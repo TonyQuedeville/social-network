@@ -1,6 +1,6 @@
 // src/components/pages/Users
 
-import React, { useState } from 'react'
+import React from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import Profile from '../Profile/Profile.jsx'
@@ -37,18 +37,23 @@ const StyledLink = styled(Link)`
 `
 
 const Users = () => {
-    const [selectedUser, setSelectedUser] = useState(null)
+    /*const [notification, setNotification] = useState('')
+    const { data, isLoading, error } = useFetch(`http://localhost:8080/users.json`)
+    const { user } = data ?? {}; // Utilisation de l'opérateur de fusionnement de null pour initialiser user avec un objet vide
 
-    const handleUserClick = (user) => {
-        setSelectedUser(user)
-        console.log("selectedUser :", selectedUser)
-    }
+    if(error) setNotification("Le chargement des données de cet utilisateur sont erronées !")
+    console.log("Le chargement des données de cet utilisateur sont erronées !");
+    console.log("isLoading:", isLoading);
+    console.log("data:", data);
+    console.log("error:", error);
+    console.log("user:", user);
+    //*/
 
     return (
         <ListContainer>
             {userlist.map((user, index) => (
                 <StyledLink                 
-                    to={`/profile/${user.pseudo}`} 
+                    to={`/user/${user.pseudo}`} 
                     key={`${user.pseudo}-${index}`} 
                     id={`user-link-${user.pseudo}`}
                 >
@@ -58,7 +63,6 @@ const Users = () => {
                             photoProfile={user.photoProfile}
                             sexe={user.sexe}
                             title={user.jobTitle}
-                            onClick={() => handleUserClick(user)}
                         />
                         <Icone 
                             alt="Demande d'ami" 

@@ -14,7 +14,6 @@ import RegisterForm from './components/pages/RegisterForm/RegisterForm'
 import Groupes from './components/Groupes/Groupes.jsx'
 import Tchat from './components/Tchat/Tchat.jsx'
 import User from './components/pages/User/User'
-import Profile from './components/pages/Profile/Profile.jsx'
 import Error from './components/Error/Error'
 
 ReactDOM.render(
@@ -34,7 +33,6 @@ ReactDOM.render(
 )
 
 function AppContent() {
-  // Vous pouvez ajouter d'autres contextes ici
   return (
     <Routes>
       <Route path="/" element={<Home />} />
@@ -43,22 +41,15 @@ function AppContent() {
       <Route path="/register" element={<RegisterForm />} />
       <Route path="/groups" element={<Groupes />} />
       <Route path="/tchat" element={<Tchat />} />
-      <Route path="/profile" element={<User />} >
-        {userlist.map((user, index) => (
-          <Route
-            key={`${user.pseudo}-${index}`}
-            path={`/profile/:username`}
-            element={
-              <Profile
-                pseudo={user.pseudo}
-                photoProfile={user.picture}
-                sexe={user.sexe}
-                title={user.title} 
-              />
-            }
-          />
-        ))}
-      </Route>
+      <Route path="/user" element={<User />} />
+
+      {userlist.map((user, index) => (
+        <Route
+          key={`${user.pseudo}-${index}`}
+          path={`/user/:username`}
+          element={<User/>}
+        />
+      ))}
 
       <Route path="*" element={<Error />} />
     </Routes>
