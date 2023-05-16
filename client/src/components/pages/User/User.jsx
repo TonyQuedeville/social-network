@@ -44,30 +44,39 @@ const User = () => {
     console.log("User username:", username)
 
     const [notification, setNotification] = useState('')
-    const { data, isLoading, error } = useFetch("http://user?" + username)
-    const { user } = data
-    if(error) setNotification("Le chargement des données de cet utilisateur sont erronées !")
-    //*/
+    const { data, isLoading, error } = useFetch(`http://localhost:8080/${username.toLowerCase()}.json`)
+    const [fetchError, setFetchError] = useState(false)
     
     useEffect(() => {
-        console.log("render User !");
-    })
+        if (error) {
+            setNotification("Le chargement des données de cet utilisateur est erroné !")
+            setFetchError(true)
+        }
+    },[error])
 
     return (
         <PageContainer>
             <Groupes larg={25}/>
+
             <ProfilContainer>
                 {isLoading ? (
-                    <Loader id={`loader`}/>
+                    <Loader id="loader"/>
                 ) : (
-                    <Profile
-                        pseudo={user.pseudo}
-                        photoProfile={user.photoProfile}
-                        sexe={user.sexe}
-                        title={user.title} 
-                        name='' //{user.name} 
-                        age='' //{user.age} 
-                    />
+                    <>
+                        { fetchError && notification && (
+                            <Popup texte={notification} type='error' />
+                        )}
+                        { !fetchError && data && (
+                            <Profile
+                                pseudo={data.pseudo}
+                                photoProfile={data.photoProfile}
+                                sexe={data.sexe}
+                                title={data.title} 
+                                name='' //{data.name} 
+                                age='' //{data.age} 
+                            />
+                        )}
+                    </>
                 )} 
                 
                 <PostContainer>
@@ -76,10 +85,6 @@ const User = () => {
             </ProfilContainer>
 
             <Tchat larg={25}/>
-            
-            {notification && (
-                <Popup texte={notification} type='error' />
-            )}
         </PageContainer>
     )
 }

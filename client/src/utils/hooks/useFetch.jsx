@@ -9,13 +9,14 @@ export function useFetch(url) {
         if (!url) return 
         
         async function fetchData() {
+            //console.log("url:", url);
             setLoading(true)
             try{
                 const response = await fetch(url)
-                const data = await response.json()
-                setData(data)
+                const dt = await response.json()
+                setData(dt)
             } catch(err) {
-                //console.log("error fetchUser !", error);
+                console.log("error fetchUser !", err);
                 setError(true)
             } finally {
                 setLoading(false)

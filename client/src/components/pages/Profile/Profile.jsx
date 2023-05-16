@@ -32,8 +32,7 @@ const PhotoProfile = styled.img`
     margin: 5px;
 `
 
-
-const Profile = ({pseudo, sexe, name, age, photoProfile, title, onClick}) => {
+const Profile = ({pseudo, sexe, name, age, photoProfile, title}) => {
     const getPhotoProfile = () => {
         if (photoProfile) {
             console.log(photoProfile)
@@ -43,22 +42,19 @@ const Profile = ({pseudo, sexe, name, age, photoProfile, title, onClick}) => {
         }
     }
 
-    //if (!error) {
-        return (
-            <ProfilCard onClick={onClick}>
+    return (
+        <ProfilCard >
+            <div>
+                <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
+                <PhotoProfile src={getPhotoProfile()} id={`user-photo-${pseudo}`} alt="photoProfile" />
+                <Titre id={`user-title-${pseudo}`}>{title}</Titre>
                 <div>
-                    <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
-                    <PhotoProfile src={getPhotoProfile()} id={`user-photo-${pseudo}`} alt="photoProfile" />
-                    <Titre id={`user-title-${pseudo}`}>{title}</Titre>
-                    <div>
-                        <span id={`user-nom-${pseudo}`}>Nom: {name}</span>
-                        <span id={`user-age-${pseudo}`}>Age: {age}</span>
-                    </div>
+                    <span id={`user-nom-${pseudo}`}>Nom: {name}</span>
+                    <span id={`user-age-${pseudo}`}>Age: {age}</span>
                 </div>
-            </ProfilCard>
-        )
-    //}
-    //console.log('erreur userFetch !');
+            </div>
+        </ProfilCard>
+    )
 }
 
 Profile.propTypes = {
