@@ -1,0 +1,15 @@
+.loginForm {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+    margin: 10px;
+}
+
+.labInput {
+    margin: 10px;
+}
+
+input, label {
+    margin: 10px;
+}
