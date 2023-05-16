@@ -1,20 +1,27 @@
-import DefaultPictureH from '../assets/img/user-profile-avatar-h.png'
-import DefaultPictureF from '../assets/img/user-profile-avatar-f.png'
 
 export const userlist = [
     {
         pseudo: 'Toto',
+        sexe: 'h',
         jobTitle: 'Devops',
-        picture: DefaultPictureH,
+        picture: 'toto.jpg',
     },
     {
         pseudo: 'Titi',
-        jobTitle: 'Developpeur frontend',
-        picture: DefaultPictureH,
+        sexe: 'f',
+        jobTitle: 'Développeuse frontend',
+        picture: 'titi.png',
+    },
+    {
+        pseudo: 'Tutu',
+        sexe: 'h',
+        jobTitle: 'Développeur Fullstack',
+        picture: '',
     },
     {
         pseudo: 'Tata',
-        jobTitle: 'Développeuse Fullstack',
-        picture: DefaultPictureF,
+        sexe: 'a',
+        jobTitle: 'Développeur backend',
+        picture: '',
     },
 ]
