@@ -1,1 +1,6 @@
 go 1.19
+
+use (
+    ./app-social-network
+    ./app-ws-chat
+)
