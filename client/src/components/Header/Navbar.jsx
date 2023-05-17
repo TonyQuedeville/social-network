@@ -12,7 +12,6 @@ import IcnGroupe from '../../assets/icn/icn-group-discut.png'
 import IcnTchat from '../../assets/icn/icn-tchat.jpg'
 import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 //import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
-//import IcnProfil from '../pages/Profile/IcnProfil.jsx'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 
@@ -36,7 +35,6 @@ const StyledGroupIcn = styled.div `
 
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
-
     const { isLoggedIn, setIsLoggedIn, usernameOrEmail } = useContext(AuthContext);
     //console.log("isLoggedIn: ", isLoggedIn);
 

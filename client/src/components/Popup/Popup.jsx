@@ -30,7 +30,7 @@ const Popup = (props) => {
           alt="Notification" 
           image={type === 'error' ? IcnErreur : IcnNotification}
           disabled={false}
-          size="0.5"
+          size={0.5}
         />
         <TexteContainer type={type}>
           { texte }

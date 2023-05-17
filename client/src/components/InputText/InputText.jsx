@@ -1,6 +1,7 @@
 // src/components/InputText
 
 import React from 'react'
+import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const InputStyle = styled.input `
@@ -13,7 +14,7 @@ const InputStyle = styled.input `
 `
 
 const InputText = (props) => {
-    const { onChange, id, label, placeholder, title, value, type='text', disabled, required } = props
+    const { onChange, id, label, placeholder, title, value, type, disabled, required } = props
 
     const handleChange = (event) => {
         const { value } = event.target
@@ -47,5 +48,21 @@ const InputText = (props) => {
         </div>
     )
 }
+
+InputText.defaultProps = {
+    type:'text'
+};
+
+InputText.propTypes = {
+    type: PropTypes.string.isRequired,
+    id: PropTypes.string.isRequired,
+    name: PropTypes.string,
+    placeholder: PropTypes.string,
+    title: PropTypes.string,
+    value: PropTypes.string,
+    onChange: PropTypes.func,
+    disabled: PropTypes.bool,
+    required: PropTypes.bool,
+};
 
 export default InputText

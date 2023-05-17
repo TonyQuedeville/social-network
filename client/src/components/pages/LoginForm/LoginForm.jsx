@@ -2,6 +2,8 @@
 
 import React, { useState, useEffect, useContext } from "react";
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider';
+//import { useFetch } from '../../../utils/hooks/useFetch.jsx'
+//import Popup from '../../Popup/Popup.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Button from '../../Button/Button'
@@ -48,7 +50,7 @@ function LoginForm() {
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     // eslint-disable-next-line 
     const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
-
+    
     const handleUsernameOrEmailChange = (event) => {
         const value = event.target.value
         setUsernameOrEmail(value)
@@ -67,6 +69,7 @@ function LoginForm() {
     }, [isUsernameOrEmailValid, isPasswordValid]);
 
     const navigate = useNavigate();
+
     const handleSubmit = (event) => {
         event.preventDefault();
         //console.log("Username/Email:", usernameOrEmail);
@@ -76,7 +79,7 @@ function LoginForm() {
             //console.log("Connexion valide !");
             // logique de connexion
             setIsLoggedIn(true);
-            navigate("/profile/" + usernameOrEmail); // Redirection vers la page profil utilisateur
+            navigate("/user/" + usernameOrEmail); // Redirection vers la page profil utilisateur
         }
     };
 

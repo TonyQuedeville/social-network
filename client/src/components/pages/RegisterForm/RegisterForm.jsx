@@ -5,7 +5,10 @@ import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Button from '../../Button/Button.jsx'
 import RadioBouton from '../../RadioBouton/RadioBouton.jsx'
+import Checkbox from '../../Checkbox/Checkbox.jsx'
 import InputText from '../../InputText/InputText.jsx'
+import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
+import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Popup from '../../Popup/Popup.jsx'
 //import { useFetch } from '../../../utils/hooks'
 
@@ -57,10 +60,15 @@ function RegisterForm() {
     const [username, setUsername] = useState("")
     const [email, setEmail] = useState("")
     const [sexe, setSexe] = useState("")
+    const [bornDate, setBornDate] = useState("")
     const [lastname, setLastname] = useState("")
     const [firstname, setFirstname] = useState("")
+    const [profileImage, setProfileImage] = useState(null);
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
+    const [statusProfil, setStatusProfil] = useState("private")
+    const [cgu, setCgu] = useState(false)
+
     const [isUsernameValid, setIsUsernameValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
@@ -68,6 +76,9 @@ function RegisterForm() {
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     const [notification, setNotification] = useState('')
 
+    const confidentialite = "Cette information restera confidentielle si le status de votre profil est en mode Privé"
+
+    // Handles
     const handleUsernameChange = (event) => {
         const value = event.target.value
         setUsername(value)
@@ -82,6 +93,11 @@ function RegisterForm() {
         const value = event.target.value
         setSexe(value)
     }
+    const handleBornDateChange = (event) => {
+        const value = event.target.value
+        setBornDate(value)
+        console.log("BornDate:", value);
+    }
     const handleLastnameChange = (event) => {
         const value = event.target.value
         setLastname(value)
@@ -89,6 +105,10 @@ function RegisterForm() {
     const handleFirstnameChange = (event) => {
         const value = event.target.value
         setFirstname(value)
+    }
+    const handleProfileImageChange = (file) => {
+        //const file = event.target.files[0];
+        setProfileImage(file);
     }
     const handlePasswordChange = (event) => {
         const value = event.target.value
@@ -99,7 +119,16 @@ function RegisterForm() {
         const value = event.target.value
         setPasswordConfirm(value)
     }
-
+    const handleStatusProfilChange = (event) => {
+        const value = event.target.value
+        setStatusProfil(value)
+    }
+    const handleCguChange = (event) => {
+        const value = event.target.checked
+        setCgu(value)
+    }
+    
+    // UseEffect "componentDidMount" Modification pendant l'existance du composant
     useEffect(() => {
         setIsConfirmDisabled(!isPasswordValid)
     }, [isPasswordValid]);
@@ -108,18 +137,41 @@ function RegisterForm() {
     }, [password])
     useEffect(() => {
         if (password === passwordConfirm) {
-            //console.log("Les mots de passe sont identiques !")
+            setNotification("")
             if (isPasswordValid) setIsConfirmDisabled(true)
         } else {
             setNotification("Les mots de passe ne sont pas identiques !")
+            setIsConfirmDisabled(false)
         }
     }, [password, isPasswordValid, passwordConfirm])
+    useEffect(() => {
+        if(isEmailValid) {
+            setNotification("")
+        } else {
+            setNotification("Adresse mail invalide !")
+        }
+    }, [isEmailValid])
+
+    // UseEffect "componentWillMount" à la création du composant, (s'execute avant le 1er rendu)
+    useEffect(() => {
+        setNotification("")
+        console.log("Création composant : componentWillMount !");
+    }, []);
+
+    // UseEffect "componentWillUnmount" à la suppression du composant, (s'execute avant la destruction du composant)
+    useEffect(() => {
+        return () => {
+            // Code de nettoyage
+            console.log("Destruction composant : componentWillUnmount !");
+        };
+    }, []);
 
     // Met à jour l'état isDisabled à chaque fois que l'état des champs d'entrée change
     useEffect(() => {
-        setIsDisabled(!(isUsernameValid && isEmailValid && isPasswordValid && isConfirmDisabled))
-    }, [isUsernameValid, isEmailValid, isPasswordValid, isConfirmDisabled])
+        setIsDisabled(!(isUsernameValid && isEmailValid && isPasswordValid && isConfirmDisabled && cgu))
+    }, [isUsernameValid, isEmailValid, isPasswordValid, isConfirmDisabled, cgu])
 
+    // Submit
     const navigate = useNavigate()
     const handleSubmit = (event) => {
         event.preventDefault()
@@ -128,7 +180,7 @@ function RegisterForm() {
         // La requête sera automatiquement déclenchée par le hook useFetch
         //setFormData({ ...formData, isSubmitting: true })
 
-        if (isUsernameValid && handlePasswordChange && isPasswordValid) {
+        if (isUsernameValid && handlePasswordChange && isPasswordValid && cgu) {
             navigate("/login"); // Redirection vers la page de connection
         }
     };
@@ -178,7 +230,7 @@ function RegisterForm() {
                     <InputText
                         type="* email"
                         id="email"
-                        label="Email"
+                        label="* Email"
                         placeholder="***@gmail.com"
                         title="Entrez une adresse valide."
                         value={email}
@@ -187,6 +239,25 @@ function RegisterForm() {
                     />
                 </StyleLabInput>
                 <StyleLabInput>
+                    <InputText
+                        id="lastname"
+                        label="Nom"
+                        value={lastname}
+                        title={confidentialite}
+                        onChange={handleLastnameChange}
+                    />
+                </StyleLabInput>
+                <StyleLabInput>
+                    <InputText
+                        id="firstname"
+                        label="Prenom"
+                        title={confidentialite}
+                        value={firstname}
+                        onChange={handleFirstnameChange}
+                    />
+                </StyleLabInput>
+                <StyleLabInput>
+                    <p>Sexe</p>
                     <RadioBouton
                         id="sexeh"
                         label="Homme"
@@ -213,23 +284,31 @@ function RegisterForm() {
                     />
                 </StyleLabInput>
                 <StyleLabInput>
-                    <InputText
-                        id="lastname"
-                        label="* Nom"
-                        value={lastname}
-                        title="Votre nom restera confidentiel et n'apparaitra pas que si vous l'autorisez."
-                        onChange={handleLastnameChange}
-                        required
+                    <InputFileImage 
+                        id="fileProfileImage"
+                        label="Photo de profil"
+                        value={profileImage}
+                        onChange={handleProfileImageChange} 
                     />
+                    {profileImage && (
+                        <DisplayImage
+                            id="profileImage"
+                            src={URL.createObjectURL(profileImage)} 
+                            alt="Profile"
+                            size={150}
+                            format='rond'
+                            disabled={false}
+                        />
+                    )}
                 </StyleLabInput>
                 <StyleLabInput>
                     <InputText
-                        id="firstname"
-                        label="* Prenom"
-                        title="Votre prénom restera confidentiel et n'apparaitra pas que si vous l'autorisez."
-                        value={firstname}
-                        onChange={handleFirstnameChange}
-                        required
+                        type="date"
+                        id="bornDate"
+                        label="Date de naissance"
+                        title={confidentialite}
+                        value={bornDate}
+                        onChange={handleBornDateChange}
                     />
                 </StyleLabInput>
                 <StyleLabInput>
@@ -256,6 +335,33 @@ function RegisterForm() {
                         onChange={handlePasswordConfirmChange}
                         required
                         disabled={isConfirmDisabled}
+                    />
+                </StyleLabInput>
+                <StyleLabInput>
+                    <p>Status profil</p>
+                    <RadioBouton
+                        id="statusProfil"
+                        label="Privé"
+                        value="private"
+                        checked={statusProfil === 'private'}
+                        onChange={handleStatusProfilChange}
+                        alignment="vertical"
+                    />
+                    <RadioBouton
+                        id="statusProfil"
+                        label="Public"
+                        value="public"
+                        onChange={handleStatusProfilChange}
+                        alignment="vertical"
+                    />
+                </StyleLabInput>
+                <StyleLabInput>
+                    <Checkbox
+                        id="cgu"
+                        label="* Veuillez accepter les CGU"
+                        value={cgu}
+                        onChange={handleCguChange}
+                        alignment="horizontal"
                     />
                 </StyleLabInput>
 

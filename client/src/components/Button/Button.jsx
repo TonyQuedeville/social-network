@@ -12,16 +12,16 @@ const CommonButtonStyle = styled.button `
         background-color: ${colors.buttonColor};
         box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
         margin: 5px;
-        &:disabled {
-            opacity: 0.5;
-            cursor: not-allowed;
-            box-shadow: 2px 2px 10px 1px rgba(0, 0, 0, 0.5);
-        }
         transition: 200ms;
         &:hover {
             transform: scale(1.05);
             cursor: pointer;
             box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
+        }
+        &:disabled {
+            opacity: 0.8;
+            cursor: not-allowed;
+            box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.5);
         }
     `
 

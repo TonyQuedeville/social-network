@@ -1,9 +1,10 @@
 // src/components/pages/Profile
 
-import React from 'react'
+import React, {useContext} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
-import colors from '../../../utils/style/Colors.js'
+import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+//import colors from '../../../utils/style/Colors.js'
 import DefaultPictureH from '../../../assets/img/user-profile-avatar-h.png'
 import DefaultPictureF from '../../../assets/img/user-profile-avatar-f.png'
 
@@ -14,14 +15,13 @@ const ProfilCard = styled.div`
     display: flex;
     align-items: center;
     justify-content: center;
+    color: ${props => (props.theme === 'light' ? 'black' : 'white')};
 `
 const Pseudo = styled.span`
-    color: ${colors.blue};
     font-size: 22px;
     font-weight: bold;
 `
 const Titre = styled.span`
-    color: ${colors.orange};
     font-size: 22px;
     font-weight: bold;
 `
@@ -33,17 +33,19 @@ const PhotoProfile = styled.img`
 `
 
 const Profile = ({pseudo, sexe, name, age, photoProfile, title}) => {
+    const { theme } = useContext(ThemeContext)
+
     const getPhotoProfile = () => {
         if (photoProfile) {
-            console.log(photoProfile)
-            return "../../../assets/img/" + photoProfile
+            console.log("photoProfile:", photoProfile)
+            return require(`../../../assets/img/${photoProfile}`).default;
         } else {
-            return sexe === 'h' ? DefaultPictureH : DefaultPictureF
+            return sexe === 'f' ? DefaultPictureF : DefaultPictureH
         }
     }
 
     return (
-        <ProfilCard >
+        <ProfilCard theme={theme}>
             <div>
                 <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
                 <PhotoProfile src={getPhotoProfile()} id={`user-photo-${pseudo}`} alt="photoProfile" />

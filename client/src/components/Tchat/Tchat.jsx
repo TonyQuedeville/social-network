@@ -29,7 +29,7 @@ const Tchat = (props) => {
 }
 
 Tchat.defaultProps = {
-	larg: '',
+	larg: null,
 }
 
 Tchat.propTypes = {

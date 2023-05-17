@@ -41,11 +41,11 @@ const PostContainer = styled.div`
 
 const User = () => {
     const { username } = useParams()
-    console.log("User username:", username)
 
     const [notification, setNotification] = useState('')
     const { data, isLoading, error } = useFetch(`http://localhost:8080/${username.toLowerCase()}.json`)
     const [fetchError, setFetchError] = useState(false)
+    console.log("Users data:",data);
     
     useEffect(() => {
         if (error) {
@@ -71,9 +71,10 @@ const User = () => {
                                 pseudo={data.pseudo}
                                 photoProfile={data.photoProfile}
                                 sexe={data.sexe}
-                                title={data.title} 
-                                name='' //{data.name} 
-                                age='' //{data.age} 
+                                title={data.jobTitle} 
+                                lastname={data.lastname} 
+                                firstname={data.firstname} 
+                                age={data.age} 
                             />
                         )}
                     </>

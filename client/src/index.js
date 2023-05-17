@@ -39,8 +39,8 @@ function AppContent() {
       <Route path="/users" element={<Users />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
-      <Route path="/groups" element={<Groupes />} />
-      <Route path="/tchat" element={<Tchat />} />
+      <Route path="/groups" element={<Groupes/>} />
+      <Route path="/tchat" element={<Tchat/>} />
       <Route path="/user" element={<User />} />
 
       {userlist.map((user, index) => (
