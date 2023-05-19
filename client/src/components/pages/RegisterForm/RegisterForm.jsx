@@ -9,9 +9,20 @@ import Checkbox from '../../Checkbox/Checkbox.jsx'
 import InputText from '../../InputText/InputText.jsx'
 import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
+import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
 //import { useFetch } from '../../../utils/hooks'
 
+const RegisterContainer = styled.form `
+    min-height: 88.5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    margin: 1px;
+    border: solid 1px;
+    border-radius: 10px;
+`
 const StyleRegisterForm = styled.form `
     display: flex;
     align-items: center;
@@ -96,7 +107,7 @@ function RegisterForm() {
     const handleBornDateChange = (event) => {
         const value = event.target.value
         setBornDate(value)
-        console.log("BornDate:", value);
+        console.log("BornDate:", value, typeof value);
     }
     const handleLastnameChange = (event) => {
         const value = event.target.value
@@ -155,14 +166,14 @@ function RegisterForm() {
     // UseEffect "componentWillMount" à la création du composant, (s'execute avant le 1er rendu)
     useEffect(() => {
         setNotification("")
-        console.log("Création composant : componentWillMount !");
+        //console.log("Création composant : componentWillMount !");
     }, []);
 
     // UseEffect "componentWillUnmount" à la suppression du composant, (s'execute avant la destruction du composant)
     useEffect(() => {
         return () => {
             // Code de nettoyage
-            console.log("Destruction composant : componentWillUnmount !");
+            //console.log("Destruction composant : componentWillUnmount !");
         };
     }, []);
 
@@ -214,7 +225,7 @@ function RegisterForm() {
 
     
     return (
-        <div>
+        <RegisterContainer>
             <StyleRegisterForm onSubmit={handleSubmit} >
                 <StyleLabInput>                    
                     <InputText
@@ -355,6 +366,7 @@ function RegisterForm() {
                         alignment="vertical"
                     />
                 </StyleLabInput>
+                <Cgu larg={70}/>
                 <StyleLabInput>
                     <Checkbox
                         id="cgu"
@@ -362,7 +374,7 @@ function RegisterForm() {
                         value={cgu}
                         onChange={handleCguChange}
                         alignment="horizontal"
-                    />
+                        />
                 </StyleLabInput>
 
                 <StyleGroupButton>
@@ -376,7 +388,7 @@ function RegisterForm() {
                     <Popup texte={notification} type='error' />
                 )}
             </StyleRegisterForm>
-        </div>
+        </RegisterContainer>
     )
 }
 

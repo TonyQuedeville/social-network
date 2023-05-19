@@ -2,7 +2,7 @@ import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css }  from 'styled-components'
 
-const IcnContainer = styled.div `
+const ImgContainer = styled.div `
   width: ${props => (props.size)}px;
   height: ${props => (props.size)}px;
   overflow: hidden;
@@ -24,7 +24,8 @@ const IcnContainer = styled.div `
         box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
       }      
     `
-  }${(props) =>
+  }
+  ${(props) =>
     props.disabled && 
     css`
       opacity: 0.5;
@@ -45,7 +46,7 @@ const DisplayImage = (props) => {
   const clickable = onClick ? true : false
 
   return (
-    <IcnContainer 
+    <ImgContainer 
       id={id}
       size={size} 
       format={format} 
@@ -58,7 +59,7 @@ const DisplayImage = (props) => {
         alt={alt}        
         size={size}
       />
-    </IcnContainer>
+    </ImgContainer>
   )
 }
 

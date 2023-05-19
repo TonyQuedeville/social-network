@@ -1,6 +1,7 @@
-import React from 'react'
+import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
+import Popup from '../Popup/Popup.jsx'
 
 const InputStyle = styled.input `
   margin: 5px;
@@ -22,12 +23,15 @@ const InputFileImage = (props) => {
       if (file.type.startsWith('image/')) {
         // Fichier valide
         onChange(file)
+        setNotification("")
       } else {
         // Fichier non valide
-        console.log('Veuillez sélectionner une image.')
+        setNotification("Erreur ! ce fichier n'est pas une image.")
       }
     }
   }
+
+  const [notification, setNotification] = useState('')
 
   return (
     <div>
@@ -40,6 +44,10 @@ const InputFileImage = (props) => {
         disabled={disabled}
         required={required}
       />
+
+      {notification && (
+        <Popup texte={notification} type='error' />
+      )}
     </div>
   )
 }

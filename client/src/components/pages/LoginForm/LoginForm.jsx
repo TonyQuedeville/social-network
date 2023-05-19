@@ -1,13 +1,23 @@
 // src/components/LoginForm
 
-import React, { useState, useEffect, useContext } from "react";
-import { AuthContext } from '../../../utils/AuthProvider/AuthProvider';
-//import { useFetch } from '../../../utils/hooks/useFetch.jsx'
-//import Popup from '../../Popup/Popup.jsx'
+import React, { useState, useEffect, useContext } from "react"
+import { AuthContext } from '../../../utils/AuthProvider/AuthProvider'
+import Popup from '../../Popup/Popup.jsx'
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
+
+const StyleLoginContainer = styled.div `
+    min-height: 88.5vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: start;
+    margin: 1px;
+    border: solid 1px;
+    border-radius: 10px;
+`
 
 const StyleLoginForm = styled.form `
     display: flex;
@@ -28,8 +38,8 @@ const StyleGroupButton = styled.div `
 
 // Validation de l'adresse email ou du nom d'utilisateur
 function isValidUsernameOrEmail(value) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/;
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+    const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/
 
     if (emailRegex.test(value.toLowerCase())) {
         //console.log("Using email regex to validate: " + value);
@@ -43,6 +53,8 @@ function isValidUsernameOrEmail(value) {
 }
 
 function LoginForm() {
+    const [notification, setNotification] = useState('')
+
     const {usernameOrEmail, setUsernameOrEmail} = useContext(AuthContext) 
     const [password, setPassword] = useState("")
     const [isUsernameOrEmailValid, setIsUsernameOrEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email ou du nom d'utilisateur
@@ -50,6 +62,7 @@ function LoginForm() {
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     // eslint-disable-next-line 
     const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
+    const { updateUserData } = useContext(AuthContext);
     
     const handleUsernameOrEmailChange = (event) => {
         const value = event.target.value
@@ -65,23 +78,35 @@ function LoginForm() {
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isUsernameOrEmailValid ou isPasswordValid change
     useEffect(() => {
-        setIsDisabled(!(isUsernameOrEmailValid && isPasswordValid));
-    }, [isUsernameOrEmailValid, isPasswordValid]);
+        setIsDisabled(!(isUsernameOrEmailValid && isPasswordValid))
+    }, [isUsernameOrEmailValid, isPasswordValid])
 
-    const navigate = useNavigate();
+    const navigate = useNavigate()
+    const [fetchError, setFetchError] = useState(false)
 
-    const handleSubmit = (event) => {
-        event.preventDefault();
+    const handleSubmit = async (event) => {
+        event.preventDefault()
         //console.log("Username/Email:", usernameOrEmail);
         //console.log("Password:", password);
 
         if (isUsernameOrEmailValid && isPasswordValid) {
             //console.log("Connexion valide !");
             // logique de connexion
-            setIsLoggedIn(true);
-            navigate("/user/" + usernameOrEmail); // Redirection vers la page profil utilisateur
+            try {
+                setNotification("")
+                const response = await fetch(`http://localhost:8080/${usernameOrEmail.toLowerCase()}.json`)
+                const data = await response.json()
+                //console.log("data:", data)
+                updateUserData(data)
+                setIsLoggedIn(true)
+                navigate(`/user/${data.pseudo}`)
+
+            } catch (error) {
+                setNotification("Erreur Login ou mot de passe !")
+                setFetchError(true);
+            }
         }
-    };
+    }
 
     // Se déconnecter
     const handleLogout = () => {
@@ -89,7 +114,7 @@ function LoginForm() {
     }
 
     return (
-        <div>
+        <StyleLoginContainer>
             <StyleLoginForm onSubmit={handleSubmit} >
                 <StyleLabInput>
                     <InputText
@@ -121,7 +146,11 @@ function LoginForm() {
                     </Link>
                 </StyleGroupButton>
             </StyleLoginForm>
-        </div>
+
+            { fetchError && notification && (
+                <Popup texte={notification} type='error' />
+            )}
+        </StyleLoginContainer>
     );
 }
 

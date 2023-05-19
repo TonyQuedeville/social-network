@@ -1,12 +1,11 @@
 // src/components/pages/User
 
 import React, { useState, useEffect } from 'react'
-import PropTypes from 'prop-types'
 import { useParams } from 'react-router-dom'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useFetch } from '../../../utils/hooks/useFetch.jsx'
 import styled from 'styled-components'
-import Profile from '../Profile/Profile'
+import Profile from '../../Profile/Profile.jsx'
 import Groupes from '../../Groupes/Groupes'
 import Tchat from '../../Tchat/Tchat'
 import Popup from '../../Popup/Popup.jsx'
@@ -29,7 +28,6 @@ const ProfilContainer = styled.div`
 `
 const PostContainer = styled.div`
     width: 99%;
-    min-height: 87.5%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -41,12 +39,13 @@ const PostContainer = styled.div`
 
 const User = () => {
     const { username } = useParams()
+    //console.log("username:", username);
 
     const [notification, setNotification] = useState('')
-    const { data, isLoading, error } = useFetch(`http://localhost:8080/${username.toLowerCase()}.json`)
+    const { dataUser, isLoading, error } = useFetch(`http://localhost:8080/${username.toLowerCase()}.json`)
     const [fetchError, setFetchError] = useState(false)
-    console.log("Users data:",data);
-    
+    //console.log("Users data:",dataUser);
+
     useEffect(() => {
         if (error) {
             setNotification("Le chargement des données de cet utilisateur est erroné !")
@@ -66,20 +65,12 @@ const User = () => {
                         { fetchError && notification && (
                             <Popup texte={notification} type='error' />
                         )}
-                        { !fetchError && data && (
-                            <Profile
-                                pseudo={data.pseudo}
-                                photoProfile={data.photoProfile}
-                                sexe={data.sexe}
-                                title={data.jobTitle} 
-                                lastname={data.lastname} 
-                                firstname={data.firstname} 
-                                age={data.age} 
-                            />
+                        { !fetchError && dataUser && (
+                            <Profile {...dataUser}/>
                         )}
                     </>
                 )} 
-                
+
                 <PostContainer>
                     Posts User
                 </PostContainer>
@@ -88,20 +79,6 @@ const User = () => {
             <Tchat larg={25}/>
         </PageContainer>
     )
-}
-
-User.defaultProps = {
-    pseudo: '',
-    sexe: '',
-    photoProfile: '',
-    title: '',
-}
-
-User.propTypes = {
-    pseudo: PropTypes.string,
-    sexe: PropTypes.string,
-    photoProfile: PropTypes.string,
-    title: PropTypes.string,
 }
 
 export default User

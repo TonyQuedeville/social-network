@@ -80,9 +80,9 @@ const Navbar = () => {
                 {isLoggedIn ? (
                     <>
                         <Link to="/">
-                            <Button text="Logout" onClick={handleLogout} disabled={false} />
+                            <Button text="Se déconnecter" onClick={handleLogout} disabled={false} />
                         </Link>
-                        <Link to={`/profile/${usernameOrEmail}`}>
+                        <Link to={`/user/${usernameOrEmail}`}>
                             <Icone 
                                 alt="Mon profile" 
                                 disabled={!isLoggedIn} 

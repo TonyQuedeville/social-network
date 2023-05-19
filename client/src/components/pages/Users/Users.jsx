@@ -1,15 +1,14 @@
 // src/components/pages/Users
 
 import React, { useState, useEffect } from 'react'
-import { Link } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Loader } from '../../../utils/Atom.jsx'
 import Popup from '../../Popup/Popup.jsx'
-import Profile from '../Profile/Profile.jsx'
+import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
 import { useFetch } from '../../../utils/hooks/useFetch.jsx'
-//import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 
 const ListContainer = styled.div`
   display: flex;
@@ -20,9 +19,8 @@ const ListContainer = styled.div`
   border: solid 1px;
   border-radius: 10px;
 `
-const StyledLink = styled(Link)`
-  text-decoration: none;
-  
+const StyledLink = styled.div`
+  text-decoration: none;  
   width: 50%;
   display: flex;
   flex-direction: row;
@@ -44,9 +42,15 @@ const Users = () => {
   //console.log("isLoggedIn: ", isLoggedIn);
   //console.log("usernameOrEmail: ", usernameOrEmail);
 
+  const navigate = useNavigate();
+  const handleUserClick = (username) => {
+    //console.log("username:", username)
+    navigate(`/user/${username}`)
+  }
+
   const [notification, setNotification] = useState('')
-  const { data, isLoading, error } = useFetch(`http://localhost:8080/users.json`)
-  //console.log("Users data:",data);
+  const { dataUser, isLoading, error } = useFetch(`http://localhost:8080/users.json`)
+  //console.log("Users data:",dataUser);
   const [fetchError, setFetchError] = useState(false)
 
   useEffect(() => {
@@ -66,20 +70,15 @@ const Users = () => {
           { fetchError && notification && (
             <Popup texte={notification} type='error' />
           )}
-          { !fetchError && data && (
-            data.users.map((user, index) => (
+          { !fetchError && dataUser && (
+            dataUser.users.map((user, index) => (
               <StyledLink                 
-                to={`/user/${user.pseudo}`} 
-                key={`${user.pseudo}-${index}`} 
-                id={`user-link-${user.pseudo}`}
+              key={`${user.pseudo}-${index}`} 
+              id={`user-link-${user.pseudo}`}
+              onClick={() => handleUserClick(user.pseudo)}
               >
                 <>
-                  <Profile
-                    pseudo={user.pseudo}
-                    photoProfile={user.photoProfile}
-                    sexe={user.sexe}
-                    title={user.jobTitle}
-                  />
+                  <Profile {...user}/>
                   <Icone 
                     alt="Demande d'ami" 
                     image={IcnAddFriend}

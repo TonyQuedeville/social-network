@@ -9486,6 +9486,14 @@
     "iconv-lite" "0.4.24"
     "unpipe" "1.0.0"
 
+"raw-loader@^4.0.2":
+  "integrity" "sha512-ZnScIV3ag9A4wPX/ZayxL/jZH+euYb6FcUinPcgiQW0+UBtEv0O6Q3lGd3cqJ+GHH+rksEv3Pj99oxJ3u3VIKA=="
+  "resolved" "https://registry.npmjs.org/raw-loader/-/raw-loader-4.0.2.tgz"
+  "version" "4.0.2"
+  dependencies:
+    "loader-utils" "^2.0.0"
+    "schema-utils" "^3.0.0"
+
 "reach-router@^0.0.0":
   "integrity" "sha512-2/69AL3yAtS+DtvnZygq0gcjOLwtuB7fZYneC0AHtDjbthBtllwFekHTjscwt2Hn2ZEGgVXM36sHiH72hOba2A=="
   "resolved" "https://registry.npmjs.org/reach-router/-/reach-router-0.0.0.tgz"
