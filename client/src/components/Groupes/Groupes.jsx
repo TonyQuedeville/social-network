@@ -25,7 +25,7 @@ const Groupes = (props) => {
 }
 
 Groupes.defaultProps = {
-  larg: '',
+  larg: null,
 }
 
 Groupes.propTypes = {

@@ -11,52 +11,71 @@ const IcnContainer = styled.div `
     display: flex;
     align-items: center;
     justify-content: center;
+    margin: 10px;
+    transition: 200ms;
+    ${(props) =>
+        !props.disabled &&
+        css`
+            &:hover {
+            transform: scale(1.05);
+            cursor: pointer;
+            box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
+        }
+    `}
     ${(props) =>
         props.disabled &&
         css`
             opacity: 0.2;
             cursor: not-allowed;
     `}
-    margin: 10px;
-    transition: 200ms;
-    &:hover {
-        transform: scale(1.05);
-        cursor: pointer;
-        box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
-    }
+    
 `
 const IcnStyle = styled.img `
     width: 90%;
     margin: 3px;
+    transition: 300ms;
+    transform: rotate(${props => props.rotate}deg);
 `
 
 const Icone = (props) => {
-    const { image, alt, disabled, size } = props
+    const { image, alt, disabled, size, onClick, rotate } = props
+    const clickable = onClick //? true : false
 
     return (
-        <IcnContainer size={size}>
+        <IcnContainer 
+            size={size}
+            disabled={disabled}  
+            clickable={clickable}
+            onClick={!props.disabled ? onClick : null}
+        >
             <IcnStyle 
                 src={image} 
                 alt={alt} 
                 title={alt}
-                disabled={disabled}                 
+                rotate={rotate}
             />
         </IcnContainer>
     )
 }
 
 Icone.defaultProps = {
-    src: '',
+    alt: '',
     size: 1,
     disabled: false,
     title: '',
+    clickable: false,
+    rotate: 0,
 };
 
 Icone.propTypes = {
-    src: PropTypes.string.isRequired,
+    image: PropTypes.string.isRequired,
+    alt: PropTypes.string,
     size: PropTypes.number,
     disabled: PropTypes.bool,
     title: PropTypes.string,
+    onClick: PropTypes.func,
+    clickable: PropTypes.bool,
+    rotate: PropTypes.number,
 };
 
 export default Icone
