@@ -6,22 +6,25 @@ export const AuthContext = createContext()
 export const AuthProvider = ({ children }) => {
     const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [usernameOrEmail, setUsernameOrEmail] = useState("")
-    const [pseudo, setPseudo] = useState("")
+    const [authPseudo, setPseudo] = useState("")
+    const [authId, setAuthId] = useState("")
     const [sexe, setSexe] = useState("")
     const [lastname, setLastname] = useState("")
     const [firstname, setFirstname] = useState("")
     const [bornDate, setBornDate] = useState("")
-    const [jobTitle, setJobTitle] = useState("")
+    const [aboutme, setAboutme] = useState("")
     const [photoProfile, setPhotoProfile] = useState("")
     const [statusProfil, setStatusProfil] = useState("")
 
     const updateUserData = (data) => {
+        setUsernameOrEmail(data.email)
         setPseudo(data.pseudo)
-        setSexe(data.sexe)
+        setAuthId(data.id)
         setLastname(data.lastname)
+        setSexe(data.sexe)
         setFirstname(data.firstname)
         setBornDate(data.BornDate)
-        setJobTitle(data.jobTitle)
+        setAboutme(data.aboutme)
         setPhotoProfile(data.photoProfile)
         setStatusProfil(data.statusProfil)
     }
@@ -30,12 +33,13 @@ export const AuthProvider = ({ children }) => {
         <AuthContext.Provider value={{ 
             isLoggedIn, setIsLoggedIn, 
             usernameOrEmail, setUsernameOrEmail,
+            authPseudo, setPseudo,
+            authId, setAuthId,
             sexe, setSexe,
-            pseudo, setPseudo,
             lastname, setLastname,
             firstname, setFirstname,
             bornDate, setBornDate,
-            jobTitle, setJobTitle,
+            aboutme, setAboutme,
             photoProfile, setPhotoProfile,
             statusProfil, setStatusProfil,
             updateUserData,
@@ -48,11 +52,14 @@ export const AuthProvider = ({ children }) => {
 AuthProvider.propTypes = {
     children: PropTypes.node.isRequired,
     isLoggedIn: PropTypes.bool,
+    authPseudo: PropTypes.string,
+    authId: PropTypes.number,
+    usernameOrEmail: PropTypes.string,
     sexe: PropTypes.string,
-    pseudo: PropTypes.string,
     lastname: PropTypes.string,
     firstname: PropTypes.string,
     bornDate: PropTypes.string,
+    aboutme: PropTypes.string,
     photoProfile: PropTypes.string,
     statusProfil: PropTypes.string,
     updateUserData: PropTypes.func,

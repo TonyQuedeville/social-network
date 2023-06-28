@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect, useContext } from "react"
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider'
-import Popup from '../../Popup/Popup.jsx'
 import { Link, useNavigate } from 'react-router-dom'
+import Popup from '../../Popup/Popup.jsx'
 import styled from 'styled-components'
 import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
@@ -54,7 +54,6 @@ function isValidUsernameOrEmail(value) {
 
 function LoginForm() {
     const [notification, setNotification] = useState('')
-
     const {usernameOrEmail, setUsernameOrEmail} = useContext(AuthContext) 
     const [password, setPassword] = useState("")
     const [isUsernameOrEmailValid, setIsUsernameOrEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email ou du nom d'utilisateur

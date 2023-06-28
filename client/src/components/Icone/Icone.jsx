@@ -40,6 +40,7 @@ const IcnStyle = styled.img `
 const Icone = (props) => {
     const { image, alt, disabled, size, onClick, rotate } = props
     const clickable = onClick //? true : false
+    //console.log(image);
 
     return (
         <IcnContainer 

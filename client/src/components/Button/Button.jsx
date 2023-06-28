@@ -27,24 +27,26 @@ const CommonButtonStyle = styled.button `
 
 
 function Button(props) {
-    const { onClick, text, disabled } = props
+    const { type, onClick, text, disabled } = props
 
     return (
-        <CommonButtonStyle onClick={onClick} disabled={disabled}>
+        <CommonButtonStyle type={type} onClick={onClick} disabled={disabled}>
             {text}
         </CommonButtonStyle>
-    );
+    )
 }
 
 Button.defaultProps = {
+    type: "button",
     text: '',
     disabled: false,
-};
+}
 
 Button.propTypes = {
+    type: PropTypes.string,
     text: PropTypes.string.isRequired,
     disabled: PropTypes.bool,
     onClick: PropTypes.func
-};
+}
 
 export default Button

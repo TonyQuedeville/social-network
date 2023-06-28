@@ -7,6 +7,7 @@ import Button from '../../Button/Button.jsx'
 import RadioBouton from '../../RadioBouton/RadioBouton.jsx'
 import Checkbox from '../../Checkbox/Checkbox.jsx'
 import InputText from '../../InputText/InputText.jsx'
+import TextArea from '../../TextArea/TextArea.jsx'
 import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Cgu from '../../Cgu/Cgu.jsx'
@@ -75,6 +76,7 @@ function RegisterForm() {
     const [lastname, setLastname] = useState("")
     const [firstname, setFirstname] = useState("")
     const [profileImage, setProfileImage] = useState(null);
+    const [aboutme, setAboutme] = useState("")
     const [password, setPassword] = useState("")
     const [passwordConfirm, setPasswordConfirm] = useState("")
     const [statusProfil, setStatusProfil] = useState("private")
@@ -120,6 +122,10 @@ function RegisterForm() {
     const handleProfileImageChange = (file) => {
         //const file = event.target.files[0];
         setProfileImage(file);
+    }
+    const handleAboutMeChange = (event) => {
+        const value = event.target.value
+        setAboutme(value)
     }
     const handlePasswordChange = (event) => {
         const value = event.target.value
@@ -223,7 +229,6 @@ function RegisterForm() {
     }
     //*/
 
-    
     return (
         <RegisterContainer>
             <StyleRegisterForm onSubmit={handleSubmit} >
@@ -265,6 +270,16 @@ function RegisterForm() {
                         title={confidentialite}
                         value={firstname}
                         onChange={handleFirstnameChange}
+                    />
+                </StyleLabInput>
+                <StyleLabInput>
+                    <InputText
+                        type="date"
+                        id="bornDate"
+                        label="Date de naissance"
+                        title={confidentialite}
+                        value={bornDate}
+                        onChange={handleBornDateChange}
                     />
                 </StyleLabInput>
                 <StyleLabInput>
@@ -313,15 +328,16 @@ function RegisterForm() {
                     )}
                 </StyleLabInput>
                 <StyleLabInput>
-                    <InputText
-                        type="date"
-                        id="bornDate"
-                        label="Date de naissance"
+                    <TextArea
+                        id="aboutme"
+                        label="Description de personalité"
                         title={confidentialite}
-                        value={bornDate}
-                        onChange={handleBornDateChange}
+                        value={aboutme}
+                        onChange={handleAboutMeChange}
+                        rows={3}
+                        cols={50}
                     />
-                </StyleLabInput>
+                </StyleLabInput>                
                 <StyleLabInput>
                     <InputText
                         type="password"
@@ -374,7 +390,7 @@ function RegisterForm() {
                         value={cgu}
                         onChange={handleCguChange}
                         alignment="horizontal"
-                        />
+                    />
                 </StyleLabInput>
 
                 <StyleGroupButton>
