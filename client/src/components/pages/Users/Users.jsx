@@ -1,6 +1,7 @@
 // src/components/pages/Users
 
-import React, { useState, useEffect } from 'react'
+import React, { useState, useEffect, useContext } from 'react'
+import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Loader } from '../../../utils/Atom.jsx'
@@ -38,9 +39,8 @@ const StyledLink = styled.div`
 `
 
 const Users = () => {
-  //const { isLoggedIn, usernameOrEmail } = useContext(AuthContext);
-  //console.log("isLoggedIn: ", isLoggedIn);
-  //console.log("usernameOrEmail: ", usernameOrEmail);
+  const { authPseudo } = useContext(AuthContext);
+  //console.log("authPseudo: ", authPseudo);
 
   const navigate = useNavigate();
   const handleUserClick = (username) => {
@@ -72,20 +72,32 @@ const Users = () => {
           )}
           { !fetchError && dataUser && (
             dataUser.users.map((user, index) => (
-              <StyledLink                 
-              key={`${user.pseudo}-${index}`} 
-              id={`user-link-${user.pseudo}`}
-              onClick={() => handleUserClick(user.pseudo)}
-              >
-                <>
-                  <Profile {...user}/>
-                  <Icone 
-                    alt="Demande d'ami" 
-                    image={IcnAddFriend}
-                    disabled={false}
-                  />
-                </>
-              </StyledLink>
+              authPseudo !== user.pseudo ? 
+                <StyledLink                 
+                  key={`${user.pseudo}-${index}`} 
+                  id={`user-link-${user.pseudo}`}
+                  onClick={() => handleUserClick(user.pseudo)}
+                >
+                  <>
+                    <Profile 
+                      //{...user} // syntaxe impossible à cause de hideStatus
+                      pseudo={user.pseudo}
+                      sexe={user.sexe}
+                      aboutme={user.aboutme}
+                      photoProfile={user.photoProfile}
+                      lastname={user.lastname}
+                      firstname={user.firstname}
+                      bornDate={user.bornDate}
+                      hideStatus={true}
+                    />
+                    <Icone 
+                      alt="Ajouter"
+                      image={IcnAddFriend}
+                      disabled={false}
+                    />
+                    </>
+                </StyledLink>
+                : null
             ))
           )}
         </>

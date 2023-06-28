@@ -1,10 +1,14 @@
-// src/components/InputText
-
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
-const InputStyle = styled.input `
+const StyledDiv = styled.div `
+    display: flex;
+    align-items: center;
+    justify-contents: center;
+`
+
+const InputStyle = styled.textarea `
     margin: 5px;
     border-radius: 5px;
     box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.3);
@@ -13,8 +17,8 @@ const InputStyle = styled.input `
     }
 `
 
-const InputText = (props) => {
-    const { onChange, id, label, placeholder, title, value, type, disabled, required } = props
+const TextArea = (props) => {
+    const { onChange, id, label, placeholder, title, value, disabled, required, rows, cols } = props
 
     const handleChange = (event) => {
         const { value } = event.target
@@ -32,10 +36,9 @@ const InputText = (props) => {
     }
 
     return (
-        <div>
+        <StyledDiv>
             <label htmlFor={id}>{label}</label>
             <InputStyle
-                type={type}
                 id={id}
                 name={id}
                 placeholder={placeholder}
@@ -44,18 +47,20 @@ const InputText = (props) => {
                 onChange={handleChange}
                 disabled={disabled}
                 required={required}
+                rows={rows}
+                cols={cols}
             />
-        </div>
+        </StyledDiv>
     )
 }
 
-InputText.defaultProps = {
-    type:'text'
+TextArea.defaultProps = {
+    rows: 5,
+    cols: 30,
 };
 
-InputText.propTypes = {
+TextArea.propTypes = {
     label: PropTypes.string,
-    type: PropTypes.string.isRequired,
     id: PropTypes.string.isRequired,
     name: PropTypes.string,
     placeholder: PropTypes.string,
@@ -64,6 +69,8 @@ InputText.propTypes = {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     required: PropTypes.bool,
+    rows: PropTypes.number,
+    cols: PropTypes.number,
 };
 
-export default InputText
+export default TextArea

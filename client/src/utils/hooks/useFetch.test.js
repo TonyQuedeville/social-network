@@ -4,7 +4,7 @@ https://openclassrooms.com/fr/courses/7150606-creez-une-application-react-comple
 //*/
 
 import { renderHook } from '@testing-library/react-hooks';
-import { useFetch } from "./";
+import { useFetch } from "./useFetch.jsx";
 
 /* test() prend une string en premier argument et une fonction en deuxième argument. */
 test('test erreur useFetch() avec une mauvaise url', async () => {
@@ -18,6 +18,7 @@ test('test erreur useFetch() avec une mauvaise url', async () => {
     expect(result.current.data).toEqual({});
     expect(result.current.isLoading).toEqual(false);
 });
+
 
 // Lancer le test : yarn run test
 

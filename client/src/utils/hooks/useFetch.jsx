@@ -14,6 +14,7 @@ export function useFetch(url) {
             try{
                 const response = await fetch(url)
                 const dt = await response.json()
+                console.log(dt)
                 setData(dt)
             } catch(err) {
                 console.log("error fetchUser !", err);

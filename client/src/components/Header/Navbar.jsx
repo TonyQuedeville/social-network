@@ -35,12 +35,20 @@ const StyledGroupIcn = styled.div `
 
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
-    const { isLoggedIn, setIsLoggedIn, usernameOrEmail } = useContext(AuthContext);
-    //console.log("isLoggedIn: ", isLoggedIn);
+    const { isLoggedIn, setIsLoggedIn, authPseudo, photoProfile } = useContext(AuthContext);
 
     // Se déconnecter
     const handleLogout = () => {
         setIsLoggedIn(false);
+    }
+
+    const getPhotoProfile = () => {
+        if (photoProfile) {
+          //console.log("photoProfile:", photoProfile)
+            return require(`../../assets/img/${photoProfile}`).default
+        } else {
+            return DefaultPictureH
+        }
     }
 
     return (
@@ -82,12 +90,12 @@ const Navbar = () => {
                         <Link to="/">
                             <Button text="Se déconnecter" onClick={handleLogout} disabled={false} />
                         </Link>
-                        <Link to={`/user/${usernameOrEmail}`}>
+                        <Link to={`/user/${authPseudo}`}>
                             <Icone 
                                 alt="Mon profile" 
                                 disabled={!isLoggedIn} 
-                                image={DefaultPictureH}
-                            />
+                                image={getPhotoProfile()}
+                                />
                         </Link>
                     </>
                 ) : (
