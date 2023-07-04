@@ -51,6 +51,7 @@ const Navbar = () => {
         }
     }
 
+    //console.log("Navbar !");
     return (
         <StyledNav theme={theme}>
             <StyledGroupIcn>

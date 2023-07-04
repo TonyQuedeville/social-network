@@ -29,6 +29,7 @@ export const AuthProvider = ({ children }) => {
         setStatusProfil(data.statusProfil)
     }
 
+    //console.log("AuthProvider !");
     return (
         <AuthContext.Provider value={{ 
             isLoggedIn, setIsLoggedIn, 

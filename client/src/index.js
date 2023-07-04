@@ -3,17 +3,16 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './utils/AuthProvider/AuthProvider'
 import { ThemeProvider } from './utils/ThemeProvider/ThemeProvider'
-//import { userlist } from './datas/UserList.js'
 import Header from './components/Header/Navbar'
 import Footer from './components/Footer/Footer'
 import GlobalStyle from './utils/style/GlobalStyle'
 import Home from './components/pages/Home/Home'
-import Users from './components/pages/Users/Users'
+import Users from './components/pages/Users/Users.jsx'
 import LoginForm from './components/pages/LoginForm/LoginForm'
 import RegisterForm from './components/pages/RegisterForm/RegisterForm'
 import Groupes from './components/Groupes/Groupes.jsx'
 import Tchat from './components/Tchat/Tchat.jsx'
-import User from './components/pages/User/User'
+import User from './components/pages/User/User.jsx'
 import Error from './components/Error/Error'
 
 ReactDOM.render(
@@ -31,7 +30,6 @@ ReactDOM.render(
   </React.StrictMode>,
   document.getElementById('root')
 )
-
 
 function AppContent() {
   return (
