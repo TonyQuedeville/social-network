@@ -1,7 +1,8 @@
+// Peut être remplacé par React Query : https://tanstack.com/query/latest/docs/react/overview
 import { useState, useEffect } from 'react'
 
 export function useFetch(url) {
-    const [dataUser, setData] = useState({})
+    const [data, setData] = useState({})
     const [isLoading, setLoading] = useState(true)
     const [error, setError] = useState(null)
 
@@ -14,7 +15,7 @@ export function useFetch(url) {
             try{
                 const response = await fetch(url)
                 const dt = await response.json()
-                console.log(dt)
+                //console.log("dt:", dt)
                 setData(dt)
             } catch(err) {
                 console.log("error fetchUser !", err);
@@ -27,5 +28,6 @@ export function useFetch(url) {
         fetchData()
     }, [url])
 
-    return { isLoading, dataUser, error }
+    //console.log("data:", data)
+    return { data, isLoading, error }
 }

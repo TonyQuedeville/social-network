@@ -1,16 +1,18 @@
 // src/components/pages/User
 
-import React, { useState, useEffect } from 'react'
+import React, { useState } from 'react'
 import { useParams } from 'react-router-dom'
+//import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
 import { Loader } from '../../../utils/Atom.jsx'
-import { useFetch } from '../../../utils/hooks/useFetch.jsx'
 import styled from 'styled-components'
 import Profile from '../../Profile/Profile.jsx'
-import Groupes from '../../Groupes/Groupes'
-import Tchat from '../../Tchat/Tchat'
+import Groupes from '../../Groupes/Groupes.jsx'
+import Tchat from '../../Tchat/Tchat.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import TextArea from '../../TextArea/TextArea.jsx'
 import Button from '../../Button/Button.jsx'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
+const queryClient = new QueryClient()
 
 const PageContainer = styled.div`
     width: 100%;
@@ -28,16 +30,6 @@ const ProfilContainer = styled.div`
     border: solid 1px;
     border-radius: 10px;
 `
-const PostItem = ({ post }) => {
-    return (
-        <PostContainer>
-            <div>
-                <p>title={post.title}</p>
-                <p>value={post.content}</p>
-            </div>
-        </PostContainer>
-    );
-};
 const PostContainer = styled.div`
     width: 99%;
     display: flex;
@@ -48,6 +40,17 @@ const PostContainer = styled.div`
     border: solid 1px;
     border-radius: 10px;
 `
+const PostItem = ({ post }) => {
+    return (
+        <PostContainer>
+            <div>
+                <p>{post.title}</p>
+                <p>{post.content}</p>
+            </div>
+        </PostContainer>
+    );
+};
+
 const StyleGroupButton = styled.div `
     display: flex;
     align-items: center;
@@ -55,20 +58,68 @@ const StyleGroupButton = styled.div `
     flex-direction: row;
 `
 
+
 const User = () => {
     // User
+    //const { authPseudo } = useContext(AuthContext);
+    //console.log("authPseudo: ", authPseudo);
     const { username } = useParams()
     //console.log("username:", username);
-    const { dataUser, isLoading, errorUser } = useFetch(`http://localhost:8080/${username.toLowerCase()}.json`)
-    console.log("Users data:",dataUser);
-    
-    // Posts
-    const { dataPosts, isLoadingPosts, errorPosts } = useFetch(`http://localhost:8080/posts.json`)
-    console.log("dataPosts:", dataPosts)
 
-    // Users
-    const { dataUsers} = useFetch(`http://localhost:8080/users.json`)
-    console.log("dataUsers:", dataUsers)
+    const UserInfos = () => {    
+        const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
+            fetch(`http://localhost:8080/${username.toLowerCase()}.json`).then((res) => res.json())
+        );
+        //console.log("dataUser:", dataUser);
+        
+        return (
+            <>
+                {isLoadingUser ? (
+                <Loader id="loader" />
+                ) : (
+                <>
+                    {errorUser && (
+                        <Popup texte="Le chargement des informations de cet utilisateur est erroné !" type='error' />
+                    )}
+                    {dataUser && (
+                        <>
+                            <Profile {...dataUser}/>
+                        </>
+                    )}
+                </>
+                )}
+            </>
+        )
+    }
+
+    // Posts
+    const Posts = () => {    
+        const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
+            fetch('http://localhost:8080/posts.json').then((res) => res.json())
+        );
+        //console.log("dataPost:", dataPosts);
+        
+        return (
+            <>
+                {isLoadingPosts ? (
+                <Loader id="loader" />
+                ) : (
+                <>
+                    {errorPosts && (
+                        <Popup texte="Le chargement des publications de cet utilisateur est erroné !" type='error' />
+                    )}
+                    {dataPosts && (
+                        <>
+                            {dataPosts.posts.map((post, index) => (
+                            <PostItem key={index} post={post} />
+                            ))}
+                        </>
+                    )}
+                </>
+                )}
+            </>
+        )
+    }
 
     // New Post
     const [newPostContent, setNewPostContent] = useState('')
@@ -87,43 +138,25 @@ const User = () => {
     }
     
     // Gestion d'erreurs
-    const [notification, setNotification] = useState('')
-    const [fetchError, setFetchError] = useState(false)
-
-    useEffect(() => {
-        if (errorUser) {
-            setNotification("Le chargement des données de cet utilisateur est erroné !")
-            setFetchError(true)
-        }
-        if (errorPosts) {
-            setNotification("Le chargement des publications de cet utilisateur est erroné !")
-            setFetchError(true)
-        }
-        //if (errorNewPosts) {
-        //    setNotification("L'envoi de cette publicaion a échouée !")
-        //    setFetchError(true)
-        //}
-    },[errorUser, errorPosts])
+    //const [notification, setNotification] = useState('')
+    //const [fetchError, setFetchError] = useState(false)
+    //useEffect(() => {
+    //    if (errorNewPosts) {
+    //        setNotification("L'envoi de cette publicaion a échouée !")
+    //        setFetchError(true)
+    //    }
+    //},[errorNewPosts])
 
     // Composant 
-    return (
+    return (        
         <PageContainer>
             <Groupes larg={25}/>
 
             <ProfilContainer>
                 {/* Infos user */}
-                {isLoading ? (
-                    <Loader id="loader"/>
-                ) : (
-                    <>
-                        { fetchError && notification && (
-                            <Popup texte={notification} type='error' />
-                        )}
-                        { !errorUser && dataUser && (
-                            <Profile {...dataUser}/>
-                        )}
-                    </>
-                )} 
+                <QueryClientProvider client={queryClient}>
+                    <UserInfos />
+                </QueryClientProvider>
 
                 {/* New post */}
                 <PostContainer> 
@@ -150,25 +183,12 @@ const User = () => {
                         </StyleGroupButton>
                     </form>
                 </PostContainer>
+                
 
                 {/* Posts */}
-                {isLoadingPosts ? (
-                    <Loader id="loader"/>
-                ) : (
-                    <>
-                    { fetchError && notification && (
-                        <Popup texte={notification} type='error' />
-                    )}
-                    {!errorPosts && dataPosts && (
-                        <>
-                            {console.log("dataPots:", dataPosts)}
-                            {dataPosts.posts.map((post, index) => (
-                                <PostItem key={index} post={post} />
-                            ))}
-                        </>
-                    )}
-                    </>
-                )}
+                <QueryClientProvider client={queryClient}>
+                    <Posts />
+                </QueryClientProvider>
             </ProfilContainer>
 
             <Tchat larg={25}/>

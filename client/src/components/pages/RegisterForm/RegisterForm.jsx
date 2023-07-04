@@ -138,6 +138,7 @@ function RegisterForm() {
     }
     const handleStatusProfilChange = (event) => {
         const value = event.target.value
+        console.log(value);
         setStatusProfil(value)
     }
     const handleCguChange = (event) => {
@@ -378,6 +379,7 @@ function RegisterForm() {
                         id="statusProfil"
                         label="Public"
                         value="public"
+                        checked={statusProfil === 'public'}
                         onChange={handleStatusProfilChange}
                         alignment="vertical"
                     />

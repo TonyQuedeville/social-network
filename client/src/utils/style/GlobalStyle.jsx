@@ -23,6 +23,7 @@ const StyledGlobalStyle = createGlobalStyle`
 function GlobalStyle() {
     const { theme } = useContext(ThemeContext)
 
+    //console.log("GlobalStyle !");
     return <StyledGlobalStyle isDarkMode={theme === 'dark'} />
 }
 
