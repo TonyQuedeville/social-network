@@ -3,8 +3,8 @@ import PropTypes from 'prop-types'
 import styled, { css }  from 'styled-components'
 
 const ImgContainer = styled.div `
-  width: ${props => (props.size)}px;
-  height: ${props => (props.size)}px;
+  width: ${props => (props.size === "auto" ? "auto" : `${props.size}px`)};
+  height: ${props => (props.size === "auto" ? "auto" : `${props.size}px`)};
   overflow: hidden;
   display: flex;
   align-items: center;
@@ -13,10 +13,11 @@ const ImgContainer = styled.div `
   border-radius: ${props => (props.format === 'rond' ? '50%' : '5px')};
   border: solid 1px;
   box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.3);
+  background-color: black;
   transition: 200ms;  
   ${(props) =>
     !props.disabled && 
-    props.clickable &&
+    props.onClick &&
     css`
       &:hover {
         transform: scale(1.05);
@@ -36,44 +37,43 @@ const ImgContainer = styled.div `
 `
 
 const ImageStyle = styled.img `
-  width: ${props => props.size}px;
-  height: ${props => props.size}px;
+  max-width: ${props => (props.size === "auto" ? "100%" : `${props.size}px`)};
+  max-height: ${props => (props.size === "auto" ? "100%" : `${props.size}px`)};
   object-fit: cover;
 `
 
 const DisplayImage = (props) => {
   const {id, src, alt, size, format, onClick, disabled} = props
-  const clickable = onClick ? true : false
 
   return (
     <ImgContainer 
       id={id}
       size={size} 
       format={format} 
-      onClick={onClick}
-      clickable={clickable}
       disabled={disabled}
+      onClick={onClick}
     >
-      <ImageStyle         
-        src={src} 
-        alt={alt}        
-        size={size}
-      />
+    <ImageStyle         
+      src={src} 
+      alt={alt}        
+      size={size}
+    />
     </ImgContainer>
   )
 }
 
 DisplayImage.defaultProps = {
   alt: 'Image sans description',
+  size: "auto",
   format: '',
   disabled: false,
 }
 
 DisplayImage.propTypes = {
   id: PropTypes.string.isRequired,
-  src: PropTypes.object.isRequired,
+  src: PropTypes.string.isRequired,
   alt: PropTypes.string,
-  size: PropTypes.number,
+  size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
   format: PropTypes.string,
   onClick: PropTypes.func,
   disabled: PropTypes.bool,

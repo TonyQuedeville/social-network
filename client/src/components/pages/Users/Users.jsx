@@ -41,7 +41,7 @@ const StyledLink = styled.div`
 
 const Users = () => {
   const { authPseudo } = useContext(AuthContext);
-  console.log("authPseudo: ", authPseudo);
+  //console.log("authPseudo: ", authPseudo);
 
   const navigate = useNavigate();
   const handleUserClick = (username) => {
@@ -53,8 +53,8 @@ const Users = () => {
   const UsersList = () => {    
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
         fetch(`http://localhost:8080/users.json`).then((res) => res.json())
-    );
-    console.log("dataUsers:", dataUsers);
+    )
+    //console.log("dataUsers:", dataUsers);
     
     return (
         <>

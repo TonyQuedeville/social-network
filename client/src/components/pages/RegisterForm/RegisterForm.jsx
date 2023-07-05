@@ -12,9 +12,8 @@ import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
-//import { useFetch } from '../../../utils/hooks'
 
-const RegisterContainer = styled.form `
+const RegisterContainer = styled.div `
     min-height: 88.5vh;
     display: flex;
     flex-direction: column;
@@ -109,7 +108,7 @@ function RegisterForm() {
     const handleBornDateChange = (event) => {
         const value = event.target.value
         setBornDate(value)
-        console.log("BornDate:", value, typeof value);
+        //console.log("BornDate:", value, typeof value);
     }
     const handleLastnameChange = (event) => {
         const value = event.target.value
@@ -138,7 +137,7 @@ function RegisterForm() {
     }
     const handleStatusProfilChange = (event) => {
         const value = event.target.value
-        console.log(value);
+        //console.log(value);
         setStatusProfil(value)
     }
     const handleCguChange = (event) => {
@@ -368,7 +367,7 @@ function RegisterForm() {
                 <StyleLabInput>
                     <p>Status profil</p>
                     <RadioBouton
-                        id="statusProfil"
+                        id="statusProfilPrivate"
                         label="Privé"
                         value="private"
                         checked={statusProfil === 'private'}
@@ -376,7 +375,7 @@ function RegisterForm() {
                         alignment="vertical"
                     />
                     <RadioBouton
-                        id="statusProfil"
+                        id="statusProfilPublic"
                         label="Public"
                         value="public"
                         checked={statusProfil === 'public'}

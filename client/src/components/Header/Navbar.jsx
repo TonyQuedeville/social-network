@@ -96,7 +96,7 @@ const Navbar = () => {
                                 alt="Mon profile" 
                                 disabled={!isLoggedIn} 
                                 image={getPhotoProfile()}
-                                />
+                            />
                         </Link>
                     </>
                 ) : (

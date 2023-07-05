@@ -10,6 +10,7 @@ import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 
+// css
 const ProfilCard = styled.div`
   width: 100%;
   padding: 10px;
@@ -56,6 +57,7 @@ const PhotoProfile = styled.img`
   margin: 5px;
 `
 
+// Composant
 const Profile = ({pseudo, sexe, statusProfil: initialStatusProfil, hideStatus, aboutme, photoProfile, lastname, firstname, bornDate}) => {
   const { theme } = useContext(ThemeContext)
   const [statusProfil, setStatusProfil] = useState(initialStatusProfil);

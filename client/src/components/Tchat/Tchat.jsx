@@ -6,7 +6,7 @@ import styled from 'styled-components'
 
 const TchatContainer = styled.div`
 	width: ${props => props.larg}%;
-	min-height: 88.5vh;
+	min-height: 88vh;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
