@@ -5,6 +5,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 
 const InputStyle = styled.input `
+    width: ${props => (props.size === "auto" ? "auto" : `${props.size}px`)};
     margin: 5px;
     border-radius: 5px;
     box-shadow: 2px 2px 4px 1px rgba(0, 0, 0, 0.3);
@@ -14,7 +15,7 @@ const InputStyle = styled.input `
 `
 
 const InputText = (props) => {
-    const { onChange, id, label, placeholder, title, value, type, disabled, required } = props
+    const { onChange, id, label, placeholder, title, value, type, disabled, required, size } = props
 
     const handleChange = (event) => {
         const { value } = event.target
@@ -44,14 +45,16 @@ const InputText = (props) => {
                 onChange={handleChange}
                 disabled={disabled}
                 required={required}
+                size={size}
             />
         </div>
     )
 }
 
 InputText.defaultProps = {
-    type:'text'
-};
+    type:'text',
+    size: 'auto',
+}
 
 InputText.propTypes = {
     label: PropTypes.string,
@@ -64,6 +67,7 @@ InputText.propTypes = {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     required: PropTypes.bool,
-};
+    size: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+}
 
 export default InputText

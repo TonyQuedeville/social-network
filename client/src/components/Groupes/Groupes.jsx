@@ -4,7 +4,7 @@ import styled from 'styled-components'
 
 const GroupContainer = styled.div`
   width: ${props => props.larg}%;
-  min-height: 88.5vh;
+  min-height: 88vh;
   display: flex;
   flex-direction: column;
   align-items: center;

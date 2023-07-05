@@ -39,14 +39,11 @@ const IcnStyle = styled.img `
 
 const Icone = (props) => {
     const { image, alt, disabled, size, onClick, rotate } = props
-    const clickable = onClick //? true : false
-    //console.log(image);
 
     return (
         <IcnContainer 
             size={size}
             disabled={disabled}  
-            clickable={clickable}
             onClick={!props.disabled ? onClick : null}
         >
             <IcnStyle 
@@ -64,7 +61,6 @@ Icone.defaultProps = {
     size: 1,
     disabled: false,
     title: '',
-    clickable: false,
     rotate: 0,
 };
 
@@ -75,7 +71,6 @@ Icone.propTypes = {
     disabled: PropTypes.bool,
     title: PropTypes.string,
     onClick: PropTypes.func,
-    clickable: PropTypes.bool,
     rotate: PropTypes.number,
 };
 

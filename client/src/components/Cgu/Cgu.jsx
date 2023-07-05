@@ -14,7 +14,7 @@ const TitleContainer = styled.div`
 
 const CguContainer = styled.div`
   width: ${props => props.larg}%;
-  height: ${props => (props.expanded ? 'auto' : '50px')};
+  height: ${props => (props.isexpanded === 'true' ? 'auto' : '50px')};
   transition: height 300ms ease;
   display: flex;
   flex-direction: column;
@@ -52,7 +52,7 @@ const Cgu = (props) => {
   return (
     <CguContainer 
       larg={larg} 
-      expanded={expanded}
+      isexpanded={expanded.toString()}
     >
       <TitleContainer>
         <p>Conditions générales d'utilisation</p>
