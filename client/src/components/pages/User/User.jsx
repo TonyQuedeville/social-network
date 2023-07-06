@@ -57,7 +57,7 @@ const ProfilContainer = styled.div`
     }
 `
 const NewPostContainer = styled.div`
-    width: 99%;
+    width: 97%;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -77,14 +77,19 @@ const StyleTitlePublication = styled.div`
 // Composant
 const User = () => {
     const { theme } = useContext(ThemeContext)
-
+    
     // AuthUser
-    const { authPseudo } = useContext(AuthContext);
+    const { authPseudo, followedUsers } = useContext(AuthContext);
     //console.log("authPseudo: ", authPseudo);
-
+    //const followedUsers = ["Titi"] // followers qui suivent authPseudo
+    //const allowedUsers = ["Toto", "Tutu"] // liste de followers que authPseudo autorise sur le post
+    
     // User
     const { username } = useParams()
     //console.log("username:", username);
+
+    let confidencial = false
+    if (authPseudo === username) {confidencial = true}
 
     const UserInfos = () => {    
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
@@ -133,7 +138,11 @@ const User = () => {
                     {dataPosts && (
                         <>
                             {dataPosts.posts.map((post, index) => (
-                                <Post key={index} post={post} theme={theme} />
+                                post.confidentialité === "public" || authPseudo === username || 
+                                (post.confidentialité === "private" && followedUsers.includes(username)) ||
+                                (post.confidentialité === "private-list" && post.allowedUsers.includes(authPseudo)) ? (
+                                    <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
+                                ) : null
                             ))}
                         </>
                     )}
@@ -262,8 +271,8 @@ const User = () => {
                                     <RadioBouton
                                         id="newPostConfidencialPublic"
                                         label="Public"
-                                        value="Public"
-                                        checked={newPostConfidencial === 'Public'}
+                                        value="public"
+                                        checked={newPostConfidencial === 'public'}
                                         onChange={handleNewPostConfidencialChange}
                                         alignment="vertical"
                                     />
