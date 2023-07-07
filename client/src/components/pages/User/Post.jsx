@@ -66,7 +66,7 @@ const Post = ({ post, theme, confidencial }) => {
   const Comments = () => {
     const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
       ['dataComment'],
-      () => fetch('http://localhost:8080/comments.json').then((res) => res.json())
+      () => fetch(`http://${window.location.hostname}:8080/comments.json`).then((res) => res.json())
       // http://localhost:8080/postId?${post.post-id}
     )
 
@@ -98,28 +98,28 @@ const Post = ({ post, theme, confidencial }) => {
         <div>{confidencial ? (
           <StyleGroupButton>
             <RadioBouton
-                id={`PostConfidencialPublic-${post['post-id']}`}
-                label="Public"
-                value="public"
-                checked={PostConfidencial === 'public'}
-                onChange={handlePostConfidencialChange}
-                alignment="vertical"
+              id={`PostConfidencialPublic-${post['post-id']}`}
+              label="Public"
+              value="public"
+              checked={PostConfidencial === 'public'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
             />
             <RadioBouton
-                id={`PostConfidencialPrivate-${post['post-id']}`}
-                label="Privé"
-                value="private"
-                checked={PostConfidencial === 'private'}
-                onChange={handlePostConfidencialChange}
-                alignment="vertical"
+              id={`PostConfidencialPrivate-${post['post-id']}`}
+              label="Privé"
+              value="private"
+              checked={PostConfidencial === 'private'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
             />
             <RadioBouton
-                id={`PostConfidencialPrivateList-${post['post-id']}`}
-                label="Liste"
-                value="private-list"
-                checked={PostConfidencial === 'private-list'}
-                onChange={handlePostConfidencialChange}
-                alignment="vertical"
+              id={`PostConfidencialPrivateList-${post['post-id']}`}
+              label="Liste"
+              value="private-list"
+              checked={PostConfidencial === 'private-list'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
             />
         </StyleGroupButton>
         ) : (

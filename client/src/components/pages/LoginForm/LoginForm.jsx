@@ -93,7 +93,7 @@ function LoginForm() {
             // logique de connexion
             try {
                 setNotification("")
-                const response = await fetch(`http://localhost:8080/${usernameOrEmail.toLowerCase()}.json`)
+                const response = await fetch(`http://${window.location.hostname}:8080/${usernameOrEmail.toLowerCase()}.json`)
                 const data = await response.json()
                 //console.log("data:", data)
                 updateUserData(data)

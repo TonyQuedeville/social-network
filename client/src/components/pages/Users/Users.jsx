@@ -52,51 +52,51 @@ const Users = () => {
   //const [notification, setNotification] = useState('')
   const UsersList = () => {    
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
-        fetch(`http://localhost:8080/users.json`).then((res) => res.json())
+        fetch(`http://${window.location.hostname}:8080/users.json`).then((res) => res.json())
     )
     //console.log("dataUsers:", dataUsers);
     
     return (
         <>
-            {isLoadingUsers ? (
-            <Loader id="loader" />
-            ) : (
-            <>
-                {errorUsers && (
-                    <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
-                )}
-                {dataUsers && (
-                    dataUsers.users.map((user, index) => (
-                      authPseudo !== user.pseudo ? 
-                        <StyledLink                 
-                          key={`${user.pseudo}-${index}`} 
-                          id={`user-link-${user.pseudo}`}
-                          onClick={() => handleUserClick(user.pseudo)}
-                        >
-                          <>
-                            <Profile 
-                              //{...user} // syntaxe impossible à cause de hideStatus
-                              pseudo={user.pseudo}
-                              sexe={user.sexe}
-                              aboutme={user.aboutme}
-                              photoProfile={user.photoProfile}
-                              lastname={user.lastname}
-                              firstname={user.firstname}
-                              bornDate={user.bornDate}
-                              hideStatus={true}
-                            />
-                            <Icone 
-                              alt="Ajouter"
-                              image={IcnAddFriend}
-                              disabled={false}
-                            />
-                          </>
-                        </StyledLink>
-                        : null
-                    ))
-                )}
-            </>
+          {isLoadingUsers ? (
+          <Loader id="loader" />
+          ) : (
+          <>
+            {errorUsers && (
+                <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
             )}
+            {dataUsers && (
+              dataUsers.users.map((user, index) => (
+                authPseudo !== user.pseudo ? 
+                  <StyledLink                 
+                    key={`${user.pseudo}-${index}`} 
+                    id={`user-link-${user.pseudo}`}
+                    onClick={() => handleUserClick(user.pseudo)}
+                  >
+                    <>
+                      <Profile 
+                        //{...user} // syntaxe impossible à cause de hideStatus
+                        pseudo={user.pseudo}
+                        sexe={user.sexe}
+                        aboutme={user.aboutme}
+                        photoProfile={user.photoProfile}
+                        lastname={user.lastname}
+                        firstname={user.firstname}
+                        bornDate={user.bornDate}
+                        hideStatus={true}
+                      />
+                      <Icone 
+                        alt="Ajouter"
+                        image={IcnAddFriend}
+                        disabled={false}
+                      />
+                    </>
+                  </StyledLink>
+                  : null
+              ))
+            )}
+          </>
+          )}
         </>
     )
   }

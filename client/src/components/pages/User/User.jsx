@@ -20,6 +20,7 @@ import IcnPhoto from '../../../assets/icn/icn_appareil_photo.svg'
 import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Post from './Post.jsx'
+import FollowersSelector from '../../FollowersSelector/FollowersSelector.jsx';
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
 const queryClient = new QueryClient()
 
@@ -93,7 +94,7 @@ const User = () => {
 
     const UserInfos = () => {    
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            fetch(`http://localhost:8080/${username.toLowerCase()}.json`).then((res) => res.json())
+            fetch(`http://${window.location.hostname}:8080/${username.toLowerCase()}.json`).then((res) => res.json())
             // http://localhost:8080/user?username.toLowerCase()
         )
         //console.log("dataUser:", dataUser);
@@ -121,7 +122,7 @@ const User = () => {
     // Posts
     const Posts = () => {    
         const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
-            fetch('http://localhost:8080/posts.json').then((res) => res.json())
+            fetch(`http://${window.location.hostname}:8080/posts.json`).then((res) => res.json())
             // http://localhost:8080/post?username
         )
         //console.log("dataPost:", dataPosts);
@@ -155,11 +156,14 @@ const User = () => {
     // New Post
     const [titleNewPost, setTitleNewPost] = useState('')
     const [newPostContent, setNewPostContent] = useState('')
-    const [postImage, setPostImage] = useState(null);
-    const [showInputFile, setShowInputFile] = useState(false);
-    const [validNewPostisDisabled, setValidNewPostisDisabled] = useState(true);
-    const [newPostConfidencial, setNewPostConfidencial] = useState('private');
+    const [postImage, setPostImage] = useState(null)
+    const [showInputFile, setShowInputFile] = useState(false)
+    const [validNewPostisDisabled, setValidNewPostisDisabled] = useState(true)
+    const [newPostConfidencial, setNewPostConfidencial] = useState('private')
     //const { dataNewPosts, isLoadingNewPosts, errorNewPosts } = useFetch('http://localhost:8080/newposts.json')
+    const [showFollowersSelector, setShowFollowersSelector] = useState(false)
+    const [followers, setFollowers] = useState([])
+
 
     const handleNewPostSubmit = (event) => {
         //console.log("handleNewPostSubmit:",event)
@@ -174,7 +178,12 @@ const User = () => {
     }
     const handleNewPostConfidencialChange = (event) => {
         setNewPostConfidencial(event.target.value)
-        console.log("newPostConfidencial:", newPostConfidencial)
+        //console.log("newPostConfidencial:", newPostConfidencial)
+        if (event.target.value === "private-list") {
+            setShowFollowersSelector(true)
+        } else {
+            setShowFollowersSelector(false)
+        }
     }
     const CancelNewPost = () => {
         setNewPostContent('')
@@ -192,7 +201,17 @@ const User = () => {
         setPostImage(file)
         setShowInputFile(false)
     }
-    
+
+    // Fenetre de selection followers (private-list)
+    const handleSelectedFollowersChange = (event) => {
+        console.log("handleSelectedFollowersChange :", event)
+        setFollowers(event)
+    }
+    const handleFollowersSelectorClose = () => {
+        setShowFollowersSelector(false)
+        console.log("followers :", followers)
+    }
+
     // Gestion d'erreurs
     //const [notification, setNotification] = useState('')
     //const [fetchError, setFetchError] = useState(false)
@@ -246,7 +265,7 @@ const User = () => {
 
                             {showInputFile && (
                                 <InputFileImage 
-                                    id="fileProfileImage"
+                                    id="filePostImage"
                                     value={postImage}
                                     onChange={handlePostImageChange} 
                                 />
@@ -293,16 +312,16 @@ const User = () => {
                                         alignment="vertical"
                                     />
                                 </StyleGroupButton>
-                                <Button 
-                                    type="submit" 
-                                    text="Publier" 
-                                    disabled={validNewPostisDisabled} 
-                                />
-                                <Button 
-                                    text="Annuler" 
-                                    disabled={false} 
-                                    onClick={CancelNewPost}
-                                />
+                                    <Button 
+                                        type="submit" 
+                                        text="Publier" 
+                                        disabled={validNewPostisDisabled} 
+                                    />
+                                    <Button 
+                                        text="Annuler" 
+                                        disabled={false} 
+                                        onClick={CancelNewPost}
+                                    />
                             </StyleGroupButton>
                         </form>
                     </NewPostContainer>
@@ -312,6 +331,17 @@ const User = () => {
                 <QueryClientProvider client={queryClient}>
                     <Posts />
                 </QueryClientProvider>
+
+                {/* Affichage de la private-list */}
+                {showFollowersSelector && (
+                <FollowersSelector
+                    followedUsers={followedUsers}
+                    followers={followers}
+                    onChange={handleSelectedFollowersChange}
+                    onClose={handleFollowersSelectorClose}
+                    theme={theme}
+                />
+                )}
             </ProfilContainer>
 
             <Tchat larg={25}/>

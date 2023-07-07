@@ -7,7 +7,7 @@ import colors from '../../utils/style/Colors.js'
 
 const CommonButtonStyle = styled.button `
         padding: 10px;
-        border-radius: 5px;
+        border-radius: ${props => (props.format === 'rond' ? '50%' : '5px')};
         border: solid 0px;
         background-color: ${colors.buttonColor};
         box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
@@ -27,10 +27,15 @@ const CommonButtonStyle = styled.button `
 
 
 function Button(props) {
-    const { type, onClick, text, disabled } = props
+    const { type, onClick, text, format, disabled } = props
 
     return (
-        <CommonButtonStyle type={type} onClick={onClick} disabled={disabled}>
+        <CommonButtonStyle 
+            type={type} 
+            onClick={onClick} 
+            format={format}
+            disabled={disabled}
+        >
             {text}
         </CommonButtonStyle>
     )
@@ -39,12 +44,14 @@ function Button(props) {
 Button.defaultProps = {
     type: "button",
     text: '',
+    format: '',
     disabled: false,
 }
 
 Button.propTypes = {
     type: PropTypes.string,
     text: PropTypes.string.isRequired,
+    format: PropTypes.string,
     disabled: PropTypes.bool,
     onClick: PropTypes.func
 }
