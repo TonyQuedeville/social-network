@@ -1,11 +1,13 @@
-import React from 'react'
+import React, {useState} from 'react'
 import { Loader } from '../../../utils/Atom.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Comment from './Comment.jsx'
 import styled from 'styled-components'
 import colors from '../../../utils/style/Colors.js'
-import { useQuery } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query'
+import RadioBouton from '../../RadioBouton/RadioBouton.jsx'
+import FrenchFormatDateConvert from '../../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 // css
 const PostContainer = styled.div`
@@ -45,17 +47,28 @@ const StyleInfo = styled.div`
 	font-size: 0.8em;
 	color: grey;
 `
+const StyleGroupButton = styled.div `
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: row;
+`
 
 // Composant
-const Post = ({ post, theme }) => {
-	//const { theme } = useContext(ThemeContext)
+const Post = ({ post, theme, confidencial }) => {
+  const [PostConfidencial, setPostConfidencial] = useState(post.confidentialité)
+
+  const handlePostConfidencialChange = (event) => {
+    setPostConfidencial(event.target.value)
+    //console.log("PostConfidencial:", PostConfidencial)
+}
 
   const Comments = () => {
     const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
       ['dataComment'],
-      () => fetch('http://localhost:8080/comments.json').then((res) => res.json())
+      () => fetch(`http://${window.location.hostname}:8080/comments.json`).then((res) => res.json())
       // http://localhost:8080/postId?${post.post-id}
-    );
+    )
 
     return (
       <>
@@ -81,7 +94,38 @@ const Post = ({ post, theme }) => {
     <PostContainer  theme={theme}>
       <StyleInfo>
         <div>{post.pseudo}</div>
-        <div>{post.dateheure}</div>
+        <div>{FrenchFormatDateConvert(post.dateheure)}</div>
+        <div>{confidencial ? (
+          <StyleGroupButton>
+            <RadioBouton
+              id={`PostConfidencialPublic-${post['post-id']}`}
+              label="Public"
+              value="public"
+              checked={PostConfidencial === 'public'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
+            />
+            <RadioBouton
+              id={`PostConfidencialPrivate-${post['post-id']}`}
+              label="Privé"
+              value="private"
+              checked={PostConfidencial === 'private'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
+            />
+            <RadioBouton
+              id={`PostConfidencialPrivateList-${post['post-id']}`}
+              label="Liste"
+              value="private-list"
+              checked={PostConfidencial === 'private-list'}
+              onChange={handlePostConfidencialChange}
+              alignment="vertical"
+            />
+        </StyleGroupButton>
+        ) : (
+          post.confidentialité
+        )}
+        </div>
       </StyleInfo>
       <StyleTitlePublication>{post.title}</StyleTitlePublication>
       {post.image ? (

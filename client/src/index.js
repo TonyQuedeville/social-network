@@ -43,5 +43,5 @@ function AppContent() {
       <Route path="/user/:username" element={<User />} />
       <Route path="*" element={<Error />} />
     </Routes>
-  );
+  )
 }

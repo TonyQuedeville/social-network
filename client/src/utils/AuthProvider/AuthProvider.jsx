@@ -15,6 +15,7 @@ export const AuthProvider = ({ children }) => {
     const [aboutme, setAboutme] = useState("")
     const [photoProfile, setPhotoProfile] = useState("")
     const [statusProfil, setStatusProfil] = useState("")
+    const [followedUsers, setFollowedUsers] = useState("")
 
     const updateUserData = (data) => {
         setUsernameOrEmail(data.email)
@@ -27,6 +28,7 @@ export const AuthProvider = ({ children }) => {
         setAboutme(data.aboutme)
         setPhotoProfile(data.photoProfile)
         setStatusProfil(data.statusProfil)
+        setFollowedUsers(data.followedUsers)
     }
 
     //console.log("AuthProvider !");
@@ -43,6 +45,7 @@ export const AuthProvider = ({ children }) => {
             aboutme, setAboutme,
             photoProfile, setPhotoProfile,
             statusProfil, setStatusProfil,
+            followedUsers, setFollowedUsers,
             updateUserData,
         }}>
             {children}
@@ -64,4 +67,5 @@ AuthProvider.propTypes = {
     photoProfile: PropTypes.string,
     statusProfil: PropTypes.string,
     updateUserData: PropTypes.func,
+    setFollowedUsers: PropTypes.arrayOf(PropTypes.string)
 }
