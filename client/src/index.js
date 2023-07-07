@@ -3,6 +3,7 @@ import ReactDOM from 'react-dom'
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './utils/AuthProvider/AuthProvider'
 import { ThemeProvider } from './utils/ThemeProvider/ThemeProvider'
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
 import Header from './components/Header/Navbar'
 import Footer from './components/Footer/Footer'
 import GlobalStyle from './utils/style/GlobalStyle'
@@ -15,17 +16,21 @@ import Tchat from './components/Tchat/Tchat.jsx'
 import User from './components/pages/User/User.jsx'
 import Error from './components/Error/Error'
 
+const queryClient = new QueryClient()
+
 ReactDOM.render(
   <React.StrictMode>
       <Router>
-        <AuthProvider>
-          <ThemeProvider>
-            <Header />
-            <GlobalStyle />
-            <AppContent />
-            <Footer />
-          </ThemeProvider>
-        </AuthProvider>
+        <QueryClientProvider client={queryClient}>
+          <AuthProvider>
+            <ThemeProvider>
+              <Header />
+              <GlobalStyle />
+              <AppContent />
+              <Footer />
+            </ThemeProvider>
+          </AuthProvider>
+          </QueryClientProvider>
       </Router>
   </React.StrictMode>,
   document.getElementById('root')
