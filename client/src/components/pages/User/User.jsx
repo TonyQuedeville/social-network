@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
 import { Loader } from '../../../utils/Atom.jsx'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+import { useQuery } from '@tanstack/react-query' //'react-query'
 import styled from 'styled-components'
 import colors from '../../../utils/style/Colors.js'
 import Profile from '../../Profile/Profile.jsx'
@@ -21,8 +22,6 @@ import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Post from './Post.jsx'
 import FollowersSelector from '../../FollowersSelector/FollowersSelector.jsx';
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
-const queryClient = new QueryClient()
 
 // css
 const StyleGroupButton = styled.div `
@@ -58,12 +57,13 @@ const ProfilContainer = styled.div`
     }
 `
 const NewPostContainer = styled.div`
-    width: 97%;
+    width: auto;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: start;
     margin: 1px;
+    padding: 5px;
     border: solid 1px;
     border-radius: 10px;
     background: ${props => (props.theme === 'light' ? colors.backgroundLightSoft : colors.backgroundDark)};
@@ -80,7 +80,7 @@ const User = () => {
     const { theme } = useContext(ThemeContext)
     
     // AuthUser
-    const { authPseudo, followedUsers } = useContext(AuthContext);
+    const { authPseudo, followedUsers } = useContext(AuthContext)
     //console.log("authPseudo: ", authPseudo);
     //const followedUsers = ["Titi"] // followers qui suivent authPseudo
     //const allowedUsers = ["Toto", "Tutu"] // liste de followers que authPseudo autorise sur le post
@@ -228,14 +228,14 @@ const User = () => {
 
     // Composant 
     return (        
-        <PageContainer  theme={theme}>
+        <PageContainer>
             <Groupes larg={25}/>
 
             <ProfilContainer theme={theme}>
                 {/* Infos user */}
-                <QueryClientProvider client={queryClient}>
+                <div>
                     <UserInfos />
-                </QueryClientProvider>
+                </div>
 
                 {/* New post */}
                 { authPseudo === username ? (
@@ -328,19 +328,19 @@ const User = () => {
                 ) : (<></>)}
 
                 {/* Posts */}
-                <QueryClientProvider client={queryClient}>
+                <div>
                     <Posts />
-                </QueryClientProvider>
+                </div>
 
                 {/* Affichage de la private-list */}
                 {showFollowersSelector && (
-                <FollowersSelector
-                    followedUsers={followedUsers}
-                    followers={followers}
-                    onChange={handleSelectedFollowersChange}
-                    onClose={handleFollowersSelectorClose}
-                    theme={theme}
-                />
+                    <FollowersSelector
+                        followedUsers={followedUsers}
+                        followers={followers}
+                        onChange={handleSelectedFollowersChange}
+                        onClose={handleFollowersSelectorClose}
+                        theme={theme}
+                    />
                 )}
             </ProfilContainer>
 
