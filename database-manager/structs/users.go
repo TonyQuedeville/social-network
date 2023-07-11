@@ -1,4 +1,4 @@
-package struct
+package structs
 
 import "time"
 
@@ -13,7 +13,7 @@ type User struct {
 	About         string    `json:"about"`
 	Status        bool      `json:"status"`
 	Follower      []uint64  `json:"follower"`
-	Follow        []uint64  `json:"follow"`
+	Followed      []uint64  `json:"followed"`
 	Created_at    time.Time `json:"created_at"`
 	Updated_at    time.Time `json:"updated_at"`
 }
