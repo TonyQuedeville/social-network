@@ -9,15 +9,15 @@ const StyleWindow = styled.div`
 	align-items: center;
 	justify-content: start;
 	flex-direction: column;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 200px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 400px;
+	height: 200px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 9999;
 	border: solid 1px;
 	border-radius: 10px;
 	background: ${props => (props.theme === 'light' ? colors.backgroundLight : colors.backgroundDark)};
@@ -43,14 +43,14 @@ const StyleFollowersList = styled.div`
 	justify-content: start;
 	flex-direction: column;
 	width: 400px;
-  height: 200px;
+	height: 200px;
 `
 
 // Composant
 function FollowersSelector({ followedUsers, followers, onChange, onClose, theme }) {
   //const [followers, setFollowers] = useState([])
 
-  const handleFollowerChange = (followerId) => {
+	const handleFollowerChange = (followerId) => {
     const updatedFollowers = [...followers]
     if (updatedFollowers.includes(followerId)) {
       updatedFollowers.splice(updatedFollowers.indexOf(followerId), 1)

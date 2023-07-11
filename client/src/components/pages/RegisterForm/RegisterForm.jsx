@@ -192,6 +192,7 @@ function RegisterForm() {
     const navigate = useNavigate()
     const handleSubmit = (event) => {
         event.preventDefault()
+        console.log("handleNewPostSubmit:",event)
 
         // Soumission des données en mettant à jour le formData. 
         // La requête sera automatiquement déclenchée par le hook useFetch

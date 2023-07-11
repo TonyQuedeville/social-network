@@ -18,7 +18,6 @@ const StyleLoginContainer = styled.div `
     border: solid 1px;
     border-radius: 10px;
 `
-
 const StyleLoginForm = styled.form `
     display: flex;
     align-items: center;
@@ -53,16 +52,17 @@ function isValidUsernameOrEmail(value) {
 }
 
 function LoginForm() {
-    const [notification, setNotification] = useState('')
     const {usernameOrEmail, setUsernameOrEmail} = useContext(AuthContext) 
+    // eslint-disable-next-line 
+    const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
+    const { updateUserData } = useContext(AuthContext)
+
+    const [notification, setNotification] = useState('')
     const [password, setPassword] = useState("")
     const [isUsernameOrEmailValid, setIsUsernameOrEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email ou du nom d'utilisateur
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
-    // eslint-disable-next-line 
-    const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
-    const { updateUserData } = useContext(AuthContext);
-    
+
     const handleUsernameOrEmailChange = (event) => {
         const value = event.target.value
         setUsernameOrEmail(value)
