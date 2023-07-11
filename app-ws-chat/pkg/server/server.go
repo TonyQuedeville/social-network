@@ -1,1 +1,4 @@
 package server
+
+func InitServer() {
+}
