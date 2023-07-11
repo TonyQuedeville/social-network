@@ -127,7 +127,9 @@ const Post = ({ post, theme, confidencial }) => {
         )}
         </div>
       </StyleInfo>
+
       <StyleTitlePublication>{post.title}</StyleTitlePublication>
+
       {post.image ? (
       <DisplayImage
         id={"postImage-" + post.id}
@@ -136,7 +138,9 @@ const Post = ({ post, theme, confidencial }) => {
         disabled={false}
       />
       ) : <></>}
+      
       <StylePostContent>{post.content}</StylePostContent>  
+
       <Comments/>
     </PostContainer>
   )

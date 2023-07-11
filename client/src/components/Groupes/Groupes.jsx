@@ -1,6 +1,9 @@
 import React, {useState, useContext, useEffect} from 'react'
-import { useQuery } from '@tanstack/react-query' //'react-query'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx';
+import { useNavigate } from 'react-router-dom'
+import { useQuery, useQueryClient } from '@tanstack/react-query' //'react-query'
+//import { queryClient } from '../../index.js';
+import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { GroupContext } from '../../utils/GroupProvider/GroupProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
 import Popup from '../Popup/Popup.jsx'
 import PropTypes from 'prop-types'
@@ -99,39 +102,40 @@ const Groupes = (props) => {
   const { authPseudo } = useContext(AuthContext);
 
   // Requete: Liste des groupes
-  const { data, isLoading, error } = useQuery(['dataGroupe'], () =>
+  const { data, isLoading, error } = useQuery(['dataGroupes'], () =>
     fetch(`http://${window.location.hostname}:8080/groupes.json`).then((res) => res.json())
   )
-  //console.log("dataUser:", dataUser);
 
   // New Group
-  const [titleNewGroupe, setTitleNewGroupe] = useState('')
+  const [newGroupeTitle, setNewGroupeTitle] = useState('')
   const [newGroupeContent, setNewGroupeContent] = useState('')
   const [groupeImage, setGroupeImage] = useState(null)
   const [showInputFile, setShowInputFile] = useState(false)
   const [validNewGroupeisDisabled, setValidNewGroupeisDisabled] = useState(true)
+  const { updateGroupeData } = useContext(GroupContext)
 
-  const handleNewGroupeSubmit = (event) => {
-    //console.log("handleNewPostSubmit:",event)
-  }
   const handleTitleNewGroupeChange = (event) => {
-    setTitleNewGroupe(event.target.value)
-    //console.log("setTitleNewGroupe:", titleNewGroupe)
+    setNewGroupeTitle(event.target.value)
+    //console.log("setTitleNewGroupe:", newGroupeTitle)
   }
   const handleNewGroupeChange = (event) => {
     setNewGroupeContent(event.target.value)
     //console.log("handleNewGroupeChange:", newGroupeContent)
   }
-  
+
+  useEffect(() => {
+    setValidNewGroupeisDisabled(!(setNewGroupeTitle && newGroupeContent))
+  }, [setNewGroupeTitle, newGroupeContent])
+
+  const handleNewGroupeSubmit = (event) => {
+    event.preventDefault()
+    console.log("handleNewPostSubmit:",event)
+  }
   const CancelNewGroupe = () => {
     setNewGroupeContent('')
-    setTitleNewGroupe('')
+    setNewGroupeTitle('')
     setGroupeImage('')
     //console.log("annuler new groupe !");
-  }
-
-  const handleAccesGroupe = () => {
-    console.log("Rejoindre le groupe !");
   }
 
   // Image post
@@ -144,76 +148,99 @@ const Groupes = (props) => {
     setShowInputFile(false)
   }
 
-  useEffect(() => {
-    setValidNewGroupeisDisabled(!(titleNewGroupe && newGroupeContent))
-  }, [titleNewGroupe, newGroupeContent])
+  // Groupe
+  const handleAccesGroupe = (e) => {
+    console.log("Rejoindre le groupe ! ",e);
+  }
+
+  // Redirection vers la page du groupe
+  const queryClient = useQueryClient();
+  const navigate = useNavigate();
+  const HandleGroupeClick = (id) => {
+    fetch(`http://${window.location.hostname}:8080/groupe-${id}.json`)
+      .then((res) => res.json())
+      .then((dataGroupe) => {
+        queryClient.setQueryData(['dataGroupe', id], dataGroupe);
+        updateGroupeData(dataGroupe)
+        navigate(`/group/${dataGroupe.id}`);
+      })
+      .catch((error) => {
+        // Gérer l'erreur de la requête
+        console.error(error);
+        // Afficher une notification d'erreur
+        // ...
+      })
+  }
 
   return (
     <PageContainer larg={larg}>
       <GroupContainer>
-        {/* New Group */}    
-        <NewGroupeContainer theme={theme}>
-          <form onSubmit={handleNewGroupeSubmit}>
-            <StyleTitleGroupe>Créer un nouveau Groupe</StyleTitleGroupe>
-            <InputText
-              id="titleNewGroupe"
-              label="Titre"
-              title="Titre de groupe"
-              placeholder="Titre de groupe"
-              value={titleNewGroupe}
-              onChange={handleTitleNewGroupeChange}
-              required
-              size={300}
-            />
-            <TextArea
-              id="new-group"
-              label=""
-              title="Description"
-              placeholder="Donnez ici une description de votre groupe de discution."
-              rows={3}
-              cols={42}
-              value={newGroupeContent}
-              onChange={handleNewGroupeChange}
-            />
-
-            {showInputFile && (
-              <InputFileImage 
-                id="fileGroupeImage"
-                value={groupeImage}
-                onChange={handleGroupeImageChange} 
+        {/* New Group */}  
+        { authPseudo ? (
+          <NewGroupeContainer theme={theme}>
+            <form onSubmit={handleNewGroupeSubmit}>
+              <StyleTitleGroupe>Créer un nouveau Groupe</StyleTitleGroupe>
+              <InputText
+                id="titleNewGroupe"
+                label="Titre"
+                title="Titre de groupe"
+                placeholder="Titre de groupe"
+                value={newGroupeTitle}
+                onChange={handleTitleNewGroupeChange}
+                required
+                size={300}
               />
-            )}                           
-            {groupeImage && (
-              <DisplayImage
-                id="groupeImage"
-                src={URL.createObjectURL(groupeImage)} 
-                alt="Groupe image"
-                disabled={false}
-              />
-            )}
-            
-            <StyleGroupButton>
-              <Icone 
-                alt="Groupe image" 
-                //disabled={!groupeImage} 
-                image={IcnPhoto}
-                onClick={loadPhotoPost}
+              <TextArea
+                id="new-group"
+                label=""
+                title="Description"
+                placeholder="Donnez ici une description de votre groupe de discution."
+                rows={3}
+                cols={42}
+                value={newGroupeContent}
+                onChange={handleNewGroupeChange}
               />
 
-              <Button 
-                  type="submit" 
-                  text="Ok" 
-                  disabled={validNewGroupeisDisabled} 
-              />
-              <Button 
-                  text="Annuler" 
-                  disabled={false} 
-                  onClick={CancelNewGroupe}
-              />
-            </StyleGroupButton>
-          </form>
-        </NewGroupeContainer>
+              {showInputFile && (
+                <InputFileImage 
+                  id="fileGroupeImage"
+                  value={groupeImage}
+                  onChange={handleGroupeImageChange} 
+                />
+              )}                           
+              {groupeImage && (
+                <DisplayImage
+                  id="groupeImage"
+                  src={URL.createObjectURL(groupeImage)} 
+                  alt="Groupe image"
+                  disabled={false}
+                />
+              )}
+              
+              <StyleGroupButton>
+                <Icone 
+                  alt="Groupe image" 
+                  //disabled={!groupeImage} 
+                  image={IcnPhoto}
+                  onClick={loadPhotoPost}
+                />
 
+                <Button 
+                    type="submit"
+                    text="Ok" 
+                    disabled={validNewGroupeisDisabled} 
+                />
+                <Button 
+                    text="Annuler" 
+                    disabled={false} 
+                    onClick={CancelNewGroupe}
+                />
+              </StyleGroupButton>
+            </form>
+          </NewGroupeContainer>
+        ) : null}  
+
+        {/* Groupe */}
         <>
           {isLoading ? (
           <Loader id="loader" />
@@ -226,18 +253,19 @@ const Groupes = (props) => {
               <>
                 {data.groupes.map((group, index) => (
                   <React.Fragment key={index}>
-                    {group.admin === authPseudo ? (
-                      <div>Fonctionnalités supplémentaires réservées à l'administrateur</div>
-                    ) : null}
-
-                    <StyleGroupeList {...group}>
+                    <StyleGroupeList 
+                      key={`${group.title}-${index}`} 
+                      id={`group-link-${group.id}`}
+                      onClick={() => HandleGroupeClick(group.id)}
+                      {...group}
+                    >
                       <StyleInfo>
                         <div>{group.admin}</div>
                         <div>{FrenchFormatDateConvert(group.dateheure)}</div>
                       </StyleInfo>
 
                       <StyleTitleGroupe>
-                        {group.titre}
+                        {group.title}
                       </StyleTitleGroupe>
 
                       {group.description}
@@ -250,7 +278,7 @@ const Groupes = (props) => {
                         disabled={false}
                       />) : <></>}
                       
-                      Nombre de membre: {group.nbMembers}
+                      Nombre de membre: {group.nbmembers}
                       
                       <Button 
                         text="Rejoindre le groupe" 

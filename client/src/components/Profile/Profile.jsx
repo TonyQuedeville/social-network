@@ -58,10 +58,20 @@ const PhotoProfile = styled.img`
 `
 
 // Composant
-const Profile = ({pseudo, sexe, statusProfil: initialStatusProfil, hideStatus, aboutme, photoProfile, lastname, firstname, bornDate}) => {
+const Profile = (props) => {
+  const { pseudo, 
+          sexe, 
+          statusProfil: initialStatusProfil, 
+          hideStatus, 
+          aboutme, 
+          photoProfile, 
+          lastname, 
+          firstname, 
+          bornDate
+        } = props
   const { theme } = useContext(ThemeContext)
-  const [statusProfil, setStatusProfil] = useState(initialStatusProfil);
-  const { authPseudo } = useContext(AuthContext);
+  const { authPseudo } = useContext(AuthContext)
+  const [statusProfil, setStatusProfil] = useState(initialStatusProfil)
   //console.log("hideStatus: ", hideStatus);
   //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo);
 
