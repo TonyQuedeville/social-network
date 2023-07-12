@@ -1,15 +1,16 @@
-import React from 'react'
-//import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import React, { useContext } from 'react'
+import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import styled from 'styled-components'
 //import colors from '../../utils/style/Colors.js'
 //import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 //import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
+import Icone from '../Icone/Icone.jsx'
+import IcnNotification from '../../assets/icn/icn-notification.png'
 
 // css
 const StyleGroupContainer = styled.div`
-	width: 100%;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -18,14 +19,6 @@ const StyleGroupContainer = styled.div`
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 10px;
-
-	overflow: auto;
-	overflow-x: hidden;
-	scrollbar-width: none; /* Masque l'ascenseur Firefox */
-	-ms-overflow-style: none; /* Masque l'ascenseur IE 10+ */
-	&::-webkit-scrollbar {
-		width: 0; /* Masque l'ascenseur Chrome, Safari et Opera */
-	}
 `
 const StyleTitleGroupe = styled.div`
 	font-weight : bold;
@@ -63,8 +56,9 @@ const StyleBold = styled.p`
 
 // Composant
 const GroupeInfos = (props) => {
-	const {id, title, admin, dateheure, description, image, nbmembers } = props
-
+	const {groupId, title, admin, createDate, description, image, nbMembers } = props
+	const { groupListRequested } = useContext(AuthContext)
+	
 	return (
 		<StyleGroupContainer>
 			<StyleTitleGroupe>
@@ -74,7 +68,7 @@ const GroupeInfos = (props) => {
 			<StyleBanner>
 				{image ? (
 					<DisplayImage
-						id={"groupImage-" + id}
+						id={"groupImage-" + groupId}
 						src={require(`../../assets/img/${image}`).default}
 						alt={"Image " + title}
 						disabled={false}
@@ -83,10 +77,24 @@ const GroupeInfos = (props) => {
 						<StyleBold>A propos:</StyleBold>
 						<StyleRow>{description}</StyleRow>
 						<StyleRow><StyleBold>Admin:</StyleBold> {admin}</StyleRow>
-						<StyleRow><StyleBold>Date de création:</StyleBold>{FrenchFormatDateConvert(dateheure)}</StyleRow>
-						<StyleRow><StyleBold>Membres:</StyleBold> {nbmembers}</StyleRow>
+						<StyleRow><StyleBold>Date de création:</StyleBold>{FrenchFormatDateConvert(createDate)}</StyleRow>
+						<StyleRow><StyleBold>Membres:</StyleBold> {nbMembers}</StyleRow>
 					</StyleInfo>
 			</StyleBanner>
+
+			<>
+				{ groupListRequested.includes(groupId) && (
+					<StyleRow>
+						<Icone 
+							alt="Demande d'adhésion à ce groupe en cours acception !" 
+							image={IcnNotification}
+							size={0.5}
+						/>
+						<p>Demande d'adhésion à ce groupe en cours acception !</p>
+					</StyleRow>
+					)
+				}
+			</>
 		</StyleGroupContainer>
 	)
 }

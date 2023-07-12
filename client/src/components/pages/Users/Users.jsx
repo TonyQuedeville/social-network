@@ -78,8 +78,9 @@ const Users = () => {
                         //{...user} // syntaxe impossible à cause de hideStatus
                         pseudo={user.pseudo}
                         sexe={user.sexe}
-                        aboutme={user.aboutme}
-                        photoProfile={user.photoProfile}
+                        about={user.about}
+                        status={user.status}
+                        image={user.image}
                         lastname={user.lastname}
                         firstname={user.firstname}
                         bornDate={user.bornDate}

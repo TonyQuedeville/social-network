@@ -1,6 +1,6 @@
 import React from 'react';
 import styled from 'styled-components'
-import colors from '../../../utils/style/Colors.js'
+import colors from '../../utils/style/Colors.js'
 
 // css
 const StylePostComment = styled.div`
@@ -34,15 +34,15 @@ const StyleInfo = styled.div`
 
 // Composant
 const Comment = ({ comment, theme }) => {
-  return (
-    <StylePostComment theme={theme}>
-      <StyleInfo>
-        <div>{comment.pseudo}</div>
-        <div>{comment.dateheure}</div>
-      </StyleInfo>
-      <StyleComment>{comment.content}</StyleComment>
-    </StylePostComment>
-  )
+	return (
+		<StylePostComment theme={theme}>
+			<StyleInfo>
+				<div>{comment.pseudo}</div>
+				<div>{comment.create_date}</div>
+			</StyleInfo>
+			<StyleComment>{comment.content}</StyleComment>
+		</StylePostComment>
+	)
 }
 
 export default Comment
