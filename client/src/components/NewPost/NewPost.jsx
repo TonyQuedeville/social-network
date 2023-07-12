@@ -14,7 +14,7 @@ import Icone from '../Icone/Icone.jsx'
 import IcnPhoto from '../../assets/icn/icn_appareil_photo.svg'
 import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
-import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx';
+import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 
 // css
 const NewPostContainer = styled.div`
@@ -43,7 +43,8 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewPost = ({ followedUsers, onChange }) => {
+const NewPost = ({ follower, onChange }) => {
+	//console.log("follower:", follower);
 	const { theme } = useContext(ThemeContext)
 	
 	// New Post
@@ -57,7 +58,7 @@ const NewPost = ({ followedUsers, onChange }) => {
 
 	const handleNewPostSubmit = (event) => {
 		event.preventDefault()
-    //onChange(followedUsers);
+    	//onChange(followed);
 		console.log("handleNewPostSubmit:",event)
 	}
 	const handleTitleNewPostChange = (event) => {
@@ -72,9 +73,9 @@ const NewPost = ({ followedUsers, onChange }) => {
 		setNewPostConfidencial(event.target.value)
 		//console.log("newPostConfidencial:", newPostConfidencial)
 		if (event.target.value === "private-list") {
-				setShowFollowersSelector(true)
+			setShowFollowersSelector(true)
 		} else {
-				setShowFollowersSelector(false)
+			setShowFollowersSelector(false)
 		}
 	}
 	const CancelNewPost = () => {
@@ -90,8 +91,8 @@ const NewPost = ({ followedUsers, onChange }) => {
 		setShowInputFile(true)
 	}
 	const handlePostImageChange = (file) => {
-			setPostImage(file)
-			setShowInputFile(false)
+		setPostImage(file)
+		setShowInputFile(false)
 	}
 
 	// Gestion d'erreurs
@@ -105,18 +106,18 @@ const NewPost = ({ followedUsers, onChange }) => {
 	//},[errorNewPosts])
 
 	useEffect(() => {
-			setValidNewPostisDisabled(!(titleNewPost && newPostContent))
+		setValidNewPostisDisabled(!(titleNewPost && newPostContent))
 	}, [titleNewPost, newPostContent])
 
 	// Followers
 	const [showFollowersSelector, setShowFollowersSelector] = useState(false)
-	const [followers, setFollowers] = useState([])
+	const [private_list, setPrivate_list] = useState([])
 
-    // Fenetre de selection followers (private-list)
-	const handleSelectedFollowersChange = (event) => {
-			//console.log("handleSelectedFollowersChange :", event)
-			setFollowers(event)
-			//onChange(event)
+    // Fenetre de selection private-list
+	const handleSelectedPrivatelistChange = (event) => {
+		//console.log("handleSelectedPrivatelistChange :", event)
+		setPrivate_list(event)
+		//onChange(event)
     }
     const handleFollowersSelectorClose = () => {
 			setShowFollowersSelector(false)
@@ -124,7 +125,7 @@ const NewPost = ({ followedUsers, onChange }) => {
     }
 
 		// Composant
-  return (
+	return (
 		<NewPostContainer theme={theme}> 
 			<form onSubmit={handleNewPostSubmit}>
 				<StyleTitlePublication>Nouvelle publication</StyleTitlePublication>
@@ -214,15 +215,15 @@ const NewPost = ({ followedUsers, onChange }) => {
 
 			{showFollowersSelector && (
 				<FollowersSelector
-					followedUsers={followedUsers}
-					followers={followers}
-					onChange={handleSelectedFollowersChange}
+					private_list={private_list}
+					follower={follower}
+					onChange={handleSelectedPrivatelistChange}
 					onClose={handleFollowersSelectorClose}
 					theme={theme}
 				/>
 			)}
 		</NewPostContainer>
-  )
+	)
 }
 
 export default NewPost

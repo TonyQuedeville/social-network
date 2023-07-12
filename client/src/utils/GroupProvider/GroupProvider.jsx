@@ -6,34 +6,34 @@ export const GroupContext = createContext()
 export const GroupProvider = ({ children }) => {
     const [groupId, setGroupId] = useState("")
     const [title, setTitle] = useState("")
-    const [dateheure, setDateheure] = useState("")
+    const [createDate, setCreateDate] = useState("")
     const [description, setDescription] = useState("")
     const [image, setImage] = useState("")
     const [admin, setAdmin] = useState("")
-    const [nbmembers, setNbmembers] = useState("")
+    const [nbMembers, setNbMembers] = useState("")
     const [membersIdList, setMembersIdList] = useState("")
 
     const updateGroupeData = (data) => {
         //console.log("Data GroupProvider :", data);
         setGroupId(data.id)
         setTitle(data.title)
-        setDateheure(data.dateheure)
+        setCreateDate(data.create_date)
         setDescription(data.description)
         setImage(data.image)
         setAdmin(data.admin)
-        setNbmembers(data.nbmembers)
-        setMembersIdList(data.membersidlist)
+        setNbMembers(data.nb_members)
+        setMembersIdList(data.members_id_list)
     }
 
     return (
         <GroupContext.Provider value={{ 
             groupId, setGroupId,
             title, setTitle,
-            dateheure, setDateheure,
+            createDate, setCreateDate,
             description, setDescription,
             image, setImage,
             admin, setAdmin,
-            nbmembers, setNbmembers,
+            nbMembers, setNbMembers,
             membersIdList, setMembersIdList,
             updateGroupeData,
         }}>
@@ -45,11 +45,11 @@ export const GroupProvider = ({ children }) => {
 GroupProvider.propTypes = {
     groupId: PropTypes.number,
     title: PropTypes.string,
-    dateheure: PropTypes.string,
+    createDate: PropTypes.string,
     description: PropTypes.string,
     image: PropTypes.string,
     admin: PropTypes.string,
-    nbmembers: PropTypes.number,
+    nbMembers: PropTypes.number,
     membersIdList: PropTypes.arrayOf(PropTypes.number),
     updateGroupeData: PropTypes.func,
 }

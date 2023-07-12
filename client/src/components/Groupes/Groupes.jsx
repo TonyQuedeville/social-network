@@ -16,14 +16,14 @@ import Button from '../Button/Button.jsx'
 //import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnPhoto from '../../assets/icn/icn_appareil_photo.svg'
+import IcnNotification from '../../assets/icn/icn-notification.png'
 import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
-import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
+//import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 
 // css
 const PageContainer = styled.div`
-  width: ${props => props.larg}%;
   height: 88.5vh;
   display: flex;
   flex-direction: row;
@@ -76,16 +76,16 @@ const StyleTitleGroupe = styled.div`
   justify-content: center;
   margin: 5px;
 `
-const StyleInfo = styled.div`
-	width: 100%;
-	display: flex;
-	flex-direction: row;
-	justify-content: space-between;
-	margin: 5px;
-	font-style: italic;
-	font-size: 0.8em;
-	color: grey;
-`
+//const StyleInfo = styled.div`
+//	width: 100%;
+//	display: flex;
+//	flex-direction: row;
+//	justify-content: space-between;
+//	margin: 5px;
+//	font-style: italic;
+//	font-size: 0.8em;
+//	color: grey;
+//`
 const StyleGroupButton = styled.div `
   display: flex;
   align-items: center;
@@ -93,13 +93,14 @@ const StyleGroupButton = styled.div `
   flex-direction: row;
 `
 
+
 // Composant
 const Groupes = (props) => {
   const { larg } = props
   const { theme } = useContext(ThemeContext)
 
   // AuthUser
-  const { authPseudo } = useContext(AuthContext);
+  const { authPseudo, authId, groupListRequested } = useContext(AuthContext);
 
   // Requete: Liste des groupes
   const { data, isLoading, error } = useQuery(['dataGroupes'], () =>
@@ -150,23 +151,24 @@ const Groupes = (props) => {
 
   // Groupe
   const handleAccesGroupe = (e) => {
-    console.log("Rejoindre le groupe ! ",e);
+    console.log("Rejoindre le groupe ! ",e)
+
   }
 
   // Redirection vers la page du groupe
-  const queryClient = useQueryClient();
-  const navigate = useNavigate();
+  const queryClient = useQueryClient()
+  const navigate = useNavigate()
   const HandleGroupeClick = (id) => {
     fetch(`http://${window.location.hostname}:8080/groupe-${id}.json`)
       .then((res) => res.json())
       .then((dataGroupe) => {
-        queryClient.setQueryData(['dataGroupe', id], dataGroupe);
+        queryClient.setQueryData(['dataGroupe', id], dataGroupe)
         updateGroupeData(dataGroupe)
-        navigate(`/group/${dataGroupe.id}`);
+        navigate(`/group/${dataGroupe.id}`)
       })
       .catch((error) => {
         // Gérer l'erreur de la requête
-        console.error(error);
+        console.error(error)
         // Afficher une notification d'erreur
         // ...
       })
@@ -259,10 +261,6 @@ const Groupes = (props) => {
                       onClick={() => HandleGroupeClick(group.id)}
                       {...group}
                     >
-                      <StyleInfo>
-                        <div>{group.admin}</div>
-                        <div>{FrenchFormatDateConvert(group.dateheure)}</div>
-                      </StyleInfo>
 
                       <StyleTitleGroupe>
                         {group.title}
@@ -279,12 +277,24 @@ const Groupes = (props) => {
                       />) : <></>}
                       
                       Nombre de membre: {group.nbmembers}
-                      
-                      <Button 
-                        text="Rejoindre le groupe" 
-                        disabled={false} 
-                        onClick={handleAccesGroupe}
-                      />
+                      { authPseudo && !group.members_id_list.includes(authId) && !groupListRequested.includes(group.id) ? (
+                        <Button 
+                          text="Rejoindre le groupe" 
+                          disabled={false} 
+                          onClick={handleAccesGroupe}
+                        />                          
+                      ) : <>
+                        { groupListRequested.includes(group.id) && (
+                          <StyleGroupButton>
+                            <Icone 
+                              alt="Demande d'adhésion à ce groupe en cours acception !" 
+                              image={IcnNotification}
+                              size={0.5}
+                            />
+                            <p>Demande d'adhésion à ce groupe en cours acception !</p>
+                          </StyleGroupButton>
+                          )
+                        }</>}
                     </StyleGroupeList>
                   </React.Fragment>
                 ))}

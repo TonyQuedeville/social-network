@@ -47,53 +47,49 @@ const StyleFollowersList = styled.div`
 `
 
 // Composant
-function FollowersSelector({ followedUsers, followers, onChange, onClose, theme }) {
-  //const [followers, setFollowers] = useState([])
-
+function FollowersSelector({ follower, private_list, onChange, onClose, theme }) {
 	const handleFollowerChange = (followerId) => {
-    const updatedFollowers = [...followers]
-    if (updatedFollowers.includes(followerId)) {
-      updatedFollowers.splice(updatedFollowers.indexOf(followerId), 1)
-    } else {
-      updatedFollowers.push(followerId)
-    }
-    onChange(updatedFollowers)
-  }
+		const updatedFollowers = [...private_list]
+		if (updatedFollowers.includes(followerId)) {
+			updatedFollowers.splice(updatedFollowers.indexOf(followerId), 1)
+		} else {
+			updatedFollowers.push(followerId)
+		}
+		onChange(updatedFollowers)
+	}
 
 	const Validfollowers = () => {
 		//console.log("Validfollowers !");
 		onClose();
 	}
 	const handleSelectAll = () => {
-    onChange([...followedUsers])
-  }
+		onChange([...follower])
+	}
 
-  const handleDeselectAll = () => {
-    onChange([])
-  }
+	const handleDeselectAll = () => {
+		onChange([])
+	}
 
-
-
-  return (
+	return (
 		<StyleWindow theme={theme}>
 			<StyleGroupButton>
 				<Button 
-						text="tous" 
-						onClick={handleSelectAll}
+					text="tous" 
+					onClick={handleSelectAll}
 				/>
 				<Button 
-						text="aucun" 
-						onClick={handleDeselectAll}
+					text="aucun" 
+					onClick={handleDeselectAll}
 				/>
 			</StyleGroupButton>
 			<StyleFollowersList>
 				{/* Afficher la liste des followers avec cases à cocher */}
-				{followedUsers.map((followerId) => (
+				{follower.map((followerId) => (
 					<label key={followerId}>
 						<input
 							type="checkbox"
 							value={followerId}
-							checked={followers.includes(followerId)}
+							checked={private_list.includes(followerId)}
 							onChange={() => handleFollowerChange(followerId)}
 						/>
 						{followerId}
@@ -102,13 +98,13 @@ function FollowersSelector({ followedUsers, followers, onChange, onClose, theme 
 			</StyleFollowersList>
 			<StyleGroupOk>
 				<Button 
-						text="Ok" 
-						format="rond"
-						onClick={Validfollowers}
+					text="Ok" 
+					format="rond"
+					onClick={Validfollowers}
 				/>
 			</StyleGroupOk>
 		</StyleWindow>
-  )
+	)
 }
 
 export default FollowersSelector

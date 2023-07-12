@@ -21,7 +21,7 @@ import Popup from '../../Popup/Popup.jsx'
 //import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 //import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import NewPost from '../../NewPost/NewPost.jsx'
-import Post from './Post.jsx'
+import Post from '../../Post/Post.jsx'
 
 // css
 const PageContainer = styled.div`
@@ -57,9 +57,10 @@ const User = () => {
     const { theme } = useContext(ThemeContext)
     
     // AuthUser
-    const { authPseudo, followedUsers } = useContext(AuthContext)
-    //console.log("authPseudo: ", authPseudo);
-    //const followedUsers = ["Titi"] // followers qui suivent authPseudo
+    const { authPseudo, followed, follower } = useContext(AuthContext)
+    //console.log("authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
+    //const followed // users suivis par authPseudo
+    //const follower // users qui suivent authPseudo
     //const allowedUsers = ["Toto", "Tutu"] // liste de followers que authPseudo autorise sur le post
     
     // User
@@ -107,7 +108,7 @@ const User = () => {
         return (
             <>
                 {isLoadingPosts ? (
-                <Loader id="loader" />
+                    <Loader id="loader" />
                 ) : (
                 <>
                     {errorPosts && (
@@ -116,9 +117,9 @@ const User = () => {
                     {dataPosts && (
                         <>
                             {dataPosts.posts.map((post, index) => (
-                                post.confidentialité === "public" || authPseudo === username || 
-                                (post.confidentialité === "private" && followedUsers.includes(username)) ||
-                                (post.confidentialité === "private-list" && post.allowedUsers.includes(authPseudo)) ? (
+                                post.status === "public" || authPseudo === username || 
+                                (post.status === "private" && followed.includes(username)) ||
+                                (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
                                     <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
                                 ) : null
                             ))}
@@ -130,8 +131,8 @@ const User = () => {
         )
     }
 
-    const handleFollowedUsersChange = (followedUsers) => {        
-        console.log("followedUsers:", followedUsers)
+    const handleFollowersChange = (follower) => {        
+        console.log("follower:", follower)
     }
 
     // Composant 
@@ -147,8 +148,8 @@ const User = () => {
 
                 { authPseudo === username ? (
                     <NewPost 
-                        followedUsers={followedUsers}
-                        onChange={handleFollowedUsersChange}
+                        follower={follower}
+                        onChange={handleFollowersChange}
                     />
                 ) : (<></>)}
 
