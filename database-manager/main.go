@@ -1,11 +1,10 @@
 package main
 
-import (
-	"github.com/TonyQuedeville/social-network/database-manager/database"
-)
+import "github.com/TonyQuedeville/social-network/database-manager/database"
 
+// no program here ;)
 func main() {
-	database.DbInit()
-	quite := make(chan struct{})
-	<-quite
+	// test
+	database.OpenDatabase()
+	database.CloseDatabase()
 }

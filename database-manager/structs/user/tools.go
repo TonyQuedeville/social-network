@@ -19,7 +19,7 @@ const (
 
 func CheckPassWordStrength(pass string) error { // to complette
 	// check password lenght
-	if len(pass) <= PASS_LENGHT {
+	if len(pass) < PASS_LENGHT {
 		return fmt.Errorf("password must contain at least %v characters not: %v", PASS_LENGHT, len(pass))
 	}
 
@@ -36,7 +36,7 @@ func CheckPassWordStrength(pass string) error { // to complette
 // check the validity age and legal age
 func CheckBirthDate(date time.Time) error {
 	// check age
-	if date.AddDate(LEGAL_AGE, 0, 0).After(time.Now()) {
+	if date.AddDate(LEGAL_AGE, 0, 0).After(time.Now()) || date == time.Now() {
 		return fmt.Errorf("you must be at least %v year old", LEGAL_AGE)
 	}
 	return nil

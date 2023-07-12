@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"fmt"
 	"log"
+	"runtime"
+	"strings"
 
 	"github.com/golang-migrate/migrate/v4"
 	"github.com/golang-migrate/migrate/v4/database/sqlite3"
@@ -13,9 +15,21 @@ import (
 
 var Database *sql.DB
 
-func DbInit() {
+// open and apply migration if is not already open
+func OpenDatabase() {
+	// Return if already open
+	if Database != nil {
+		return
+	}
+	base_pass := func() string {
+		_, bp, _, _ := runtime.Caller(0)
+		return strings.Split(bp, "database.go")[0]
+	}()
+
+	fmt.Printf("base_pass: %v\n", base_pass)
+
 	// database connection string
-	dbConnStr := "database/database.db"
+	dbConnStr := fmt.Sprintf("file://%sdatabase.db", base_pass)
 
 	// Create a new SQLite database connection
 	var err error
@@ -30,10 +44,9 @@ func DbInit() {
 	if err != nil {
 		log.Fatalf("Failed to create SQLite database driver instance: %v", err)
 	}
-
 	// Create a new migrate instance with the SQLite driver
 	m, err := migrate.NewWithDatabaseInstance(
-		"file://database/migrations",
+		fmt.Sprintf("file://%smigrations", base_pass),
 		"sqlite3", driver)
 	if err != nil {
 		log.Fatalf("Failed to create migrate instance: %v", err)
@@ -46,4 +59,13 @@ func DbInit() {
 
 	fmt.Println("Migrations applied successfully!")
 	// Perform other database operations...
+}
+
+// close database
+func CloseDatabase() {
+	if Database == nil {
+		return
+	}
+	Database.Close()
+	Database = nil
 }
