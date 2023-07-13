@@ -1,13 +1,15 @@
-import React, {useState} from 'react'
-import { Loader } from '../../../utils/Atom.jsx'
-import Popup from '../../Popup/Popup.jsx'
-import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
-import Comment from './Comment.jsx'
+import React, {useState, useContext} from 'react'
+import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { Loader } from '../../utils/Atom.jsx'
+import Popup from '../Popup/Popup.jsx'
+import DisplayImage from '../DisplayImage/DisplayImage.jsx'
+import Comment from '../Comment/Comment.jsx'
 import styled from 'styled-components'
-import colors from '../../../utils/style/Colors.js'
+import colors from '../../utils/style/Colors.js'
 import { useQuery } from '@tanstack/react-query'
-import RadioBouton from '../../RadioBouton/RadioBouton.jsx'
-import FrenchFormatDateConvert from '../../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
+import RadioBouton from '../RadioBouton/RadioBouton.jsx'
+import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
+import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 
 // css
 const PostContainer = styled.div`
@@ -48,26 +50,45 @@ const StyleInfo = styled.div`
 	color: grey;
 `
 const StyleGroupButton = styled.div `
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-direction: row;
 `
 
 // Composant
 const Post = ({ post, theme, confidencial }) => {
-  const [PostConfidencial, setPostConfidencial] = useState(post.confidentialité)
+  // AuthUser
+  const { follower } = useContext(AuthContext)
+  //console.log("follower:", follower);
+  const [privateList, setPrivateList] = useState([])
+  const [PostConfidencial, setPostConfidencial] = useState(post.status)
+  const [showFollowersSelector, setShowFollowersSelector] = useState(false)
+
+  // Fenetre de selection followers (private-list)
+	const handleSelectedPrivatelistChange = (event) => {
+    //console.log("handleSelectedPrivatelistChange :", event)
+    setPrivateList(event)
+    //onChange(event)
+  }
+  const handleFollowersSelectorClose = () => {
+    setShowFollowersSelector(false)
+  }
 
   const handlePostConfidencialChange = (event) => {
     setPostConfidencial(event.target.value)
     //console.log("PostConfidencial:", PostConfidencial)
+    if (event.target.value === "private-list") {
+			setShowFollowersSelector(true)
+		} else {
+			setShowFollowersSelector(false)
+		}
 }
 
   const Comments = () => {
     const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
       ['dataComment'],
       () => fetch(`http://${window.location.hostname}:8080/comments.json`).then((res) => res.json())
-      // http://localhost:8080/postId?${post.post-id}
     )
 
     return (
@@ -94,11 +115,11 @@ const Post = ({ post, theme, confidencial }) => {
     <PostContainer  theme={theme}>
       <StyleInfo>
         <div>{post.pseudo}</div>
-        <div>{FrenchFormatDateConvert(post.dateheure)}</div>
+        <div>{FrenchFormatDateConvert(post.create_date)}</div>
         <div>{confidencial ? (
           <StyleGroupButton>
             <RadioBouton
-              id={`PostConfidencialPublic-${post['post-id']}`}
+              id={`PostConfidencialPublic-${post['post_id']}`}
               label="Public"
               value="public"
               checked={PostConfidencial === 'public'}
@@ -106,7 +127,7 @@ const Post = ({ post, theme, confidencial }) => {
               alignment="vertical"
             />
             <RadioBouton
-              id={`PostConfidencialPrivate-${post['post-id']}`}
+              id={`PostConfidencialPrivate-${post['post_id']}`}
               label="Privé"
               value="private"
               checked={PostConfidencial === 'private'}
@@ -114,7 +135,7 @@ const Post = ({ post, theme, confidencial }) => {
               alignment="vertical"
             />
             <RadioBouton
-              id={`PostConfidencialPrivateList-${post['post-id']}`}
+              id={`PostConfidencialPrivateList-${post['post_id']}`}
               label="Liste"
               value="private-list"
               checked={PostConfidencial === 'private-list'}
@@ -127,16 +148,30 @@ const Post = ({ post, theme, confidencial }) => {
         )}
         </div>
       </StyleInfo>
+
       <StyleTitlePublication>{post.title}</StyleTitlePublication>
+
       {post.image ? (
       <DisplayImage
         id={"postImage-" + post.id}
-        src={require(`../../../assets/img/${post.image}`).default}
+        src={require(`../../assets/img/${post.image}`).default}
         alt={"Image " + post.title}
         disabled={false}
       />
       ) : <></>}
+      
       <StylePostContent>{post.content}</StylePostContent>  
+
+      {showFollowersSelector && (
+				<FollowersSelector
+          private_list={privateList}
+          follower={follower}
+          onChange={handleSelectedPrivatelistChange}
+          onClose={handleFollowersSelectorClose}
+          theme={theme}
+      />
+			)}
+
       <Comments/>
     </PostContainer>
   )

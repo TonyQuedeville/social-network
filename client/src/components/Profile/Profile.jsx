@@ -1,6 +1,6 @@
 // src/components/pages/Profile
 
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx';
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
@@ -58,17 +58,32 @@ const PhotoProfile = styled.img`
 `
 
 // Composant
-const Profile = ({pseudo, sexe, statusProfil: initialStatusProfil, hideStatus, aboutme, photoProfile, lastname, firstname, bornDate}) => {
+const Profile = (props) => {
+  const { pseudo, 
+          sexe, 
+          status, 
+          hideStatus, 
+          about, 
+          image, 
+          lastname, 
+          firstname, 
+          bornDate
+        } = props
   const { theme } = useContext(ThemeContext)
-  const [statusProfil, setStatusProfil] = useState(initialStatusProfil);
-  const { authPseudo } = useContext(AuthContext);
-  //console.log("hideStatus: ", hideStatus);
-  //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo);
+  const { authPseudo } = useContext(AuthContext)
+  //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo)
+  //console.log("status: ", status);
+  const [statusProfil, setStatusProfil] = useState(status)
+
+  useEffect(() => {
+    setStatusProfil(status);
+  }, [status])
+  //console.log("statusProfil: ", statusProfil);
 
   const getPhotoProfile = () => {
-    if (photoProfile) {
+    if (image) {
       //console.log("photoProfile:", photoProfile)
-      return require(`../../assets/img/${photoProfile}`).default
+      return require(`../../assets/img/${image}`).default
     } else {
       return sexe === 'f' ? DefaultPictureF : DefaultPictureH
     }
@@ -128,7 +143,7 @@ const Profile = ({pseudo, sexe, statusProfil: initialStatusProfil, hideStatus, a
               <span id={`user-age-${pseudo}`}>Date de naissance: {FrenchFormatDateConvert(bornDate)}</span>
             )}
           </InfoUser>
-          <Titre id={`user-title-${pseudo}`}>{aboutme}</Titre>
+          <Titre id={`user-title-${pseudo}`}>{about}</Titre>
         </>
       : <></>
     }
@@ -140,9 +155,9 @@ Profile.propTypes = {
   pseudo: PropTypes.string.isRequired,
   sexe: PropTypes.string,
   aboutme: PropTypes.string,
-  statusProfil: PropTypes.string,
+  status: PropTypes.string,
   hideStatus: PropTypes.bool,
-  photoProfile: PropTypes.string,
+  image: PropTypes.string,
   lastname: PropTypes.string,
   firstname: PropTypes.string,
   bornDate: PropTypes.string,
@@ -151,7 +166,7 @@ Profile.propTypes = {
 Profile.defaultProps = {
   pseudo: 'Anonyme',
   aboutme: 'aucun',
-  statusProfil: 'private',
+  status: 'private',
   hideStatus: false,
 }
 

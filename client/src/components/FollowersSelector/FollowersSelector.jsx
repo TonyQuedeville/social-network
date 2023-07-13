@@ -9,15 +9,15 @@ const StyleWindow = styled.div`
 	align-items: center;
 	justify-content: start;
 	flex-direction: column;
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  transform: translate(-50%, -50%);
-  width: 400px;
-  height: 200px;
-  padding: 20px;
-  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-  z-index: 9999;
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	transform: translate(-50%, -50%);
+	width: 400px;
+	height: 200px;
+	padding: 20px;
+	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+	z-index: 9999;
 	border: solid 1px;
 	border-radius: 10px;
 	background: ${props => (props.theme === 'light' ? colors.backgroundLight : colors.backgroundDark)};
@@ -43,57 +43,53 @@ const StyleFollowersList = styled.div`
 	justify-content: start;
 	flex-direction: column;
 	width: 400px;
-  height: 200px;
+	height: 200px;
 `
 
 // Composant
-function FollowersSelector({ followedUsers, followers, onChange, onClose, theme }) {
-  //const [followers, setFollowers] = useState([])
-
-  const handleFollowerChange = (followerId) => {
-    const updatedFollowers = [...followers]
-    if (updatedFollowers.includes(followerId)) {
-      updatedFollowers.splice(updatedFollowers.indexOf(followerId), 1)
-    } else {
-      updatedFollowers.push(followerId)
-    }
-    onChange(updatedFollowers)
-  }
+function FollowersSelector({ follower, private_list, onChange, onClose, theme }) {
+	const handleFollowerChange = (followerId) => {
+		const updatedFollowers = [...private_list]
+		if (updatedFollowers.includes(followerId)) {
+			updatedFollowers.splice(updatedFollowers.indexOf(followerId), 1)
+		} else {
+			updatedFollowers.push(followerId)
+		}
+		onChange(updatedFollowers)
+	}
 
 	const Validfollowers = () => {
 		//console.log("Validfollowers !");
 		onClose();
 	}
 	const handleSelectAll = () => {
-    onChange([...followedUsers])
-  }
+		onChange([...follower])
+	}
 
-  const handleDeselectAll = () => {
-    onChange([])
-  }
+	const handleDeselectAll = () => {
+		onChange([])
+	}
 
-
-
-  return (
+	return (
 		<StyleWindow theme={theme}>
 			<StyleGroupButton>
 				<Button 
-						text="tous" 
-						onClick={handleSelectAll}
+					text="tous" 
+					onClick={handleSelectAll}
 				/>
 				<Button 
-						text="aucun" 
-						onClick={handleDeselectAll}
+					text="aucun" 
+					onClick={handleDeselectAll}
 				/>
 			</StyleGroupButton>
 			<StyleFollowersList>
 				{/* Afficher la liste des followers avec cases à cocher */}
-				{followedUsers.map((followerId) => (
+				{follower.map((followerId) => (
 					<label key={followerId}>
 						<input
 							type="checkbox"
 							value={followerId}
-							checked={followers.includes(followerId)}
+							checked={private_list.includes(followerId)}
 							onChange={() => handleFollowerChange(followerId)}
 						/>
 						{followerId}
@@ -102,13 +98,13 @@ function FollowersSelector({ followedUsers, followers, onChange, onClose, theme 
 			</StyleFollowersList>
 			<StyleGroupOk>
 				<Button 
-						text="Ok" 
-						format="rond"
-						onClick={Validfollowers}
+					text="Ok" 
+					format="rond"
+					onClick={Validfollowers}
 				/>
 			</StyleGroupOk>
 		</StyleWindow>
-  )
+	)
 }
 
 export default FollowersSelector
