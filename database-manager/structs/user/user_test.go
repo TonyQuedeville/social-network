@@ -28,8 +28,8 @@ func TestRegisterUserBadBirthDate(t *testing.T) {
 	}
 	want := "you must be at least 15 year old"
 
-	if err := u_bad_bd.Register("1test"); err != nil && err.Error() != want {
-		t.Fatalf(`u_bad_bd.Register("1test"), output: "%v"; want: "%v"`, err, want)
+	if err := u_bad_bd.Register(); err != nil && err.Error() != want {
+		t.Fatalf(`u_bad_bd.Register(), output: "%v"; want: "%v"`, err, want)
 	}
 }
 
@@ -54,8 +54,8 @@ func TestRegisterUserGoodBirthDate(t *testing.T) {
 	database.OpenDatabase()
 	defer database.CloseDatabase()
 	no_want := "you must be at least 15 year old"
-	if err := u_good_bd.Register("1test"); err != nil && err.Error() == no_want {
-		t.Fatalf(`u_good_bd.Register("1test"), output: "%v"; want: "%v"`, err, "other")
+	if err := u_good_bd.Register(); err != nil && err.Error() == no_want {
+		t.Fatalf(`u_good_bd.Register(), output: "%v"; want: "%v"`, err, "other")
 	}
 }
 
@@ -78,8 +78,8 @@ func TestRegisterUserBadMail(t *testing.T) {
 	}
 	want := "mail"
 
-	if err := u_bad_mail.Register("1test"); err != nil && !strings.Contains(err.Error(), want) {
-		t.Fatalf(`u_bad_mail.Register("1test"), output: "%v"; want: "error"`, err)
+	if err := u_bad_mail.Register(); err != nil && !strings.Contains(err.Error(), want) {
+		t.Fatalf(`u_bad_mail.Register(), output: "%v"; want: "error"`, err)
 	}
 }
 
@@ -103,8 +103,8 @@ func TestRegisterUserGoodMail(t *testing.T) {
 	database.OpenDatabase()
 	defer database.CloseDatabase()
 	want := "mail"
-	if err := u_good_mail.Register("1test"); err != nil && strings.Contains(err.Error(), want) {
-		t.Fatalf(`u_good_mail.Register("1test"), output: "%v"; want: "other"`, err)
+	if err := u_good_mail.Register(); err != nil && strings.Contains(err.Error(), want) {
+		t.Fatalf(`u_good_mail.Register(), output: "%v"; want: "other"`, err)
 	}
 }
 
@@ -126,8 +126,8 @@ func TestRegisterUserBadPassword(t *testing.T) {
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
 	want := "password"
-	if err := u_bad_pass.Register("bad"); err != nil && !strings.Contains(err.Error(), want) {
-		t.Fatalf(`u_bad_pass.Register("bad"), output: "%v"; want: "error"`, err)
+	if err := u_bad_pass.Register(); err != nil && !strings.Contains(err.Error(), want) {
+		t.Fatalf(`u_bad_pass.Register(), output: "%v"; want: "error"`, err)
 	}
 }
 
@@ -152,8 +152,8 @@ func TestRegisterUserGoodPassword(t *testing.T) {
 	defer database.CloseDatabase()
 
 	want := "password"
-	if err := u_good_pass.Register("good1"); err != nil && strings.Contains(err.Error(), want) {
-		t.Fatalf(`u_good_pass.Register("good1"), output: "%v"; want: "other"`, err)
+	if err := u_good_pass.Register(); err != nil && strings.Contains(err.Error(), want) {
+		t.Fatalf(`u_good_pass.Register(), output: "%v"; want: "other"`, err)
 	}
 }
 
@@ -177,7 +177,7 @@ func TestRegisterUserGoodCredential(t *testing.T) {
 	// want := "mail: no angle-addr"
 	database.OpenDatabase()
 	defer database.CloseDatabase()
-	if err := u_good_cred.Register("notbad"); err != nil {
-		t.Fatalf(`u_good_cred.Register("notbad"), output: "%v"; want: "nil"`, err)
+	if err := u_good_cred.Register(); err != nil {
+		t.Fatalf(`u_good_cred.Register(), output: "%v"; want: "nil"`, err)
 	}
 }

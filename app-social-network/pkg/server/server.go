@@ -12,5 +12,6 @@ func InitServer() {
 	defer database.CloseDatabase()
 
 	http.HandleFunc("/user/register", api.UserRegister)
+	http.HandleFunc("/user/login", api.UserLogin)
 	http.ListenAndServe(ADRESS, nil)
 }
