@@ -24,11 +24,11 @@ func BadRequest(w http.ResponseWriter, message_error string) {
 }
 
 type reponse struct {
-	datas interface{}
+	Datas interface{} `json:"datas"`
 }
 
 func Ok(w http.ResponseWriter, rep interface{}) {
 	w.WriteHeader(http.StatusOK)
-	corp, _ := json.MarshalIndent(reponse{datas: rep}, "", "	")
+	corp, _ := json.MarshalIndent(reponse{Datas: rep}, "", "	")
 	w.Write(corp)
 }

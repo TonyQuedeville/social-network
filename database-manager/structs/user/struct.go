@@ -5,8 +5,9 @@ import "time"
 type User struct {
 	Id         uint64    `json:"id,omitempty"`
 	Email      string    `json:"email"`
-	First_name string    `json:"first_name"`
-	Last_name  string    `json:"last_name"`
+	Password   string    `json:"password,omitempty"`
+	First_name string    `json:"firstname"`
+	Last_name  string    `json:"lastname"`
 	Born_date  time.Time `json:"born_date"`
 	Sexe       string    `json:"sexe"`
 	Status     string    `json:"status"`

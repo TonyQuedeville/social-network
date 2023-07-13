@@ -15,27 +15,22 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
-	u := user.User{}                                    // prepare un user
+	u := &user.User{}                                   // prepare un user
 	if err := json.Unmarshal(reqBody, &u); err != nil { // unwrap le corp dans user
 		BadRequest(w, err.Error())
 		return
 	}
-
-	pass := struct {
-		Password *string `json:"password"`
-	}{}
-	if err := json.Unmarshal(reqBody, &pass); err != nil { // unwrap le corp dans pass
-		BadRequest(w, err.Error())
-		return
-	} else if pass.Password == nil {
-		BadRequest(w, "no password field found")
+	if u.Password == "" {
+		BadRequest(w, "no password found")
 		return
 	}
 
-	if err := u.Register(*pass.Password); err != nil { // unwrap le corp dans user
+	if err := u.Register(); err != nil { // unwrap le corp dans user
 		BadRequest(w, err.Error())
 		return
 	}
+
+	u, _ = user.GetUserByMail(u.Email)
 
 	Ok(w, u)
 }
@@ -55,7 +50,24 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, err.Error())
 		return
 	} else if pass.Email == nil || pass.Password == nil {
-		BadRequest(w, "no password or/and email fields found")
+		BadRequest(w, "no 'password' or/and 'email' fields found")
 		return
 	}
+
+	// Create uuid in session database
+	u, uuid, err := user.Login(*pass.Password, *pass.Email)
+	if err != nil {
+		BadRequest(w, err.Error())
+		return
+	}
+
+	rep := struct {
+		Uuid string    `json:"uuid"`
+		User user.User `json:"user"`
+	}{
+		Uuid: uuid,
+		User: *u,
+	}
+
+	Ok(w, rep)
 }
