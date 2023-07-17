@@ -12,6 +12,8 @@ import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
+import axios from "axios"
+import { makeRequest } from '../../../utils/Axios/Axios.js'
 
 const RegisterContainer = styled.div `
     min-height: 88.5vh;
@@ -44,8 +46,8 @@ const StyleGroupButton = styled.div `
     flex-direction: row;
 `
 
-// Validation du nom d'utilisateur
-function isValidUsername(value) {
+// Validation du pseudo utilisateur
+function isValidPseudo(value) {
     const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/;
 
     if (usernameRegex.test(value)) {
@@ -55,6 +57,7 @@ function isValidUsername(value) {
         return false
     }
 }
+
 // Validation de l'adresse email
 function isValidEmail(value) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -68,78 +71,86 @@ function isValidEmail(value) {
 }
 
 function RegisterForm() {
-    const [username, setUsername] = useState("")
-    const [email, setEmail] = useState("")
-    const [sexe, setSexe] = useState("")
-    const [bornDate, setBornDate] = useState("")
-    const [lastname, setLastname] = useState("")
-    const [firstname, setFirstname] = useState("")
-    const [profileImage, setProfileImage] = useState(null);
-    const [aboutme, setAboutme] = useState("")
-    const [password, setPassword] = useState("")
-    const [passwordConfirm, setPasswordConfirm] = useState("")
-    const [statusProfil, setStatusProfil] = useState("private")
-    const [cgu, setCgu] = useState(false)
-
-    const [isUsernameValid, setIsUsernameValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
+    const [isPseudoValid, setIsPseudoValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
-    const [isConfirmDisabled, setIsConfirmDisabled] = useState(true)
-    const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
+    const [isConfirmDisabled, setIsConfirmDisabled] = useState(true) // Nouvelle variable d'état pour vérifier la confirmation du mot de passe
+    const [imageUrl, setImageUrl] = useState('')
+    const [password, setPassword] = useState("")
+    const [passwordConfirm, setPasswordConfirm] = useState("")
+    const [cgu, setCgu] = useState(false)
+    const [isDisabled, setIsDisabled] = useState(true)
     const [notification, setNotification] = useState('')
-
+    const [fetchError, setFetchError] = useState(false)
     const confidentialite = "Cette information restera confidentielle si le status de votre profil est en mode Privé"
 
-    // Handles
-    const handleUsernameChange = (event) => {
-        const value = event.target.value
-        setUsername(value)
-        setIsUsernameValid(isValidUsername(value))
+    const [formData, setFormData] = useState({
+        pseudo: '',
+        email: '',
+        lastname: '',
+        firstname: '',
+        born_date: '',
+        sexe: '',
+        image: '',
+        about: '',
+        password: '',
+        status: '',
+    })
+
+    const handleChange = (e) => {
+        if (e && e.target && e.target.name) {
+            var value = e.target.value
+            switch(e.target.name) {
+                case "image" : 
+                    if (e.target.files && e.target.files.length > 0) {
+                        const file = e.target.files[0]
+                        setImageUrl(URL.createObjectURL(file));
+                        value = file.name
+                    }
+                    break
+
+                case "pseudo" : 
+                    setIsPseudoValid(isValidPseudo(value))
+                    break
+                
+                case "email" : 
+                    setIsEmailValid(isValidEmail(value))
+                    break
+
+                case "password" : 
+                    setIsPasswordValid(value.length >= 4)
+                    setPassword(value)
+                    break
+
+                case "passwordConfirm" : 
+                    setPasswordConfirm(value)
+                    break
+
+                case "born_date" :
+                    value = value + "T00:00:00.000+07:00"
+                    console.log("born_date", value)
+                    break
+
+                default :
+                    break
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                [e.target.name]: value
+            }))
+        }
+
+        //console.log(formData); // (affichage avec 1 event de retard)
     }
-    const handleEmailChange = (event) => {
-        const value = event.target.value
-        setEmail(value)
-        setIsEmailValid(isValidEmail(value))
-    }
-    const handleSexeChange = (event) => {
-        const value = event.target.value
-        setSexe(value)
-    }
-    const handleBornDateChange = (event) => {
-        const value = event.target.value
-        setBornDate(value)
-        //console.log("BornDate:", value, typeof value);
-    }
-    const handleLastnameChange = (event) => {
-        const value = event.target.value
-        setLastname(value)
-    }
-    const handleFirstnameChange = (event) => {
-        const value = event.target.value
-        setFirstname(value)
-    }
-    const handleProfileImageChange = (file) => {
-        //const file = event.target.files[0];
-        setProfileImage(file);
-    }
-    const handleAboutMeChange = (event) => {
-        const value = event.target.value
-        setAboutme(value)
-    }
+
     const handlePasswordChange = (event) => {
+        console.log("password:", event.target.value);
         const value = event.target.value
         setPassword(value)
         setIsPasswordValid(value.length >= 4)
     }
-    const handlePasswordConfirmChange = (event) => {
-        const value = event.target.value
-        setPasswordConfirm(value)
-    }
-    const handleStatusProfilChange = (event) => {
-        const value = event.target.value
-        //console.log(value);
-        setStatusProfil(value)
-    }
+    
     const handleCguChange = (event) => {
         const value = event.target.checked
         setCgu(value)
@@ -148,10 +159,12 @@ function RegisterForm() {
     // UseEffect "componentDidMount" Modification pendant l'existance du composant
     useEffect(() => {
         setIsConfirmDisabled(!isPasswordValid)
-    }, [isPasswordValid]);
+    }, [isPasswordValid])
+
     useEffect(() => {
         setIsPasswordValid(password.length >= 4)
     }, [password])
+
     useEffect(() => {
         if (password === passwordConfirm) {
             setNotification("")
@@ -161,6 +174,7 @@ function RegisterForm() {
             setIsConfirmDisabled(false)
         }
     }, [password, isPasswordValid, passwordConfirm])
+
     useEffect(() => {
         if(isEmailValid) {
             setNotification("")
@@ -169,6 +183,7 @@ function RegisterForm() {
         }
     }, [isEmailValid])
 
+    /*
     // UseEffect "componentWillMount" à la création du composant, (s'execute avant le 1er rendu)
     useEffect(() => {
         setNotification("")
@@ -182,64 +197,52 @@ function RegisterForm() {
             //console.log("Destruction composant : componentWillUnmount !");
         };
     }, []);
+    */
 
     // Met à jour l'état isDisabled à chaque fois que l'état des champs d'entrée change
     useEffect(() => {
-        setIsDisabled(!(isUsernameValid && isEmailValid && isPasswordValid && isConfirmDisabled && cgu))
-    }, [isUsernameValid, isEmailValid, isPasswordValid, isConfirmDisabled, cgu])
+        setIsDisabled(!(isPseudoValid && isEmailValid && isPasswordValid && isConfirmDisabled && cgu))
+    }, [isPseudoValid, isEmailValid, isPasswordValid, isConfirmDisabled, cgu])
 
     // Submit
     const navigate = useNavigate()
-    const handleSubmit = (event) => {
+
+    const handleSubmit = async (event) => {
         event.preventDefault()
         console.log("handleNewPostSubmit:",event)
-
+        
         // Soumission des données en mettant à jour le formData. 
         // La requête sera automatiquement déclenchée par le hook useFetch
         //setFormData({ ...formData, isSubmitting: true })
+        try{
+            await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(formData))
 
-        if (isUsernameValid && handlePasswordChange && isPasswordValid && cgu) {
-            navigate("/login"); // Redirection vers la page de connection
+            if (isPseudoValid && handlePasswordChange && isPasswordValid && cgu) {
+                navigate("/login"); // Redirection vers la page de connection
+            }
         }
-    };
-
-    /*const [formData, setFormData] = useState({
-        username: '',
-        email: '',
-        firstname: '',
-        lastname:'',
-        password: '',
-    })
-
-    const { isLoading, data, error } = useFetch('https://api.example.com/endpoint', {
-        method: 'POST',
-        body: JSON.stringify(formData),
-        headers: {
-            'Content-Type': 'application/json',
-        },
-    })
-
-    if (isLoading) {
-        return <div>Loading...</div>
+        catch (err) {
+            console.log("Error request register!", err.response);
+            console.log("Error message:", err.message)
+            setNotification("Erreur requete d'enregistrement !")
+            setFetchError(true)
+        }
+        finally {
+        }
     }
-    if (error) {
-        return <div>Error occurred while submitting the form</div>
-    }
-    if (data) {
-        // Utilisez les données récupérées après la soumission si nécessaire
-    }
-    //*/
+    //"{"pseudo":"Toto","email":"tonyquedeville@gmail.com","lastname":"Quedeville","firstname":"Tony","born_date":"2023-07-13","sexe":"h","image":"Tony51.jpg","about":"sdfgnhvjjvngbv","password":"0000","status":"private","passwordConfirm":"0000"}"
 
     return (
         <RegisterContainer>
             <StyleRegisterForm onSubmit={handleSubmit} >
-                <StyleLabInput>                    
+                <StyleLabInput>            
                     <InputText
-                        id="username"
+                        id="pseudo"
+                        name="pseudo"
                         label="* Pseudo"
                         title=""
-                        value={username}
-                        onChange={handleUsernameChange}
+                        //value={pseudo}
+                        onChange={handleChange}
                         required
                     />
                 </StyleLabInput>
@@ -247,80 +250,91 @@ function RegisterForm() {
                     <InputText
                         type="* email"
                         id="email"
+                        name="email"
                         label="* Email"
                         placeholder="***@gmail.com"
-                        title="Entrez une adresse valide."
-                        value={email}
-                        onChange={handleEmailChange}
+                        title="Entrez une adresse mail valide."
+                        //value={email}
+                        onChange={handleChange}
                         required
                     />
                 </StyleLabInput>
                 <StyleLabInput>
                     <InputText
                         id="lastname"
+                        name="lastname"
                         label="Nom"
-                        value={lastname}
+                        //value={lastname}
                         title={confidentialite}
-                        onChange={handleLastnameChange}
+                        onChange={handleChange}
                     />
                 </StyleLabInput>
                 <StyleLabInput>
                     <InputText
                         id="firstname"
+                        name="firstname"
                         label="Prenom"
                         title={confidentialite}
-                        value={firstname}
-                        onChange={handleFirstnameChange}
+                        //value={firstname}
+                        onChange={handleChange}
                     />
                 </StyleLabInput>
                 <StyleLabInput>
                     <InputText
                         type="date"
-                        id="bornDate"
+                        id="borndate"
+                        name="born_date"
                         label="Date de naissance"
                         title={confidentialite}
-                        value={bornDate}
-                        onChange={handleBornDateChange}
+                        //value={bornDate}
+                        onChange={handleChange}
                     />
                 </StyleLabInput>
                 <StyleLabInput>
                     <p>Sexe</p>
                     <RadioBouton
                         id="sexeh"
+                        name="sexe"
                         label="Homme"
+                        title="Homme"
                         value="h"
-                        checked={sexe === 'h'}
-                        onChange={handleSexeChange}
+                        //checked={sexe === 'h'}
+                        onChange={handleChange}
                         alignment="vertical"
                     />
                     <RadioBouton
                         id="sexef"
+                        name="sexe"
                         label="Femme"
+                        title="Femme"
                         value="f"
-                        checked={sexe === 'f'}
-                        onChange={handleSexeChange}
+                        //checked={sexe === 'f'}
+                        onChange={handleChange}
                         alignment="vertical"
                     />
                     <RadioBouton
                         id="sexea"
+                        name="sexe"
                         label="Autre"
+                        title="Autre sexe (LGBT)"
                         value="a"
-                        checked={sexe === 'a'}
-                        onChange={handleSexeChange}
+                        //checked={sexe === 'a'}
+                        onChange={handleChange}
                         alignment="vertical"
                     />
                 </StyleLabInput>
                 <StyleLabInput>
                     <InputFileImage 
                         id="fileProfileImage"
+                        name="image"
                         label="Photo de profil"
-                        value={profileImage}
-                        onChange={handleProfileImageChange} 
+                        //value={profileImage}
+                        onChange={(file) => handleChange({ target: { name: 'image', files: [file] } })}
                     />
-                    {profileImage && (
+                    {imageUrl && (
                         <DisplayImage
                             id="profileImage"
-                            src={URL.createObjectURL(profileImage)} 
+                            src={imageUrl} 
                             alt="Profile"
                             size={150}
                             format='rond'
@@ -330,11 +344,12 @@ function RegisterForm() {
                 </StyleLabInput>
                 <StyleLabInput>
                     <TextArea
-                        id="aboutme"
+                        id="about"
+                        name="about"
                         label="Description de personalité"
-                        title={confidentialite}
-                        value={aboutme}
-                        onChange={handleAboutMeChange}
+                        title={"Description de personalité"}
+                        //value={about}
+                        onChange={handleChange}
                         rows={3}
                         cols={50}
                     />
@@ -343,11 +358,12 @@ function RegisterForm() {
                     <InputText
                         type="password"
                         id="password"
+                        name="password"
                         label="* Mot de passe"
                         placeholder="****"
-                        title="4 caractères minimum"
+                        title="Mot de passe. 4 caractères minimum"
                         value={password}
-                        onChange={handlePasswordChange}
+                        onChange={handleChange}
                         required
                         disabled={false}
                     />
@@ -356,11 +372,12 @@ function RegisterForm() {
                     <InputText
                         type="password"
                         id="passwordConfirm"
+                        name="passwordConfirm"
                         label="* Confirmation mot de passe"
                         placeholder="****"
-                        title="4 caractères minimum"
+                        title="Confirmation du mot de passe. 4 caractères minimum"
                         value={passwordConfirm}
-                        onChange={handlePasswordConfirmChange}
+                        onChange={handleChange}
                         required
                         disabled={isConfirmDisabled}
                     />
@@ -369,18 +386,20 @@ function RegisterForm() {
                     <p>Status profil</p>
                     <RadioBouton
                         id="statusProfilPrivate"
+                        name="status"
                         label="Privé"
                         value="private"
-                        checked={statusProfil === 'private'}
-                        onChange={handleStatusProfilChange}
+                        title="Status profil privé"
+                        onChange={handleChange}
                         alignment="vertical"
                     />
                     <RadioBouton
                         id="statusProfilPublic"
+                        name="status"
                         label="Public"
                         value="public"
-                        checked={statusProfil === 'public'}
-                        onChange={handleStatusProfilChange}
+                        title="Status profil public"
+                        onChange={handleChange}
                         alignment="vertical"
                     />
                 </StyleLabInput>
@@ -402,7 +421,7 @@ function RegisterForm() {
                     </Link>
                 </StyleGroupButton>
 
-                {notification && (
+                {fetchError && notification && (
                     <Popup texte={notification} type='error' />
                 )}
             </StyleRegisterForm>

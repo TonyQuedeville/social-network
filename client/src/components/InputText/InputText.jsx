@@ -15,12 +15,12 @@ const InputStyle = styled.input `
 `
 
 const InputText = (props) => {
-    const { onChange, id, label, placeholder, title, value, type, disabled, required, size } = props
+    const { onChange, id, name, label, placeholder, title, value, type, disabled, required, size } = props
 
     const handleChange = (event) => {
         const { value } = event.target
         const validatedValue = validateInput(value)
-        onChange({ target: { id, value: validatedValue } })
+        onChange({ target: { id, name, value: validatedValue } })
     }
     
     // Empèche l'injection de code
@@ -38,7 +38,7 @@ const InputText = (props) => {
             <InputStyle
                 type={type}
                 id={id}
-                name={id}
+                name={!name ? id : name}
                 placeholder={placeholder}
                 title={title}
                 value={value}

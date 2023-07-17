@@ -4,6 +4,7 @@ import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 import { GroupContext } from '../../../utils/GroupProvider/GroupProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
+import { makeRequest } from '../../../utils/Axios/Axios.js'
 //import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
@@ -67,23 +68,28 @@ const Groupe = () => {
 
   // Posts
   const Posts = () => {    
-    const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
-      fetch(`http://${window.location.hostname}:8080/posts.json`).then((res) => res.json())
+    //const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
+    //  fetch(`http://${window.location.hostname}:8080/posts.json`).then((res) => res.json())
+    //)
+    const { data, isLoading, error } = useQuery(['dataPost'], () =>
+      makeRequest.get("/posts.json").then((res) => {
+        return res.data
+      })
     )
-    console.log("dataPosts:", dataPosts);
+    //console.log("dataPosts:", data);
 
     return (
       <>
-        {isLoadingPosts ? (
+        {isLoading ? (
         <Loader id="loader" />
         ) : (
         <>
-          {errorPosts && (
+          {error && (
             <Popup texte="Le chargement des publications de ce groupe est erroné !" type='error' />
           )}
-          {dataPosts && (
+          {data && (
             <>
-              {dataPosts.posts.map((post, index) => (
+              {data.posts.map((post, index) => (
                 (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
                   <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
                 ) : null

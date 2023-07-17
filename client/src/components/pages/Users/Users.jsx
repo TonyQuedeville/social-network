@@ -10,6 +10,8 @@ import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
+import { makeRequest } from '../../../utils/Axios/Axios.js'
+
 const queryClient = new QueryClient()
 
 const ListContainer = styled.div`
@@ -52,7 +54,9 @@ const Users = () => {
   //const [notification, setNotification] = useState('')
   const UsersList = () => {    
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
-        fetch(`http://${window.location.hostname}:8080/users.json`).then((res) => res.json())
+      makeRequest.get(`/users.json`).then((res) => {
+        return res.data
+      })
     )
     //console.log("dataUsers:", dataUsers);
     

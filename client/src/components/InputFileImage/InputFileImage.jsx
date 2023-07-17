@@ -14,7 +14,7 @@ const InputStyle = styled.input `
 `
 
 const InputFileImage = (props) => {
-  const { onChange, id, label, disabled, required } = props
+  const { onChange, id, name, label, disabled, required } = props
 
   const handleFileChange = (event) => {
     const file = event.target.files[0]
@@ -39,6 +39,7 @@ const InputFileImage = (props) => {
       <InputStyle 
         type="file" 
         id={id}
+        name={!name ? id : name}
         accept="image/*" 
         onChange={handleFileChange}
         disabled={disabled}
@@ -59,6 +60,7 @@ InputFileImage.defaultProps = {
 
 InputFileImage.propTypes = {
   id: PropTypes.string.isRequired,
+  name: PropTypes.string,
   accept: PropTypes.string,
   onChange: PropTypes.func,
   disabled: PropTypes.bool,

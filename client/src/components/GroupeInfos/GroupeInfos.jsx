@@ -72,6 +72,7 @@ const GroupeInfos = (props) => {
 						src={require(`../../assets/img/${image}`).default}
 						alt={"Image " + title}
 						disabled={false}
+						size={300}
 					/>) : <></>}
 					<StyleInfo>
 						<StyleBold>A propos:</StyleBold>
