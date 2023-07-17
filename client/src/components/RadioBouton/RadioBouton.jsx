@@ -2,6 +2,7 @@
 
 import React from 'react'
 import styled from 'styled-components'
+import PropTypes from 'prop-types'
 
 const RadioContainer = styled.div`
   display: flex;
@@ -20,19 +21,21 @@ const StyleRadio = styled.input`
 `
 
 const RadioBouton = (props) => {
-  const { id, label, value, checked, onChange, disabled, required, alignment } = props;
+  const { id, name, label, value, checked, onChange, disabled, required, title, alignment } = props;
 
   return (
     <RadioContainer alignment={alignment}>
       <StyleRadio
         type="radio"
         id={id}
+        name={!name ? id : name}
         value={value}
         checked={checked}
         onChange={onChange}
         disabled={disabled}
+        title={title}
         required={required}
-        />
+      />
       <RadioLabel 
         htmlFor={id}
         disabled={disabled}
@@ -41,5 +44,21 @@ const RadioBouton = (props) => {
     </RadioContainer>
   );
 };
+
+RadioBouton.defaultProps = {
+  disabled: false
+}
+
+RadioBouton.propTypes = {
+  id: PropTypes.string.isRequired,
+  name: PropTypes.string,
+  label: PropTypes.string,
+  value: PropTypes.string,
+  title: PropTypes.string,
+  checked: PropTypes.bool,
+  onChange: PropTypes.func,
+  disabled: PropTypes.bool,
+  required: PropTypes.string,
+}
 
 export default RadioBouton;

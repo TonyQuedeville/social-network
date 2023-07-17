@@ -11,8 +11,9 @@ import (
 
 func TestRegisterUserBadBirthDate(t *testing.T) {
 	u_bad_bd := User{
-		Id:         0,          // uint64    `json:"id"`
-		Email:      "a@a",      // string    `json:"email"`
+		Id:         0,     // uint64    `json:"id"`
+		Email:      "a@a", // string    `json:"email"`
+		Password:   "AZERTYU",
 		First_name: "",         // string    `json:"first_name"`
 		Last_name:  "",         // string    `json:"last_name"`
 		Born_date:  time.Now(), // time.Time `json:"date_of_birth"`
@@ -27,7 +28,8 @@ func TestRegisterUserBadBirthDate(t *testing.T) {
 		Updated_at: time.Now(), // time.Time `json:"updated_at"`
 	}
 	want := "you must be at least 15 year old"
-
+	database.OpenDatabase()
+	defer database.CloseDatabase()
 	if err := u_bad_bd.Register(); err != nil && err.Error() != want {
 		t.Fatalf(`u_bad_bd.Register(), output: "%v"; want: "%v"`, err, want)
 	}

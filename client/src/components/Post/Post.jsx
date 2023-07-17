@@ -1,12 +1,13 @@
 import React, {useState, useContext} from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
+import { useQuery } from '@tanstack/react-query'
+import { makeRequest } from '../../utils/Axios/Axios.js'
 import Popup from '../Popup/Popup.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 import Comment from '../Comment/Comment.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
-import { useQuery } from '@tanstack/react-query'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
@@ -86,9 +87,10 @@ const Post = ({ post, theme, confidencial }) => {
 }
 
   const Comments = () => {
-    const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
-      ['dataComment'],
-      () => fetch(`http://${window.location.hostname}:8080/comments.json`).then((res) => res.json())
+    const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(['dataComment'], () =>
+      makeRequest.get(`/comments.json`).then((res) => {
+        return res.data
+      })
     )
 
     return (
