@@ -7,10 +7,10 @@ import (
 )
 
 func IsPost(w http.ResponseWriter, r *http.Request) bool {
-	if r.Method != http.MethodOptions {
-		w.WriteHeader(http.StatusOK)
-		return false
-	}
+	// if r.Method != http.MethodOptions {
+	// 	w.WriteHeader(http.StatusOK)
+	// 	return false
+	// }
 	if r.Method != http.MethodPost {
 		w.WriteHeader(http.StatusMethodNotAllowed)
 		return false

@@ -10,6 +10,7 @@ import (
 )
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("TRY REGISTER")
 	// only post
 	if !IsPost(w, r) {
 		return
@@ -41,10 +42,12 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 }
 
 func UserLogin(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("TRY LOGIN")
 	// only post
 	if !IsPost(w, r) {
 		return
 	}
+	fmt.Println("Login request")
 
 	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
 	pass := struct {
@@ -73,6 +76,6 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		Uuid: uuid,
 		User: *u,
 	}
-
+	fmt.Println("LOGIN OK")
 	Ok(w, rep)
 }
