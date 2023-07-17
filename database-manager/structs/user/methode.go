@@ -9,9 +9,11 @@ import (
 	"golang.org/x/crypto/bcrypt"
 )
 
+/* GETER >*/
+
 func GetUserByMail(email string) (*User, error) {
 	u := &User{}
-	
+
 	err := database.Database.QueryRow(`
 	SELECT * FROM user
 	WHERE email = ?
@@ -43,6 +45,20 @@ func (u *User) GetHashPass() {
 		fmt.Println("err gethashpass:", err)
 	}
 }
+
+func GetUserIdByUuid(uuid string) uint64 {
+	u_id := uint64(0)
+	err := database.Database.QueryRow(`
+	SELECT user_id FROM session
+	WHERE uuid = ?
+	`, uuid).Scan(u_id)
+	if err != nil {
+		fmt.Println("err getuserid by uuid:", err)
+	}
+	return u_id
+}
+
+/*< GETER */
 
 // register user in database with given password
 func (u *User) Register() error {
@@ -114,6 +130,6 @@ func Login(password, email string) (*User, string, error) {
 	if err != nil {
 		return u, "", err
 	}
-
+	u.Password = ""
 	return u, uuid.String(), nil
 }
