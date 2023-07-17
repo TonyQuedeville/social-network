@@ -5,6 +5,7 @@ import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
+import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../../utils/style/Colors.js'
@@ -72,8 +73,9 @@ const User = () => {
 
     const UserInfos = () => {    
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            fetch(`http://${window.location.hostname}:8080/${username.toLowerCase()}.json`).then((res) => res.json())
-            // http://localhost:8080/user?username.toLowerCase()
+            makeRequest.get(`/${username.toLowerCase()}.json`).then((res) => {
+                return res.data
+            })
         )
         //console.log("dataUser:", dataUser);
         
@@ -100,8 +102,9 @@ const User = () => {
     // Posts
     const Posts = () => {    
         const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
-            fetch(`http://${window.location.hostname}:8080/posts.json`).then((res) => res.json())
-            // http://localhost:8080/post?username
+            makeRequest.get(`/posts.json`).then((res) => {
+                return res.data
+            })
         )
         //console.log("dataPost:", dataPosts);
 

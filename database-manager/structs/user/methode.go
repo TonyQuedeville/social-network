@@ -11,6 +11,7 @@ import (
 
 func GetUserByMail(email string) (*User, error) {
 	u := &User{}
+	
 	err := database.Database.QueryRow(`
 	SELECT * FROM user
 	WHERE email = ?

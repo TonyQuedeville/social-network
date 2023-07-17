@@ -5,9 +5,8 @@ import styled from 'styled-components'
 const StyledDiv = styled.div `
     display: flex;
     align-items: center;
-    justify-contents: center;
+    justify-content: center;
 `
-
 const InputStyle = styled.textarea `
     margin: 5px;
     border-radius: 5px;
@@ -18,12 +17,12 @@ const InputStyle = styled.textarea `
 `
 
 const TextArea = (props) => {
-    const { onChange, id, label, placeholder, title, value, disabled, required, rows, cols } = props
+    const { onChange, id, name, label, placeholder, title, value, disabled, required, rows, cols } = props
 
     const handleChange = (event) => {
         const { value } = event.target
         const validatedValue = validateInput(value)
-        onChange({ target: { id, value: validatedValue } })
+        onChange({ target: { id, name, value: validatedValue } })
     }
     
     // Empèche l'injection de code
@@ -40,7 +39,7 @@ const TextArea = (props) => {
             <label htmlFor={id}>{label}</label>
             <InputStyle
                 id={id}
-                name={id}
+                name={!name ? id : name}
                 placeholder={placeholder}
                 title={title}
                 value={value}

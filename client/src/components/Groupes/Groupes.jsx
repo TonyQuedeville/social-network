@@ -1,6 +1,7 @@
 import React, {useState, useContext, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query' //'react-query'
+import { makeRequest } from '../../utils/Axios/Axios.js'
 //import { queryClient } from '../../index.js';
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { GroupContext } from '../../utils/GroupProvider/GroupProvider.jsx'
@@ -104,7 +105,9 @@ const Groupes = (props) => {
 
   // Requete: Liste des groupes
   const { data, isLoading, error } = useQuery(['dataGroupes'], () =>
-    fetch(`http://${window.location.hostname}:8080/groupes.json`).then((res) => res.json())
+    makeRequest.get("/groupes.json").then((res) => {
+      return res.data
+    })
   )
 
   // New Group
@@ -215,6 +218,7 @@ const Groupes = (props) => {
                   id="groupeImage"
                   src={URL.createObjectURL(groupeImage)} 
                   alt="Groupe image"
+                  size={300}
                   disabled={false}
                 />
               )}
@@ -273,6 +277,7 @@ const Groupes = (props) => {
                         id={"groupImage-" + group.id}
                         src={require(`../../assets/img/${group.image}`).default}
                         alt={"Image " + group.title}
+                        size={300}
                         disabled={false}
                       />) : <></>}
                       
