@@ -2,6 +2,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -13,13 +14,15 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
-
+	fmt.Println("Register request")
 	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
 	u := &user.User{}                                   // prepare un user
 	if err := json.Unmarshal(reqBody, &u); err != nil { // unwrap le corp dans user
 		BadRequest(w, err.Error())
 		return
 	}
+	fmt.Printf("Unmarshal user register form %v\n", u)
+
 	if u.Password == "" {
 		BadRequest(w, "no password found")
 		return
@@ -31,6 +34,8 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	}
 
 	u, _ = user.GetUserByMail(u.Email)
+
+	fmt.Printf("user form  register %v\n", u)
 
 	Ok(w, u)
 }
