@@ -11,7 +11,9 @@ func InitServer() {
 	database.OpenDatabase()
 	defer database.CloseDatabase()
 
-	http.HandleFunc("/user/register", api.UserRegister)
-	http.HandleFunc("/user/login", api.UserLogin)
-	http.ListenAndServe(ADRESS, nil)
+	mux := http.NewServeMux()
+
+	mux.Handle("/user/register", ApplyMiddleware(http.HandlerFunc(api.UserRegister)))
+	mux.Handle("/user/login", ApplyMiddleware(http.HandlerFunc(api.UserLogin)))
+	http.ListenAndServe(ADRESS, mux)
 }
