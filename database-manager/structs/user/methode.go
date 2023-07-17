@@ -2,6 +2,7 @@ package user
 
 import (
 	"errors"
+	"fmt"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 	"github.com/gofrs/uuid"
@@ -33,10 +34,13 @@ func GetUserByMail(email string) (*User, error) {
 }
 
 func (u *User) GetHashPass() {
-	database.Database.QueryRow(`
+	err := database.Database.QueryRow(`
 	SELECT password FROM user
 	WHERE email = ?
 	`, u.Email).Scan(&u.Password)
+	if err != nil {
+		fmt.Println("err gethashpass:", err)
+	}
 }
 
 // register user in database with given password
@@ -86,7 +90,7 @@ func (u *User) Register() error {
 func Login(password, email string) (*User, string, error) {
 	u, _ := GetUserByMail(email)
 	u.GetHashPass()
-
+	fmt.Printf("u.Password: %v\n", u.Password)
 	if len(u.Password) == 0 {
 		return u, "", errors.New("invalid mail")
 	}
