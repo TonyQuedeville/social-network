@@ -1,4 +1,10 @@
-// src/components/RegisterForm
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant RegisterForm : Formulaire d'enrtegistrement nouvel utilisateur
+    Page Register : Route http://localhost:3000/register 
+*/
 
 import React, { useState, useEffect } from "react"
 import { Link, useNavigate } from 'react-router-dom'
@@ -13,8 +19,8 @@ import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import axios from "axios"
-import { makeRequest } from '../../../utils/Axios/Axios.js'
 
+// css
 const RegisterContainer = styled.div `
     min-height: 88.5vh;
     display: flex;
@@ -46,6 +52,7 @@ const StyleGroupButton = styled.div `
     flex-direction: row;
 `
 
+// Fonctions
 // Validation du pseudo utilisateur
 function isValidPseudo(value) {
     const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/;
@@ -70,18 +77,20 @@ function isValidEmail(value) {
     }
 }
 
+// Composant
 function RegisterForm() {
     const [isPseudoValid, setIsPseudoValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isConfirmDisabled, setIsConfirmDisabled] = useState(true) // Nouvelle variable d'état pour vérifier la confirmation du mot de passe
-    const [imageUrl, setImageUrl] = useState('')
-    const [password, setPassword] = useState("")
-    const [passwordConfirm, setPasswordConfirm] = useState("")
-    const [cgu, setCgu] = useState(false)
-    const [isDisabled, setIsDisabled] = useState(true)
-    const [notification, setNotification] = useState('')
-    const [fetchError, setFetchError] = useState(false)
+    const [imageUrl, setImageUrl] = useState('') // url de l'image téléchargée par l'utilisateur
+    const [selectedImage, setSelectedImage] = useState(null) // image selectionnée qui sera envoyée au server app-image-storage
+    const [password, setPassword] = useState("") // mot de passe
+    const [passwordConfirm, setPasswordConfirm] = useState("") // confirmation du mot de passe
+    const [cgu, setCgu] = useState(false) // case à cocher acceptation des cgu
+    const [isDisabled, setIsDisabled] = useState(true) // Activation du bouton submit formaulaire
+    const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
+    const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
     const confidentialite = "Cette information restera confidentielle si le status de votre profil est en mode Privé"
 
     const [formData, setFormData] = useState({
@@ -91,12 +100,13 @@ function RegisterForm() {
         firstname: '',
         born_date: '',
         sexe: '',
-        image: '',
+        image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
         about: '',
         password: '',
         status: '',
     })
 
+    // Mise à jour de formData à chaque changement dans le formaulaire
     const handleChange = (e) => {
         if (e && e.target && e.target.name) {
             var value = e.target.value
@@ -106,6 +116,7 @@ function RegisterForm() {
                         const file = e.target.files[0]
                         setImageUrl(URL.createObjectURL(file));
                         value = file.name
+                        setSelectedImage(file)
                     }
                     break
 
@@ -127,8 +138,7 @@ function RegisterForm() {
                     break
 
                 case "born_date" :
-                    value = value + "T00:00:00.000+07:00"
-                    console.log("born_date", value)
+                    value = value + "T00:00:00.000+00:00"
                     break
 
                 default :
@@ -140,17 +150,9 @@ function RegisterForm() {
                 [e.target.name]: value
             }))
         }
-
-        //console.log(formData); // (affichage avec 1 event de retard)
     }
 
-    const handlePasswordChange = (event) => {
-        console.log("password:", event.target.value);
-        const value = event.target.value
-        setPassword(value)
-        setIsPasswordValid(value.length >= 4)
-    }
-    
+    // Acceptation des cgu
     const handleCguChange = (event) => {
         const value = event.target.checked
         setCgu(value)
@@ -199,39 +201,64 @@ function RegisterForm() {
     }, []);
     */
 
-    // Met à jour l'état isDisabled à chaque fois que l'état des champs d'entrée change
+    // Mise à jour l'état isDisabled du bouton submit à chaque fois que l'état des champs d'entrée change
+    // Quand toutes les conditions sont ok, le bouton devient cliquable.
     useEffect(() => {
         setIsDisabled(!(isPseudoValid && isEmailValid && isPasswordValid && isConfirmDisabled && cgu))
     }, [isPseudoValid, isEmailValid, isPasswordValid, isConfirmDisabled, cgu])
 
     // Submit
-    const navigate = useNavigate()
-
+    const navigate = useNavigate()  // variable permettant de rediriger vers la page /login si l'inscription réussie
     const handleSubmit = async (event) => {
         event.preventDefault()
-        console.log("handleNewPostSubmit:",event)
+        let data = {
+            ...formData,
+                image: "",
+        } 
         
-        // Soumission des données en mettant à jour le formData. 
-        // La requête sera automatiquement déclenchée par le hook useFetch
-        //setFormData({ ...formData, isSubmitting: true })
-        try{
-            await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(formData))
+        // Requete téléchargement de l'image vers app-image-storage
+        try {
+            // Créer une instance de imageFormData
+            const imageFormData = new FormData()
+            imageFormData.append('image', selectedImage)
+        
+            // Envoyer la requête au serveur app-image-storage
+            const response = await axios.post(`http://${window.location.hostname}:4000/upload`, imageFormData, {
+                //headers: { 'Content-Type': 'multipart/form-data' } // Spécifie le type de fichier image. facultatif puisque valeur par defaut
+            })
 
-            if (isPseudoValid && handlePasswordChange && isPasswordValid && cgu) {
-                navigate("/login"); // Redirection vers la page de connection
+            // Récupére l'URL de l'image à partir de la réponse du serveur d'images
+            data = {
+                ...formData,
+                image: response.data.filename,
             }
         }
         catch (err) {
-            console.log("Error request register!", err.response);
-            console.log("Error message:", err.message)
-            setNotification("Erreur requete d'enregistrement !")
+            setNotification(err.message + " : " + err.response.data.error)
             setFetchError(true)
         }
         finally {
-        }
-    }
-    //"{"pseudo":"Toto","email":"tonyquedeville@gmail.com","lastname":"Quedeville","firstname":"Tony","born_date":"2023-07-13","sexe":"h","image":"Tony51.jpg","about":"sdfgnhvjjvngbv","password":"0000","status":"private","passwordConfirm":"0000"}"
+            // Requete d'enregistrement vers app-social-network
+            try{
+                await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(data))
 
+                setFetchError(false)
+                if (isPseudoValid && isPasswordValid && cgu) {
+                    navigate("/login") // Redirection vers la page de connection
+                }
+            }
+            catch (err) {
+                setNotification(err.message + " : " + err.response.data.error)
+                setFetchError(true)
+            }
+            finally {
+            }
+        }
+
+            
+    }
+    
+    // Rendu du composant
     return (
         <RegisterContainer>
             <StyleRegisterForm onSubmit={handleSubmit} >
@@ -284,10 +311,11 @@ function RegisterForm() {
                         type="date"
                         id="borndate"
                         name="born_date"
-                        label="Date de naissance"
-                        title={confidentialite}
+                        label="* Date de naissance"
+                        title={confidentialite + " : Inscription interdite au moins de 15 ans"}
                         //value={bornDate}
                         onChange={handleChange}
+                        required
                     />
                 </StyleLabInput>
                 <StyleLabInput>
@@ -416,7 +444,7 @@ function RegisterForm() {
 
                 <StyleGroupButton>
                     <Button type="submit" text="Créer un compte" disabled={isDisabled} />
-                    <Link to="/">
+                    <Link to="/register">
                         <Button text="Annuler" disabled={false} />
                     </Link>
                 </StyleGroupButton>

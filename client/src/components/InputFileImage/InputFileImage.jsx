@@ -1,8 +1,16 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant InputFileImage : Fenetre de téléchargement d'image
+*/
+
 import React, {useState} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Popup from '../Popup/Popup.jsx'
 
+// css
 const InputStyle = styled.input `
   margin: 5px;
   border-radius: 5px;
@@ -13,6 +21,7 @@ const InputStyle = styled.input `
   }
 `
 
+// Composant
 const InputFileImage = (props) => {
   const { onChange, id, name, label, disabled, required } = props
 
@@ -24,6 +33,7 @@ const InputFileImage = (props) => {
         // Fichier valide
         onChange(file)
         setNotification("")
+
       } else {
         // Fichier non valide
         setNotification("Erreur ! ce fichier n'est pas une image.")

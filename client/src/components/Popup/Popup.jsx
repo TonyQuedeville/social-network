@@ -21,7 +21,7 @@ const TexteContainer = styled.p`
 
 const Popup = (props) => {
   const { texte, type } = props
-  console.log("Popup !");
+  //console.log("Popup !");
 
   return (
     <PopupContainer>

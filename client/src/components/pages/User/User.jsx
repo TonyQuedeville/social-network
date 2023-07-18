@@ -1,10 +1,18 @@
 // src/components/pages/User
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant User : Affiche l'ensemble des données d'un utilisateur
+    Page User : Route http://localhost:3000/login
+*/
 
 import React, { useContext } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
+//import axios from "axios"
 import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
@@ -56,14 +64,14 @@ const ProfilContainer = styled.div`
 // Composant
 const User = () => {
     const { theme } = useContext(ThemeContext)
-    
+
     // AuthUser
     const { authPseudo, followed, follower } = useContext(AuthContext)
     //console.log("authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
     //const followed // users suivis par authPseudo
     //const follower // users qui suivent authPseudo
     //const allowedUsers = ["Toto", "Tutu"] // liste de followers que authPseudo autorise sur le post
-    
+
     // User
     const { username } = useParams()
     //console.log("username:", username);
@@ -71,14 +79,14 @@ const User = () => {
     let confidencial = false
     if (authPseudo === username) {confidencial = true}
 
-    const UserInfos = () => {    
+    const UserInfos = async () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            makeRequest.get(`/${username.toLowerCase()}.json`).then((res) => {
+            makeRequest.get(`/${username.toLowerCase()}`).then((res) => {
                 return res.data
             })
         )
-        //console.log("dataUser:", dataUser);
-        
+        console.log("dataUser:", dataUser) 
+
         return (
             <>
                 {isLoadingUser ? (
@@ -86,7 +94,7 @@ const User = () => {
                 ) : (
                 <>
                     {errorUser && (
-                        <Popup texte="Le chargement des informations de cet utilisateur est erroné !" type='error' />
+                        <Popup texte={errorUser} type='error' />
                     )}
                     {dataUser && (
                         <>
