@@ -11,6 +11,36 @@ import (
 
 /* GETER >*/
 
+func GetUserById(get_user_id uint64, user_id uint64) *User {
+	u := User{}
+	err := database.Database.QueryRow(`
+	SELECT u.* FROM user u
+	LEFT JOIN follower f ON f.user_id = u.id AND f.follow_id = ?
+	WHERE u.id = ? AND
+	(u.id = ? OR u.status = 'public' OR f.user_id IS NOT NULL);
+	`, user_id, get_user_id, user_id).Scan(
+		&u.Id,
+		&u.Email,
+		&u.Password,
+		&u.First_name,
+		&u.Last_name,
+		&u.Born_date,
+		&u.Sexe,
+		&u.Image,
+		&u.Pseudo,
+		&u.About,
+		&u.Status,
+		&u.Created_at,
+		&u.Updated_at,
+	)
+	u.Password = ""
+	u.Email = ""
+	if err != nil {
+		fmt.Println("err getuserid by id:", err)
+	}
+	return &u
+}
+
 func GetUserByMail(email string) (*User, error) {
 	u := &User{}
 

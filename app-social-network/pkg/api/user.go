@@ -89,6 +89,16 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	if !IsGet(w, r) {
 		return
 	}
+	var get_user_id uint64
+	_, err := fmt.Sscanf(r.URL.Path, "/user/%d", &get_user_id) // recupere l'id
+	if err != nil {
+		BadRequest(w, err.Error())
+		return
+	}
+
+	user_id := r.Context().Value(USER_ID).(uint64)
+
+	Ok(w, user.GetUserById(get_user_id, user_id))
 }
 
 func GetUsers(w http.ResponseWriter, r *http.Request) {
