@@ -1,4 +1,10 @@
-// src/components/LoginForm
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant LoginForm : Formulaire de connection utilisateur
+    Page Login : Route http://localhost:3000/login
+*/
 
 import React, { useState, useEffect, useContext } from "react"
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider'
@@ -8,8 +14,8 @@ import styled from 'styled-components'
 import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
 import axios from "axios"
-//import { makeRequest } from '../../../utils/Axios/Axios.js'
 
+// css
 const StyleLoginContainer = styled.div `
     min-height: 88.5vh;
     display: flex;
@@ -36,6 +42,8 @@ const StyleGroupButton = styled.div `
     justify-content: center;
     flex-direction: row;
 `
+
+//Fonctions
 // Validation de l'adresse email
 function isValidEmail(value) {
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
@@ -48,47 +56,43 @@ function isValidEmail(value) {
     }
 }
 
+/*
 // Validation de l'adresse email ou du nom d'utilisateur
-/*function isValidEmail(value) {
-    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/
+function isValidPseudo(value) {
     const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/
 
-    if (emailRegex.test(value.toLowerCase())) {
-        //console.log("Using email regex to validate: " + value);
-        return true;
-    } else if (usernameRegex.test(value)) {
+    if (usernameRegex.test(value)) {
         //console.log("Using username regex to validate: " + value);
         return true;
     } else {
         return false;
     }
 }
-*/
+//*/
 
+// Composant
 function LoginForm() {
     const [formData, setFormData] = useState({
         email: '',
         password: '',
     })
 
-    // eslint-disable-next-line 
-    const { isLoggedIn, setIsLoggedIn } = useContext(AuthContext)
-    const { updateUserData } = useContext(AuthContext)
-
-    const [notification, setNotification] = useState('')
-    //const [password, setPassword] = useState("")
+    const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email ou du nom d'utilisateur
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
+    const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+    const { updateUserData, setIsLoggedIn } = useContext(AuthContext) // Utilisateur connecté
 
-    // Mettre à jour l'état isDisabled à chaque fois que l'état de isUsernameOrEmailValid ou isPasswordValid change
+    // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
+    // Quand toutes les conditions sont ok, le bouton devient cliquable.
     useEffect(() => {
         setIsDisabled(!(isEmailValid && isPasswordValid))
     }, [isEmailValid, isPasswordValid])
 
-    const navigate = useNavigate()
-    const [fetchError, setFetchError] = useState(false)
+    const navigate = useNavigate() // variable permettant de rediriger vers la page /user/pseudo si le login réussie
 
+    // mise à jour des champs de formData (formulaire)
     const handleChange = (e) => {
         if (e && e.target && e.target.name) {
             var value = e.target.value
@@ -110,55 +114,28 @@ function LoginForm() {
                 [e.target.name]: value
             }))
         }
-
-        console.log(formData); // (affichage avec 1 event de retard)
     }
 
     const handleSubmit = async (event) => {
         event.preventDefault()
-        //console.log("Username/Email:", usernameOrEmail);
-        //console.log("Password:", password);
 
-        if (isEmailValid && isPasswordValid) {
-            //console.log("Connexion valide !");
-            // logique de connexion 'o'
-            /*try {
-                setNotification("")
-                console.log(formData);
-                const response = await fetch(`http://${window.location.hostname}:8080/user/login`, {method:"POST",  body: JSON.stringify(formData)})
-                const responseText = await response.text();
-                console.log("responseText:", responseText);
-                
-                console.log("Response headers:", response.headers);
-
-                console.log("response:", response)
-                const data = await response.json()
-                console.log("data:", data)
-                updateUserData(data)
-                setIsLoggedIn(true)
-                navigate(`/user/${data.pseudo}`)
-
-            } catch (err) {
-                console.log("Error request register!", err.response);
-                console.log("Error message:", err.message)
-                setNotification("Erreur Login ou mot de passe !")
-                setFetchError(true);
-            }
-            //*/
-
-            
+        if (isEmailValid && isPasswordValid) {            
             try{
-                await axios.post(`http://${window.location.hostname}:8080/user/login`, JSON.stringify(formData))
-                console.log("formData:", formData)
-                updateUserData(formData)
+                const response = await axios.post(`http://${window.location.hostname}:8080/user/login`, JSON.stringify(formData))
+                const responseData = response.data;
+
+                console.log("responseData:", responseData.datas)
+                updateUserData(responseData.datas.user)
+                
                 setIsLoggedIn(true)
-                navigate(`/user/${formData.pseudo}`)
+                
+                navigate(`/user/${responseData.datas.user.pseudo}`)
             }
             catch (err) {
                 console.log("Error request register!", err.response);
-                console.log("Response headers:", err.response.headers);
                 console.log("Error message:", err.message)
-                setNotification("Erreur Login ou mot de passe !")
+                setNotification("Erreur login ou mot de passe !")
+                setNotification(err.message + " : " + err.response.data.error)
                 setFetchError(true)
             }
             finally {
@@ -202,7 +179,7 @@ function LoginForm() {
 
                 <StyleGroupButton>
                     <Button type="submit" text="Se connecter" disabled={isDisabled} />
-                    <Link to="/">
+                    <Link to="/login">
                         <Button onClick={handleLogout} text="Annuler" disabled={false} />
                     </Link>
                 </StyleGroupButton>

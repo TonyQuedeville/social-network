@@ -1,0 +1,105 @@
+Mettre en place un server Node JS : tchatGPT
+
+
+1.
+À l'intérieur du dossier "app-image-storage", vous pouvez initialiser un projet Node.js 
+en exécutant la commande : npm init . Cela créera un fichier package.json dans votre dossier 
+avec les métadonnées de votre application.
+
+2.
+Ensuite, vous pouvez installer les dépendances nécessaires à votre application de stockage 
+d'images. Par exemple, vous pouvez utiliser Express pour créer un serveur web minimal. 
+
+    2.1
+    Pour installer Express, exécutez la commande suivante : npm install express
+    Cela téléchargera et installera Express dans votre dossier "app-image-storage" et 
+    mettra à jour le fichier package.json avec l'entrée correspondante.
+
+    2.2
+    Installer la bibliothéque Multer: npm install multer
+
+    2.3
+    Installer CORS : npm install cors
+
+
+3.
+Une fois que vous avez installé les dépendances, vous pouvez créer un fichier principal 
+pour votre application, par exemple "server.js". C'est là que vous configurerez votre 
+serveur Express et gérerez les routes pour la gestion des images.
+
+4.
+Dans votre fichier "server.js", vous pouvez commencer par importer les modules nécessaires :
+    const express = require('express');
+    const app = express();
+
+5.
+Ensuite, vous pouvez configurer les routes pour gérer les requêtes liées aux images. 
+Par exemple, vous pouvez définir une route pour l'upload d'une image :
+    app.post('/upload', (req, res) => {
+        // Gérer l'upload de l'image ici
+    });
+Dans cette route, vous pouvez utiliser Multer pour gérer l'upload de l'image vers votre 
+système de fichiers ou votre service de stockage local.
+
+6.
+Vous pouvez également ajouter d'autres routes pour la gestion des images, telles que la 
+récupération d'une image par son nom de fichier, la suppression d'une image, etc.
+
+7.
+Enfin, vous pouvez démarrer votre serveur Express en écoutant sur un port spécifique :
+    const port = 3000;
+    app.listen(port, () => {
+        console.log(`Server is running on port ${port}`);
+    });
+
+8.
+Vous pouvez maintenant exécuter votre application de stockage d'images en exécutant la 
+commande node server.js dans votre terminal. Votre serveur Express sera démarré et sera 
+prêt à recevoir des requêtes.
+
+9.
+N'oubliez pas d'ajouter plus de fonctionnalités et de sécurités à votre application de 
+stockage d'images selon vos besoins. Vous pouvez également consulter la documentation 
+d'Express et de Multer pour obtenir plus d'informations sur leur utilisation dans votre 
+application.
+    Express : https://expressjs.com/fr/
+    Multer : https://github.com/expressjs/multer
+
+10. 
+Lancer le server :
+ "node server.js"
+
+11.
+ajouter la logique pour gérer l'upload de l'image dans votre route /upload du serveur 
+app-image-storage. Voici un exemple de code pour vous aider à démarrer :
+    const express = require('express');
+    const multer = require('multer');
+
+    const app = express();
+    const upload = multer({ dest: 'uploads/' }); // Le dossier où les fichiers téléchargés seront stockés
+
+    app.post('/upload', upload.single('image'), (req, res) => {
+    console.log('/upload !');
+
+    // Vérifier si un fichier a été téléchargé
+    if (!req.file) {
+        res.status(400).json({ error: 'Aucun fichier téléchargé' });
+        return;
+    }
+
+    // Obtenir les détails du fichier téléchargé
+    const { originalname, filename, path } = req.file;
+
+    // Effectuer ici les actions souhaitées avec le fichier téléchargé
+    // Par exemple, enregistrer le nom du fichier dans une base de données ou effectuer 
+    // d'autres opérations de traitement
+
+    // Répondre avec une confirmation de réussite
+    res.status(200).json({ message: 'Fichier téléchargé avec succès', filename, path });
+    });
+
+    // Autres routes et configurations du serveur
+
+    app.listen(4000, () => {
+    console.log('Serveur app-image-storage en cours d\'exécution sur le port 4000');
+    });

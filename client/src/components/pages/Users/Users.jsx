@@ -45,7 +45,7 @@ const Users = () => {
   const { authPseudo } = useContext(AuthContext);
   //console.log("authPseudo: ", authPseudo);
 
-  const navigate = useNavigate();
+  const navigate = useNavigate()
   const handleUserClick = (username) => {
     //console.log("username:", username)
     navigate(`/user/${username}`)
@@ -54,7 +54,7 @@ const Users = () => {
   //const [notification, setNotification] = useState('')
   const UsersList = () => {    
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
-      makeRequest.get(`/users.json`).then((res) => {
+      makeRequest.get(`/users`).then((res) => {
         return res.data
       })
     )

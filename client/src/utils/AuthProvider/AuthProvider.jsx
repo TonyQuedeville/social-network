@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	AuthProvider : Contexte Utilisateur
+*/
+
 import React, { createContext, useState } from 'react'
 import PropTypes from 'prop-types'
 
@@ -20,12 +27,13 @@ export const AuthProvider = ({ children }) => {
     const [groupListRequested, setGroupListRequested] = useState("")
 
     const updateUserData = (data) => {
+        //console.log("AuthProvider :", data);
         setEmail(data.email)
         setPseudo(data.pseudo)
         setAuthId(data.id)
         setLastname(data.lastname)
-        setSexe(data.sexe)
         setFirstname(data.firstname)
+        setSexe(data.sexe)
         setBornDate(data.born_date)
         setAbout(data.about)
         setPhotoProfile(data.image)
@@ -35,7 +43,6 @@ export const AuthProvider = ({ children }) => {
         setGroupListRequested(data.group_list_requested)
     }
 
-    //console.log("AuthProvider !");
     return (
         <AuthContext.Provider value={{ 
             isLoggedIn, setIsLoggedIn, 
@@ -62,6 +69,7 @@ export const AuthProvider = ({ children }) => {
 AuthProvider.propTypes = {
     children: PropTypes.node.isRequired,
     isLoggedIn: PropTypes.bool,
+    setIsLoggedIn: PropTypes.func,
     authPseudo: PropTypes.string,
     authId: PropTypes.number,
     email: PropTypes.string,
