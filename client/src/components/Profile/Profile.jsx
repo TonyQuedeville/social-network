@@ -1,4 +1,9 @@
-// src/components/pages/Profile
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Profile : Affiche les données d'un utilisateur
+*/
 
 import React, { useContext, useState, useEffect } from 'react';
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx';

@@ -1,4 +1,10 @@
-// src/components/pages/Users
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant User : Affiche la liste des utilisateurs inscrits
+  Page Users : Route http://localhost:3000/users
+*/
 
 import React, { useContext } from 'react'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
@@ -52,13 +58,13 @@ const Users = () => {
   }
 
   //const [notification, setNotification] = useState('')
-  const UsersList = () => {    
+  const UsersList = () => { 
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
       makeRequest.get(`/users`).then((res) => {
         return res.data
       })
     )
-    //console.log("dataUsers:", dataUsers);
+    console.log("dataUsers:", dataUsers);
     
     return (
         <>
