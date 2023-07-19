@@ -2,8 +2,10 @@ package server
 
 import (
 	"context"
+	"fmt"
 	"net/http"
 
+	"github.com/TonyQuedeville/social-network/app-social-network/pkg/api"
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
@@ -30,10 +32,6 @@ func AlowCorse(next http.Handler) http.Handler {
 	})
 }
 
-type ck string
-
-const USER_ID = ck("user_id")
-
 func CheckSession(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		ck, err := r.Cookie("session")
@@ -41,7 +39,8 @@ func CheckSession(next http.Handler) http.Handler {
 		if err == nil {
 			u_id = user.GetUserIdByUuid(ck.Value)
 		}
-		ctx := context.WithValue(r.Context(), USER_ID, u_id)
+		fmt.Println("Middleware Session idfind: ", u_id)
+		ctx := context.WithValue(r.Context(), api.USER_ID, u_id)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
 	})
