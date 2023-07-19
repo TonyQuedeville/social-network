@@ -141,7 +141,7 @@ function LoginForm() {
             //*/
         }
     }
-
+//
     // Annuler
     const handleCancel = () => {
         //setIsLoggedIn(false);
