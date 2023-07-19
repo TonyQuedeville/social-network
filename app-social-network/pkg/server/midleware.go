@@ -28,6 +28,14 @@ func AlowCorse(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
 		w.Header().Set("Access-Control-Allow-Origin", "*") // A CHANGER POUR UN POTENTIEL DEPLOIMENT
+
+		// Allow the use of credentials (like cookies) in the requests
+		w.Header().Set("Access-Control-Allow-Credentials", "true")
+
+		// If it's a preflight request, just return without calling the next handler
+		if r.Method == "OPTIONS" {
+			return
+		}
 		next.ServeHTTP(w, r)
 	})
 }

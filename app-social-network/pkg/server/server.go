@@ -17,5 +17,6 @@ func InitServer() {
 	mux.Handle("/user/login", ApplyMiddleware(http.HandlerFunc(api.UserLogin)))
 	mux.Handle("/users", ApplyMiddleware(http.HandlerFunc(api.GetUsers)))
 	mux.Handle("/user/", ApplyMiddleware(http.HandlerFunc(api.GetUserById)))
+	// mux.Handle("/follower/", ApplyMiddleware(http.HandlerFunc(api.GetFollowerUserById)))
 	http.ListenAndServe(ADRESS, mux)
 }

@@ -3,6 +3,7 @@ package user
 import (
 	"errors"
 	"fmt"
+	"time"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 	"github.com/gofrs/uuid"
@@ -13,12 +14,20 @@ import (
 
 func GetUserById(get_user_id uint64, user_id uint64) *User {
 	u := User{}
+	var have_acess bool
 	err := database.Database.QueryRow(`
-	SELECT u.* FROM user u
-	LEFT JOIN follower f ON f.user_id = u.id AND f.follow_id = ?
-	WHERE u.id = ? AND
-	(u.id = ? OR u.status = 'public' OR f.user_id IS NOT NULL);
-	`, user_id, get_user_id, user_id).Scan(
+	SELECT u.*,
+	CASE
+		WHEN  ? = ?
+			OR u.status = 'public'
+			OR (f.user_id IS NOT NULL)
+			THEN 1
+			ELSE 0
+		END AS have_acess
+	FROM user u
+	LEFT JOIN follower f ON f.user_id = ? AND f.follow_id = ?
+	WHERE u.id = ?;
+	`, user_id, get_user_id, get_user_id, user_id, get_user_id).Scan(
 		&u.Id,
 		&u.Email,
 		&u.Password,
@@ -32,9 +41,13 @@ func GetUserById(get_user_id uint64, user_id uint64) *User {
 		&u.Status,
 		&u.Created_at,
 		&u.Updated_at,
+		&have_acess,
 	)
 	u.Password = ""
 	u.Email = ""
+	if !have_acess {
+		u.RemoveCriticalData()
+	}
 	if err != nil {
 		fmt.Println("err getuserid by id:", err)
 	}
@@ -91,10 +104,10 @@ func GetUserIdByUuid(uuid string) uint64 {
 func GetUsers(user_id uint64) []*User {
 	c := `
 	CASE
-			WHEN u.id = %v
-				OR u.status = 'public'
-				OR (f.user_id IS NOT NULL)
-				THEN u.%v
+		WHEN u.id = %v
+			OR u.status = 'public'
+			OR (f.user_id IS NOT NULL)
+			THEN u.%v
 		END AS %v`
 	rows, err := database.Database.Query(fmt.Sprintf(
 		`SELECT
@@ -123,7 +136,25 @@ func GetUsers(user_id uint64) []*User {
 	return result
 }
 
+func GetFollower(get_user_id uint64, user_id uint64) {
+	database.Database.Query(`SELECT u.* FROM user u
+	LEFT JOIN follower f ON f.user_id = 2
+	WHERE f.user_id IS NOT NULL;`)
+}
+
 /*< GETER */
+
+func (u *User) RemoveCriticalData() {
+	u.Email = ""
+	u.Password = ""
+	u.First_name = ""
+	u.Last_name = ""
+	u.Born_date = time.Time{}
+	u.Sexe = ""
+	u.About = ""
+	u.Created_at = time.Time{}
+	u.Updated_at = time.Time{}
+}
 
 // register user in database with given password
 func (u *User) Register() error {
