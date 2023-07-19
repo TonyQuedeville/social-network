@@ -75,10 +75,11 @@ func GetUsers(user_id uint64) []*User {
 		%v,
 		%v,
 		%v,
+		%v,
 		%v
 	FROM user u
 	LEFT JOIN follower f ON f.user_id = u.id AND f.follow_id = %v;
-	`, fmt.Sprintf(c, user_id, "about", "about"), fmt.Sprintf(c, user_id, "sexe", "sexe"), fmt.Sprintf(c, user_id, "first_name", "first_name"), fmt.Sprintf(c, user_id, "last_name", "last_name"), fmt.Sprintf(c, user_id, "date_of_birth", "date_of_birth"), user_id))
+	`, fmt.Sprintf(c, user_id, "about", "about"), fmt.Sprintf(c, user_id, "sexe", "sexe"), fmt.Sprintf(c, user_id, "first_name", "first_name"), fmt.Sprintf(c, user_id, "last_name", "last_name"), fmt.Sprintf(c, user_id, "date_of_birth", "date_of_birth"), fmt.Sprintf(c, user_id, "status", "status"), user_id))
 	if err != nil {
 		fmt.Println("ERREUR QUERY ALL USERS: ", err)
 	}
