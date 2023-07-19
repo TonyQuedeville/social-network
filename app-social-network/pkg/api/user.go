@@ -9,6 +9,10 @@ import (
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
+type ck string
+
+const USER_ID = ck("user_id")
+
 func UserRegister(w http.ResponseWriter, r *http.Request) {
 	fmt.Println("TRY REGISTER")
 	// only post
@@ -78,4 +82,20 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 	fmt.Println("LOGIN OK")
 	Ok(w, rep)
+}
+
+func GetUserById(w http.ResponseWriter, r *http.Request) {
+	// only get methode
+	if !IsGet(w, r) {
+		return
+	}
+}
+
+func GetUsers(w http.ResponseWriter, r *http.Request) {
+	// only get methode
+	if !IsGet(w, r) {
+		return
+	}
+	u_id := r.Context().Value(USER_ID).(uint64)
+	Ok(w, user.GetUsers(u_id))
 }
