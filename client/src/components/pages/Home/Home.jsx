@@ -1,4 +1,10 @@
-// src/components/pages/Home
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Home
+    Page d'acceuil : Route http://localhost:3000/
+*/
 
 import React from "react"
 import styled from 'styled-components'

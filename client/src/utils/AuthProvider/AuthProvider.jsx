@@ -11,7 +11,6 @@ import PropTypes from 'prop-types'
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
-    const [isLoggedIn, setIsLoggedIn] = useState(false)
     const [email, setEmail] = useState("")
     const [authPseudo, setPseudo] = useState("")
     const [authId, setAuthId] = useState("")
@@ -27,7 +26,6 @@ export const AuthProvider = ({ children }) => {
     const [groupListRequested, setGroupListRequested] = useState("")
 
     const updateUserData = (data) => {
-        //console.log("AuthProvider :", data);
         setEmail(data.email)
         setPseudo(data.pseudo)
         setAuthId(data.id)
@@ -45,7 +43,6 @@ export const AuthProvider = ({ children }) => {
 
     return (
         <AuthContext.Provider value={{ 
-            isLoggedIn, setIsLoggedIn, 
             email, setEmail,
             authPseudo, setPseudo,
             authId, setAuthId,
@@ -68,8 +65,6 @@ export const AuthProvider = ({ children }) => {
 
 AuthProvider.propTypes = {
     children: PropTypes.node.isRequired,
-    isLoggedIn: PropTypes.bool,
-    setIsLoggedIn: PropTypes.func,
     authPseudo: PropTypes.string,
     authId: PropTypes.number,
     email: PropTypes.string,

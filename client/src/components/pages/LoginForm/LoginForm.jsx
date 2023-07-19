@@ -70,6 +70,7 @@ function isValidPseudo(value) {
 }
 //*/
 
+
 // Composant
 function LoginForm() {
     const [formData, setFormData] = useState({
@@ -82,7 +83,7 @@ function LoginForm() {
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
-    const { updateUserData, setIsLoggedIn } = useContext(AuthContext) // Utilisateur connecté
+    const { updateUserData } = useContext(AuthContext) // Utilisateur connecté
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
     // Quand toutes les conditions sont ok, le bouton devient cliquable.
@@ -126,15 +127,12 @@ function LoginForm() {
 
                 console.log("responseData:", responseData.datas)
                 updateUserData(responseData.datas.user)
-                
-                setIsLoggedIn(true)
+
+                //setIsLoggedIn(true)
                 
                 navigate(`/user/${responseData.datas.user.pseudo}`)
             }
             catch (err) {
-                console.log("Error request register!", err.response);
-                console.log("Error message:", err.message)
-                setNotification("Erreur login ou mot de passe !")
                 setNotification(err.message + " : " + err.response.data.error)
                 setFetchError(true)
             }
@@ -143,10 +141,17 @@ function LoginForm() {
             //*/
         }
     }
-
-    // Se déconnecter
-    const handleLogout = () => {
-        setIsLoggedIn(false);
+//
+    // Annuler
+    const handleCancel = () => {
+        //setIsLoggedIn(false);
+        //updateUserData()
+        setFormData({
+            email: '',
+            password: ''
+        })
+        setIsEmailValid(false)
+        setIsPasswordValid(false)
     }
 
     return (
@@ -156,8 +161,8 @@ function LoginForm() {
                     <InputText
                         id="email"
                         name="email"
-                        label="* Nom d'utilisateur ou email:"
-                        title=""
+                        label="* Email:"
+                        title="Adresse mail uniquement"
                         //value={email}
                         onChange={handleChange}
                         required
@@ -180,7 +185,7 @@ function LoginForm() {
                 <StyleGroupButton>
                     <Button type="submit" text="Se connecter" disabled={isDisabled} />
                     <Link to="/login">
-                        <Button onClick={handleLogout} text="Annuler" disabled={false} />
+                        <Button onClick={handleCancel} text="Annuler" disabled={false} />
                     </Link>
                 </StyleGroupButton>
             </StyleLoginForm>

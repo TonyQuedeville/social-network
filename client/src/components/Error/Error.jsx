@@ -1,8 +1,15 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Error : Affiche la page Error 404
+*/
+
 import React from 'react'
 import styled from 'styled-components'
 
 const ErrorContainer = styled.div`
-        heigth: 800px;
+        height: 800px;
         display: flex;
         flex-direction: column;
         align-items: center;

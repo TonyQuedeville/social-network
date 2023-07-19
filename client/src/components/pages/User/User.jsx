@@ -1,10 +1,9 @@
-// src/components/pages/User
 /*
 	Projet Zone01 : Social network
 	Tony Quedeville 
 	10/07/2023
 	Composant User : Affiche l'ensemble des données d'un utilisateur
-    Page User : Route http://localhost:3000/login
+    Page User : Route http://localhost:3000/user/:username
 */
 
 import React, { useContext } from 'react'
@@ -68,9 +67,8 @@ const User = () => {
     // AuthUser
     const { authPseudo, followed, follower } = useContext(AuthContext)
     //console.log("authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
-    //const followed // users suivis par authPseudo
     //const follower // users qui suivent authPseudo
-    //const allowedUsers = ["Toto", "Tutu"] // liste de followers que authPseudo autorise sur le post
+    //const followed // users suivis par authPseudo
 
     // User
     const { username } = useParams()
@@ -81,7 +79,7 @@ const User = () => {
 
     const UserInfos = async () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            makeRequest.get(`/${username.toLowerCase()}`).then((res) => {
+            makeRequest.get(`/user/${username.toLowerCase()}`).then((res) => {
                 return res.data
             })
         )
