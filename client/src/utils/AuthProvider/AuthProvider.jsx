@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     const [groupListRequested, setGroupListRequested] = useState("")
 
     const updateUserData = (data) => {
+        //console.log("updateUserData:", data);
         setEmail(data.email)
         setPseudo(data.pseudo)
         setAuthId(data.id)
@@ -49,6 +50,7 @@ export const AuthProvider = ({ children }) => {
 
     const handleLogout = () => {
         Cookies.remove('session')
+        updateUserData({})
         setIsAuthenticated(false)
     }
 
@@ -90,7 +92,7 @@ AuthProvider.propTypes = {
     photoProfile: PropTypes.string,
     statusProfil: PropTypes.string,
     updateUserData: PropTypes.func,
-    follower: PropTypes.arrayOf(PropTypes.string),
-    followed: PropTypes.arrayOf(PropTypes.string),
+    follower: PropTypes.arrayOf(PropTypes.object),
+    followed: PropTypes.arrayOf(PropTypes.object),
     groupListRequested: PropTypes.arrayOf(PropTypes.number),
 }

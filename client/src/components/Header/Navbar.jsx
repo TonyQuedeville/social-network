@@ -5,7 +5,7 @@
 	Composant Navbar : Barre de navigation
 */
 
-import React, { useContext, useEffect, useState } from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -40,7 +40,7 @@ const StyledGroupIcn = styled.div `
 
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
-    const { authPseudo, photoProfile, isAuthenticated, handleLogout } = useContext(AuthContext)
+    const { authId, photoProfile, isAuthenticated, handleLogout } = useContext(AuthContext)
 
     return (
         <StyledNav theme={theme}>
@@ -81,7 +81,7 @@ const Navbar = () => {
                         <Link to="/">
                             <Button text="Se déconnecter" onClick={handleLogout} disabled={false} />
                         </Link>
-                        <Link to={`/user/${authPseudo}`}>
+                        <Link to={`/user/${authId}`}>
                             <Icone 
                                 alt="Mon profile" 
                                 disabled={!isAuthenticated} 
