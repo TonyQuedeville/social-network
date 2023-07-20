@@ -51,32 +51,9 @@ func GetUserById(get_user_id uint64, user_id uint64) *User {
 	if err != nil {
 		fmt.Println("err 1 getuserid by id:", err)
 	}
-	rows, err := database.Database.Query(`
-	SELECT u.id, u.pseudo, u.image FROM user u
-	LEFT JOIN follower f ON f.user_id = ?
-	WHERE u.id = f.follow_id AND f.user_id IS NOT NULL;
-	`, get_user_id)
-	if err != nil {
-		fmt.Println("err 2 getuserid by id:", err)
-	}
-	for rows.Next() {
-		f_u := User{}
-		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
-		u.Follower = append(u.Follower, &f_u)
-	}
 
-	rows, err = database.Database.Query(`
-	SELECT u.id, u.pseudo, u.image FROM user u
-	LEFT JOIN follower f ON f.follow_id = ?
-	WHERE u.id = f.user_id AND f.user_id IS NOT NULL;
-	`, get_user_id)
-	if err != nil {
-		fmt.Println("err 3 getuserid by id:", err)
-	}
-	for rows.Next() {
-		f_u := User{}
-		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
-		u.Followed = append(u.Followed, &f_u)
+	if err := u.AddFollowerFollowed(); err != nil {
+		fmt.Println("err 2 getuserid by id:", err)
 	}
 
 	return &u
@@ -104,6 +81,12 @@ func GetUserByMail(email string) (*User, error) {
 		&u.Updated_at,
 	)
 	u.Password = ""
+	if err != nil {
+		return u, err
+	}
+
+	u.AddFollowerFollowed()
+
 	return u, err
 }
 
@@ -281,3 +264,38 @@ func Login(password, email string) (*User, string, error) {
 	u.Password = ""
 	return u, uuid.String(), nil
 }
+
+func (u *User) AddFollowerFollowed() error {
+	rows, err := database.Database.Query(`
+	SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.user_id = ?
+	WHERE u.id = f.follow_id AND f.user_id IS NOT NULL;
+	`, u.Id)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		f_u := User{}
+		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
+		u.Follower = append(u.Follower, &f_u)
+	}
+
+	rows, err = database.Database.Query(`
+	SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.follow_id = ?
+	WHERE u.id = f.user_id AND f.user_id IS NOT NULL;
+	`, u.Id)
+	if err != nil {
+		return err
+	}
+	for rows.Next() {
+		f_u := User{}
+		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
+		u.Followed = append(u.Followed, &f_u)
+	}
+	return nil
+}
+
+// addFollower
+
+// removeFollower

@@ -22,8 +22,8 @@ func TestRegisterUserBadBirthDate(t *testing.T) {
 		Pseudo:     "",         // string    `json:"pseudo"`
 		Image:      "",         // string    `json:"image"`
 		About:      "",         // string    `json:"about"`
-		Follower:   []uint64{}, //[]uint64  `json:"follower"`
-		Followed:   []uint64{}, //[]uint64  `json:"followed"`
+		Follower:   []*User{},  //[]uint64  `json:"follower"`
+		Followed:   []*User{},  //[]uint64  `json:"followed"`
 		Created_at: time.Now(), // time.Time `json:"created_at"`
 		Updated_at: time.Now(), // time.Time `json:"updated_at"`
 	}
@@ -47,8 +47,8 @@ func TestRegisterUserGoodBirthDate(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string     `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
@@ -73,8 +73,8 @@ func TestRegisterUserBadMail(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string    `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
@@ -97,8 +97,8 @@ func TestRegisterUserGoodMail(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string    `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
@@ -122,8 +122,8 @@ func TestRegisterUserBadPassword(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string    `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
@@ -145,8 +145,8 @@ func TestRegisterUserGoodPassword(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string    `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
@@ -171,8 +171,8 @@ func TestRegisterUserGoodCredential(t *testing.T) {
 		Pseudo:     "",                            // string    `json:"pseudo"`
 		Image:      "",                            // string    `json:"image"`
 		About:      "",                            // string    `json:"about"`
-		Follower:   []uint64{},                    //[]uint64  `json:"follower"`
-		Followed:   []uint64{},                    //[]uint64  `json:"followed"`
+		Follower:   []*User{},                     //[]uint64  `json:"follower"`
+		Followed:   []*User{},                     //[]uint64  `json:"followed"`
 		Created_at: time.Now(),                    // time.Time `json:"created_at"`
 		Updated_at: time.Now(),                    // time.Time `json:"updated_at"`
 	}
