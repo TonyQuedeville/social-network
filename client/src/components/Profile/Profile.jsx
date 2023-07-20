@@ -16,7 +16,7 @@ import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchF
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 
 // css
-const ProfilCard = styled.div`
+const StyleProfilCard = styled.div`
   width: 100%;
   padding: 10px;
   display: flex;
@@ -64,10 +64,11 @@ const StylePhotoProfile = styled.img`
 
 // Composant
 const Profile = (props) => {
-  const { pseudo, 
+  const { 
+          id,
+          pseudo, 
           sexe, 
           status, 
-          hideStatus, 
           about, 
           image, 
           lastname, 
@@ -76,10 +77,13 @@ const Profile = (props) => {
         } = props
 
   const { theme } = useContext(ThemeContext)
-  const { authPseudo } = useContext(AuthContext)
+  const { authPseudo, followed } = useContext(AuthContext)
   //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo)
+  //if (follower.includes(authId)) {
+  //  console.log("follower:", follower)
+  //}
   
-  console.log("status: ", status);
+  //console.log("status: ", status);
   const [statusProfil, setStatusProfil] = useState(status)
 
   useEffect(() => {
@@ -87,25 +91,25 @@ const Profile = (props) => {
   }, [status])
 
   const updateStatusProfilOnServer = (newStatus) => {
-    console.log("newStatus:", newStatus);
+    console.log("newStatus:", newStatus)
     // Effectuer la requête HTTP ou la communication avec le serveur pour mettre à jour le statut du profil
-  };
+  }
 
   const handleStatusProfilChange = (event) => {
     const newStatus = event.target.value
-    setStatusProfil(newStatus);
-    updateStatusProfilOnServer(newStatus); // Envoyer le changement au serveur
+    setStatusProfil(newStatus)
+    updateStatusProfilOnServer(newStatus) // Envoyer le changement au serveur
   }
 
   return (
-    <ProfilCard theme={theme}>
+    <StyleProfilCard theme={theme}>
       <StyleLabelUser>
         <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
         {image ? 
           <StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${image}`} id={`user-photo-${pseudo}`} alt="photoProfile" />
           : <StylePhotoProfile src={sexe === 'f' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${pseudo}`} alt="photoProfile" />
         }
-        {!hideStatus && authPseudo === pseudo ? 
+        { authPseudo === pseudo ? 
           <StyleLabInput>
             <p>Status profil</p>
             <RadioBouton
@@ -129,16 +133,16 @@ const Profile = (props) => {
         }
       </StyleLabelUser>
 
-      {statusProfil === "public" || authPseudo === pseudo ?
+      { statusProfil === "public" || authPseudo === pseudo || (followed && followed.includes(id)) ?
         <>
           <InfoUser>
-            {firstname && (
+            { firstname && (
               <span id={`user-nom-${pseudo}`}>Nom: {lastname}</span>
             )}
-            {lastname && (
+            { lastname && (
               <span id={`user-nom-${pseudo}`}>Prénom: {firstname}</span>
             )}
-            {bornDate && (
+            { bornDate && (
               <span id={`user-age-${pseudo}`}>Date de naissance: {FrenchFormatDateConvert(bornDate)}</span>
             )}
           </InfoUser>
@@ -146,7 +150,7 @@ const Profile = (props) => {
         </>
       : <></>
     }
-    </ProfilCard>
+    </StyleProfilCard>
   )
 }
 

@@ -64,7 +64,7 @@ const User = () => {
     const { theme } = useContext(ThemeContext)
 
     // AuthUser
-    const { authPseudo, followed, follower } = useContext(AuthContext)
+    const { authPseudo, followed } = useContext(AuthContext)
     //console.log("authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
     //const follower // users qui suivent authPseudo
     //const followed // users suivis par authPseudo
@@ -79,7 +79,7 @@ const User = () => {
     const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
             makeRequest.get(`/user/${userid}`).then((res) => {
-                console.log("res.data:", res.data);
+                //console.log("res.data:", res.data)
                 return res.data
             })
         )
@@ -140,10 +140,6 @@ const User = () => {
         )
     }
 
-    const handleFollowersChange = (follower) => {        
-        console.log("follower:", follower)
-    }
-
     // Composant 
     return (        
         <PageContainer>
@@ -156,10 +152,7 @@ const User = () => {
                 </div>
 
                 { authPseudo === userid ? (
-                    <NewPost 
-                        follower={follower}
-                        onChange={handleFollowersChange}
-                    />
+                    <NewPost/>
                 ) : (<></>)}
 
                 {/* Posts */}

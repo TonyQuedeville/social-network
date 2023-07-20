@@ -6,7 +6,7 @@
   Page Users : Route http://localhost:3000/users
 */
 
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
@@ -15,8 +15,10 @@ import Popup from '../../Popup/Popup.jsx'
 import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
+import IcnSupFriend from '../../../assets/icn/icn-supfriend.jpg'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
 import { makeRequest } from '../../../utils/Axios/Axios.js'
+import axios from "axios"
 
 const queryClient = new QueryClient()
 
@@ -48,66 +50,107 @@ const StyledLink = styled.div`
 `
 
 const Users = () => {
-  const { authPseudo } = useContext(AuthContext)
-  //console.log("authPseudo: ", authPseudo)
+  const { authPseudo, followed } = useContext(AuthContext)
+  const followedId = (followed||[]).map(follow => follow.id) 
+  console.log("authPseudo:", authPseudo, "followedId:", followedId);
 
   const navigate = useNavigate()
+  const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
+
+  // Redirection vers la page "/user/userid"
   const handleUserClick = (userid) => {
-    //console.log("userid:", userid)
     navigate(`/user/${userid}`)
   }
 
-  //const [notification, setNotification] = useState('')
+  // Demande d'ajout de follower
+  const handleAddFollowerClick = async (userid) => {
+    // Requete de demande d'ajout follower vers app-social-network
+    try{
+      await axios.post(`http://${window.location.hostname}:8080/addfollower/${userid}`)
+
+      setFetchError(false)
+    }
+    catch (err) {
+        setNotification(err.message + " : " + err.response.data.error)
+        setFetchError(true)
+    }
+    finally {
+    }
+  }
+
+  // demande de suppression de follower
+  const handleSupFollowerClick = async (userid) => {
+    // Requete de demande d'ajout follower vers app-social-network
+    try{
+      await axios.post(`http://${window.location.hostname}:8080/supfollower/${userid}`)
+
+      setFetchError(false)
+    }
+    catch (err) {
+        setNotification(err.message + " : " + err.response.data.error)
+        setFetchError(true)
+    }
+    finally {
+    }
+  }
+
   const UsersList = () => { 
     const { data: dataUsers, isLoading: isLoadingUsers, error: errorUsers } = useQuery(['dataUsers'], () =>
       makeRequest.get(`/users`).then((res) => {
         return res.data
       })
     )
+    //console.log("dataUsers:", dataUsers);
     
     return (
+      <>
+        {isLoadingUsers ? (
+        <Loader id="loader" />
+        ) : (
         <>
-          {isLoadingUsers ? (
-          <Loader id="loader" />
-          ) : (
-          <>
-            {errorUsers && (
-                <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
-            )}
-            {dataUsers && (
-              dataUsers.datas.map((user, index) => (
-                authPseudo !== user.pseudo ? 
-                  <StyledLink                 
-                    key={`${user.pseudo}-${index}`} 
-                    id={`user-link-${user.pseudo}`}
-                    onClick={() => handleUserClick(user.id)}
-                  >
-                    <>
-                      <Profile 
-                        //{...user} // syntaxe impossible à cause de hideStatus
-                        pseudo={user.pseudo}
-                        sexe={user.sexe}
-                        about={user.about}
-                        status={user.status}
-                        image={user.image}
-                        lastname={user.lastname}
-                        firstname={user.firstname}
-                        bornDate={user.bornDate}
-                        hideStatus={true}
-                      />
-                      <Icone 
-                        alt="Ajouter"
-                        image={IcnAddFriend}
-                        disabled={false}
-                      />
-                    </>
-                  </StyledLink>
-                  : null
-              ))
-            )}
-          </>
+          {errorUsers && (
+            <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
+          )}
+          {dataUsers && (
+            dataUsers.datas.map((user, index) => (
+              authPseudo !== user.pseudo ? 
+                <StyledLink                 
+                  key={`${user.pseudo}-${index}`} 
+                  id={`user-link-${user.pseudo}`}
+                  onClick={() => handleUserClick(user.id)}
+                >
+                  <>
+                    <Profile 
+                      {...user} 
+                    />
+                    { authPseudo && 
+                      <>
+                        { followed && followedId.includes(user.id) ?
+                          <Icone 
+                            alt="Ne plus suivre"
+                            image={IcnSupFriend}
+                            disabled={false}
+                            onClick={() => handleSupFollowerClick(user.id)}
+                          />
+                          : <Icone 
+                              alt="Suivre"
+                              image={IcnAddFriend}
+                              disabled={false}
+                              onClick={() => handleAddFollowerClick(user.id)}
+                              
+                            />
+                        }
+                      </>
+                    }
+                  </>
+                </StyledLink>
+              : null
+            ))
           )}
         </>
+        )}
+      </>
     )
   }
 
@@ -117,6 +160,10 @@ const Users = () => {
       <QueryClientProvider client={queryClient}>
         <UsersList />
       </QueryClientProvider>
+
+      {fetchError && notification && (
+        <Popup texte={notification} type='error' />
+      )}
     </ListContainer>
   )
 }

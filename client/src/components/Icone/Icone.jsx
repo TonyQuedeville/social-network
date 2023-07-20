@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Icone : créé un icone
+*/
+
 import React from 'react'
 import styled, { css } from 'styled-components'
 import PropTypes from 'prop-types'

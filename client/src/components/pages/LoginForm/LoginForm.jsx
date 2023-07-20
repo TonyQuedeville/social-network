@@ -132,7 +132,7 @@ function LoginForm() {
                 Cookies.set('session', responseData.datas.uuid, { expires: 1, path: '/' }) // définir le cookie 
 
                 // Données AuthUser
-                //console.log("userData:", responseData.datas.user)
+                //console.log("userData:", responseData.datas)
                 updateUserData(responseData.datas.user)
                 handleLogin()
                 
