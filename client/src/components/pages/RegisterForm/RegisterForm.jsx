@@ -106,7 +106,6 @@ function RegisterForm() {
         status: '',
     })
 
-
     // Mise à jour de formData à chaque changement dans le formulaire
     const handleChange = (e) => {
         if (e && e.target && e.target.name) {
@@ -115,7 +114,7 @@ function RegisterForm() {
                 case "image" : 
                     if (e.target.files && e.target.files.length > 0) {
                         const file = e.target.files[0]
-                        setImageUrl(URL.createObjectURL(file));
+                        setImageUrl(URL.createObjectURL(file))
                         value = file.name
                         setSelectedImage(file)
                     }
@@ -223,7 +222,7 @@ function RegisterForm() {
             data = {
             ...formData,
             image: imageUrl,
-            };
+            }
         }
         
         // Requete d'enregistrement vers app-social-network

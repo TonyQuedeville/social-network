@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	14/07/2023
+	Package Axios : Gére les requètes à app-social-network
+*/
+
 import axios from "axios"
 
 export const makeRequest = axios.create({

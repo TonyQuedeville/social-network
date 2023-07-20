@@ -2,6 +2,8 @@ import React, { useState, useContext, useEffect } from 'react'
 //import { useParams } from 'react-router-dom'
 //import { Loader } from '../../../utils/Atom.jsx'
 //import { useQuery } from '@tanstack/react-query' //'react-query'
+import axios from "axios"
+import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -12,8 +14,10 @@ import Button from '../Button/Button.jsx'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnPhoto from '../../assets/icn/icn_appareil_photo.svg'
+import useImageUpload from '../../utils/hooks/ImageUpload/useImageUpload.js'
 import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
+import Popup from '../Popup/Popup.jsx'
 import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 
 // css
@@ -43,24 +47,108 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewPost = ({ follower, onChange }) => {
+//const NewPost = ({ follower, onChange }) => {
 	//console.log("follower:", follower);
+const NewPost = () => {
 	const { theme } = useContext(ThemeContext)
+
+	// AuthUser
+    const { authId, follower } = useContext(AuthContext)
 	
 	// New Post
+	const { imageUrl, selectedImage, setImageUrl, setSelectedImage, uploadImage } = useImageUpload() // Hook personalisé: image selectionnée qui sera envoyée au server app-image-storage
+	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
+	
 	const [titleNewPost, setTitleNewPost] = useState('')
 	const [newPostContent, setNewPostContent] = useState('')
 	const [postImage, setPostImage] = useState(null)
 	const [showInputFile, setShowInputFile] = useState(false)
 	const [validNewPostisDisabled, setValidNewPostisDisabled] = useState(true)
-	const [newPostConfidencial, setNewPostConfidencial] = useState('private')
+	//const [newPostConfidencial, setNewPostConfidencial] = useState('private')
 	//const { dataNewPosts, isLoadingNewPosts, errorNewPosts } = useFetch('http://localhost:8080/newposts.json')
 
-	const handleNewPostSubmit = (event) => {
+	// Followers
+	const [showFollowersSelector, setShowFollowersSelector] = useState(false)
+	const [private_list, setPrivate_list] = useState([])
+
+	const [formData, setFormData] = useState({
+        user_id: authId,
+		status: '',
+		title: '',
+		content: '',
+		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
+		private_list: '',
+    })
+
+    // Mise à jour de formData à chaque changement dans le formulaire
+    const handleChange = (e) => {
+        if (e && e.target && e.target.name) {
+            var value = e.target.value
+            switch(e.target.name) {
+                case "image" : 
+                    if (e.target.files && e.target.files.length > 0) {
+                        const file = e.target.files[0]
+                        setImageUrl(URL.createObjectURL(file))
+                        value = file.name
+                        setSelectedImage(file)
+						setShowInputFile(true)
+                    }
+                    break
+
+                case "born_date" :
+                    value = value + "T00:00:00.000+00:00"
+                    break
+
+                default :
+                    break
+            }
+
+            setFormData(prev => ({
+                ...prev,
+                [e.target.name]: value
+            }))
+        }
+    }
+
+	const handleNewPostSubmit = async (event) => {
 		event.preventDefault()
-    	//onChange(followed);
-		console.log("handleNewPostSubmit:",event)
+        let data = {
+            ...formData,
+                image: "",
+        } 
+        
+        // Requete téléchargement de l'image vers app-image-storage par le hook personnalisé
+        if (selectedImage) {
+            await uploadImage(selectedImage)
+            data = {
+            ...formData,
+            image: imageUrl,
+            }
+        }
+        
+        // Requete d'enregistrement vers app-social-network
+        try{
+            await axios.post(`http://${window.location.hostname}:8080/newpost`, JSON.stringify(data))
+
+            setFetchError(false)
+        }
+        catch (err) {
+            setNotification(err.message + " : " + err.response.data.error)
+            setFetchError(true)
+        }
+        finally {
+        }
 	}
+
+	const CancelNewPost = () => {
+		setNewPostContent('')
+		setTitleNewPost('')
+		setPostImage('')
+		//console.log("annuler new post !");
+	}
+
+	/*
 	const handleTitleNewPostChange = (event) => {
 		setTitleNewPost(event.target.value)
 		//console.log("setTitleNewPost:", titleNewPost)
@@ -78,13 +166,6 @@ const NewPost = ({ follower, onChange }) => {
 			setShowFollowersSelector(false)
 		}
 	}
-	const CancelNewPost = () => {
-		setNewPostContent('')
-		setTitleNewPost('')
-		setPostImage('')
-		//console.log("annuler new post !");
-	}
-
 	// Image post
 	const loadPhotoPost = () => {
 		//console.log("loadPhotoPost !")
@@ -94,24 +175,11 @@ const NewPost = ({ follower, onChange }) => {
 		setPostImage(file)
 		setShowInputFile(false)
 	}
-
-	// Gestion d'erreurs
-	//const [notification, setNotification] = useState('')
-	//const [fetchError, setFetchError] = useState(false)
-	//useEffect(() => {
-	//    if (errorNewPosts) {
-	//        setNotification("L'envoi de cette publicaion a échouée !")
-	//        setFetchError(true)
-	//    }
-	//},[errorNewPosts])
+	//*/
 
 	useEffect(() => {
 		setValidNewPostisDisabled(!(titleNewPost && newPostContent))
 	}, [titleNewPost, newPostContent])
-
-	// Followers
-	const [showFollowersSelector, setShowFollowersSelector] = useState(false)
-	const [private_list, setPrivate_list] = useState([])
 
     // Fenetre de selection private-list
 	const handleSelectedPrivatelistChange = (event) => {
@@ -135,8 +203,8 @@ const NewPost = ({ follower, onChange }) => {
 					label="Titre"
 					title="Titre de publication"
 					placeholder="Titre de publication"
-					value={titleNewPost}
-					onChange={handleTitleNewPostChange}
+					//value={title}
+					onChange={handleChange}
 					required
 					size={470}
 				/>
@@ -147,21 +215,23 @@ const NewPost = ({ follower, onChange }) => {
 					placeholder="c'est là qu'tu cause !"
 					rows={3}
 					cols={61}
-					value={newPostContent}
-					onChange={handleNewPostChange}
+					//value={content}
+					onChange={handleChange}
 				/>
 
 				{showInputFile && (
 					<InputFileImage 
 						id="filePostImage"
-						value={postImage}
-						onChange={handlePostImageChange} 
+						name="image"
+                        label="Photo de profil"
+						//value={image}
+						onChange={(file) => handleChange({ target: { name: 'image', files: [file] } })}
 					/>
 				)}                           
 				{postImage && (
 					<DisplayImage
 						id="postImage"
-						src={URL.createObjectURL(postImage)} 
+						src={imageUrl} 
 						alt="Post image"
 						disabled={false}
 					/>
@@ -172,31 +242,31 @@ const NewPost = ({ follower, onChange }) => {
 						alt="Post image" 
 						//disabled={!postImage} 
 						image={IcnPhoto}
-						onClick={loadPhotoPost}
+						onClick={handleChange}
 					/>
 
 					<RadioBouton
-						id="newPostConfidencialPublic"
+						id="newPostStatusPublic"
 						label="Public"
-						value="public"
-						checked={newPostConfidencial === 'public'}
-						onChange={handleNewPostConfidencialChange}
+						//value="public"
+						//checked={status === 'public'}
+						onChange={handleChange}
 						alignment="vertical"
 					/>
 					<RadioBouton
-						id="newPostConfidencialPrivate"
+						id="newPostStatusPrivate"
 						label="Privé"
-						value="private"
-						checked={newPostConfidencial === 'private'}
-						onChange={handleNewPostConfidencialChange}
+						//value="private"
+						//checked={status === 'private'}
+						onChange={handleChange}
 						alignment="vertical"
 					/>
 					<RadioBouton
-						id="newPostConfidencialPrivateList"
+						id="newPostStatusPrivateList"
 						label="Liste"
-						value="private-list"
-						checked={newPostConfidencial === 'private-list'}
-						onChange={handleNewPostConfidencialChange}
+						//value="private-list"
+						//checked={status === 'private-list'}
+						onChange={handleChange}
 						alignment="vertical"
 					/>
 
@@ -211,6 +281,10 @@ const NewPost = ({ follower, onChange }) => {
 						onClick={CancelNewPost}
 					/>
 				</StyleGroupButton>
+
+				{fetchError && notification && (
+                    <Popup texte={notification} type='error' />
+                )}
 			</form>
 
 			{showFollowersSelector && (

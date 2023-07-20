@@ -26,7 +26,7 @@ func ApplyMiddleware(next http.Handler) http.Handler {
 func AlowCorse(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080") // A CHANGER POUR UN POTENTIEL DEPLOIMENT
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:3000") // A CHANGER POUR UN POTENTIEL DEPLOIMENT
 
 		// Allow the use of credentials (like cookies) in the requests
 		w.Header().Set("Access-Control-Allow-Credentials", "true")

@@ -79,6 +79,7 @@ const User = () => {
     const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
             makeRequest.get(`/user/${userid}`).then((res) => {
+                console.log("res.data:", res.data);
                 return res.data
             })
         )
