@@ -14,8 +14,8 @@ type User struct {
 	Pseudo     string    `json:"pseudo,omitempty"`
 	Image      string    `json:"image,omitempty"`
 	About      string    `json:"about,omitempty"`
-	Follower   []uint64  `json:"follower,omitempty"`
-	Followed   []uint64  `json:"followed,omitempty"`
+	Follower   []*User   `json:"follower"`
+	Followed   []*User   `json:"followed"`
 	Created_at time.Time `json:"created_date,omitempty"`
 	Updated_at time.Time `json:"updated_date,omitempty"`
 }

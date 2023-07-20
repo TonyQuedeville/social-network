@@ -49,8 +49,36 @@ func GetUserById(get_user_id uint64, user_id uint64) *User {
 		u.RemoveCriticalData()
 	}
 	if err != nil {
-		fmt.Println("err getuserid by id:", err)
+		fmt.Println("err 1 getuserid by id:", err)
 	}
+	rows, err := database.Database.Query(`
+	SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.user_id = ?
+	WHERE u.id = f.follow_id AND f.user_id IS NOT NULL;
+	`, get_user_id)
+	if err != nil {
+		fmt.Println("err 2 getuserid by id:", err)
+	}
+	for rows.Next() {
+		f_u := User{}
+		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
+		u.Follower = append(u.Follower, &f_u)
+	}
+
+	rows, err = database.Database.Query(`
+	SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.follow_id = ?
+	WHERE u.id = f.user_id AND f.user_id IS NOT NULL;
+	`, get_user_id)
+	if err != nil {
+		fmt.Println("err 3 getuserid by id:", err)
+	}
+	for rows.Next() {
+		f_u := User{}
+		rows.Scan(&f_u.Id, &f_u.Pseudo, &f_u.Image)
+		u.Followed = append(u.Followed, &f_u)
+	}
+
 	return &u
 }
 
@@ -136,10 +164,34 @@ func GetUsers(user_id uint64) []*User {
 	return result
 }
 
-func GetFollower(get_user_id uint64, user_id uint64) {
-	database.Database.Query(`SELECT u.* FROM user u
-	LEFT JOIN follower f ON f.user_id = 2
-	WHERE f.user_id IS NOT NULL;`)
+func GetFollower(user_id uint64) (result []*User) {
+	rows, err := database.Database.Query(`SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.user_id = ?
+	WHERE u.id = f.follow_id AND f.user_id IS NOT NULL;`, user_id)
+	if err != nil {
+		fmt.Println("err GetFollower:", err)
+	}
+	for rows.Next() {
+		u := User{}
+		rows.Scan(&u.Id, &u.Pseudo, &u.Image)
+		result = append(result, &u)
+	}
+	return
+}
+
+func GetFollowed(user_id uint64) (result []*User) {
+	rows, err := database.Database.Query(`SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN follower f ON f.follow_id = ?
+	WHERE u.id = f.user_id AND f.user_id IS NOT NULL;`, user_id)
+	if err != nil {
+		fmt.Println("err GetFollowed:", err)
+	}
+	for rows.Next() {
+		u := User{}
+		rows.Scan(&u.Id, &u.Pseudo, &u.Image)
+		result = append(result, &u)
+	}
+	return
 }
 
 /*< GETER */

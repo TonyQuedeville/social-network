@@ -110,19 +110,30 @@ func GetUsers(w http.ResponseWriter, r *http.Request) {
 	Ok(w, user.GetUsers(u_id))
 }
 
-// func GetFollowerUserById(w http.ResponseWriter, r *http.Request) {
-// 	// only get methode
-// 	if !IsGet(w, r) {
-// 		return
-// 	}
-// 	var follower_id uint64
-// 	_, err := fmt.Sscanf(r.URL.Path, "/follower/%d", &follower_id) // recupere l'id
-// 	if err != nil {
-// 		BadRequest(w, err.Error())
-// 		return
-// 	}
+func GetFollowerUserById(w http.ResponseWriter, r *http.Request) {
+	// only get methode
+	if !IsGet(w, r) {
+		return
+	}
+	user_id := r.Context().Value(USER_ID).(uint64)
+	if user_id == 0 {
+		BadRequest(w, "You must be connected")
+		return
+	}
 
-// 	user_id := r.Context().Value(USER_ID).(uint64)
+	Ok(w, user.GetFollower(user_id))
+}
 
-// 	Ok(w, user.GetUserById(get_user_id, user_id))
-// }
+func GetFollowedUserById(w http.ResponseWriter, r *http.Request) {
+	// only get methode
+	if !IsGet(w, r) {
+		return
+	}
+	user_id := r.Context().Value(USER_ID).(uint64)
+	if user_id == 0 {
+		BadRequest(w, "You must be connected")
+		return
+	}
+
+	Ok(w, user.GetFollowed(user_id))
+}
