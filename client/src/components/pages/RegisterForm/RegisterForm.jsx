@@ -16,6 +16,7 @@ import InputText from '../../InputText/InputText.jsx'
 import TextArea from '../../TextArea/TextArea.jsx'
 import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
+import useImageUpload from '../../../utils/hooks/ImageUpload/useImageUpload.js'
 import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import axios from "axios"
@@ -55,10 +56,10 @@ const StyleGroupButton = styled.div `
 // Fonctions
 // Validation du pseudo utilisateur
 function isValidPseudo(value) {
-    const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/;
+    const useridRegex = /^[a-zA-Z0-9_-]{4,}$/;
 
-    if (usernameRegex.test(value)) {
-        //console.log("Using username regex to validate: " + value)
+    if (useridRegex.test(value)) {
+        //console.log("Using userid regex to validate: " + value)
         return true
     } else {
         return false
@@ -83,8 +84,7 @@ function RegisterForm() {
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isConfirmDisabled, setIsConfirmDisabled] = useState(true) // Nouvelle variable d'état pour vérifier la confirmation du mot de passe
-    const [imageUrl, setImageUrl] = useState('') // url de l'image téléchargée par l'utilisateur
-    const [selectedImage, setSelectedImage] = useState(null) // image selectionnée qui sera envoyée au server app-image-storage
+    const { imageUrl, selectedImage, setImageUrl, setSelectedImage, uploadImage } = useImageUpload() // Hook personalisé: image selectionnée qui sera envoyée au server app-image-storage
     const [password, setPassword] = useState("") // mot de passe
     const [passwordConfirm, setPasswordConfirm] = useState("") // confirmation du mot de passe
     const [cgu, setCgu] = useState(false) // case à cocher acceptation des cgu
@@ -106,7 +106,8 @@ function RegisterForm() {
         status: '',
     })
 
-    // Mise à jour de formData à chaque changement dans le formaulaire
+
+    // Mise à jour de formData à chaque changement dans le formulaire
     const handleChange = (e) => {
         if (e && e.target && e.target.name) {
             var value = e.target.value
@@ -216,21 +217,22 @@ function RegisterForm() {
                 image: "",
         } 
         
-        // Requete téléchargement de l'image vers app-image-storage
-        try {
-            // Créer une instance de imageFormData
-            const imageFormData = new FormData()
-            imageFormData.append('image', selectedImage)
-        
-            // Envoyer la requête au serveur app-image-storage
-            const response = await axios.post(`http://${window.location.hostname}:4000/upload`, imageFormData, {
-                //headers: { 'Content-Type': 'multipart/form-data' } // Spécifie le type de fichier image. facultatif puisque valeur par defaut
-            })
-
-            // Récupére l'URL de l'image à partir de la réponse du serveur d'images
+        // Requete téléchargement de l'image vers app-image-storage par le hook personnalisé
+        if (selectedImage) {
+            await uploadImage(selectedImage)
             data = {
-                ...formData,
-                image: response.data.filename,
+            ...formData,
+            image: imageUrl,
+            };
+        }
+        
+        // Requete d'enregistrement vers app-social-network
+        try{
+            await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(data))
+
+            setFetchError(false)
+            if (isPseudoValid && isPasswordValid && cgu) {
+                navigate("/login") // Redirection vers la page de connection
             }
         }
         catch (err) {
@@ -238,24 +240,7 @@ function RegisterForm() {
             setFetchError(true)
         }
         finally {
-            // Requete d'enregistrement vers app-social-network
-            try{
-                await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(data))
-
-                setFetchError(false)
-                if (isPseudoValid && isPasswordValid && cgu) {
-                    navigate("/login") // Redirection vers la page de connection
-                }
-            }
-            catch (err) {
-                setNotification(err.message + " : " + err.response.data.error)
-                setFetchError(true)
-            }
-            finally {
-            }
         }
-
-            
     }
     
     // Rendu du composant

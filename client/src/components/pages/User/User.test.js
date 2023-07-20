@@ -22,7 +22,7 @@ describe('User', () => {
         /*render(
             <MemoryRouter initialEntries={[`/profile/${user.pseudo}`]}>
                 <Routes>
-                    <Route path="/profile/:username" element={<User />} />
+                    <Route path="/profile/:userid" element={<User />} />
                 </Routes>    
             </MemoryRouter>
         );

@@ -55,7 +55,7 @@ const Titre = styled.span`
   font-size: 22px;
   font-weight: bold;
 `
-const PhotoProfile = styled.img`
+const StylePhotoProfile = styled.img`
   height: 50px;
   width: 50px;
   border-radius: 50%;
@@ -74,25 +74,17 @@ const Profile = (props) => {
           firstname, 
           bornDate
         } = props
+
   const { theme } = useContext(ThemeContext)
   const { authPseudo } = useContext(AuthContext)
   //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo)
-  //console.log("status: ", status);
+  
+  console.log("status: ", status);
   const [statusProfil, setStatusProfil] = useState(status)
 
   useEffect(() => {
     setStatusProfil(status);
   }, [status])
-  //console.log("statusProfil: ", statusProfil);
-
-  const getPhotoProfile = () => {
-    if (image) {
-      //console.log("photoProfile:", photoProfile)
-      return require(`../../assets/img/${image}`).default
-    } else {
-      return sexe === 'f' ? DefaultPictureF : DefaultPictureH
-    }
-  }
 
   const updateStatusProfilOnServer = (newStatus) => {
     console.log("newStatus:", newStatus);
@@ -109,8 +101,10 @@ const Profile = (props) => {
     <ProfilCard theme={theme}>
       <StyleLabelUser>
         <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
-        <PhotoProfile src={getPhotoProfile()} id={`user-photo-${pseudo}`} alt="photoProfile" />
-
+        {image ? 
+          <StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${image}`} id={`user-photo-${pseudo}`} alt="photoProfile" />
+          : <StylePhotoProfile src={sexe === 'f' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${pseudo}`} alt="photoProfile" />
+        }
         {!hideStatus && authPseudo === pseudo ? 
           <StyleLabInput>
             <p>Status profil</p>

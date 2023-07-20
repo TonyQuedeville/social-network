@@ -35,7 +35,7 @@ describe('Users', () => {
             <MemoryRouter initialEntries={['/users']}>
                 <Routes>
                     <Route path="/users" element={<Users users={userlist} />} />
-                    <Route path="/profile/:username" element={<User />} />
+                    <Route path="/profile/:userid" element={<User />} />
                 </Routes>                
             </MemoryRouter>
         );

@@ -7,10 +7,12 @@
 
 import React, { createContext, useState } from 'react'
 import PropTypes from 'prop-types'
+import Cookies from 'js-cookie' // npm install js-cookie
 
 export const AuthContext = createContext()
 
 export const AuthProvider = ({ children }) => {
+    const [isAuthenticated, setIsAuthenticated] = useState(false)
     const [email, setEmail] = useState("")
     const [authPseudo, setPseudo] = useState("")
     const [authId, setAuthId] = useState("")
@@ -41,8 +43,18 @@ export const AuthProvider = ({ children }) => {
         setGroupListRequested(data.group_list_requested)
     }
 
+    const handleLogin = () => {
+        setIsAuthenticated(true)
+    }
+
+    const handleLogout = () => {
+        Cookies.remove('session')
+        setIsAuthenticated(false)
+    }
+
     return (
         <AuthContext.Provider value={{ 
+            isAuthenticated, setIsAuthenticated,
             email, setEmail,
             authPseudo, setPseudo,
             authId, setAuthId,
@@ -57,6 +69,8 @@ export const AuthProvider = ({ children }) => {
             followed, setFollowed,
             groupListRequested, setGroupListRequested,
             updateUserData,
+            handleLogin,
+            handleLogout,
         }}>
             {children}
         </AuthContext.Provider>

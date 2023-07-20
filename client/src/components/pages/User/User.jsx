@@ -3,7 +3,7 @@
 	Tony Quedeville 
 	10/07/2023
 	Composant User : Affiche l'ensemble des données d'un utilisateur
-    Page User : Route http://localhost:3000/user/:username
+    Page User : Route http://localhost:3000/user/:userid
 */
 
 import React, { useContext } from 'react'
@@ -59,7 +59,6 @@ const ProfilContainer = styled.div`
     }
 `
 
-
 // Composant
 const User = () => {
     const { theme } = useContext(ThemeContext)
@@ -71,20 +70,20 @@ const User = () => {
     //const followed // users suivis par authPseudo
 
     // User
-    const { username } = useParams()
-    //console.log("username:", username);
+    const { userid } = useParams()
+    //console.log("userid:", userid);
 
     let confidencial = false
-    if (authPseudo === username) {confidencial = true}
+    if (authPseudo === userid) {confidencial = true}
 
-    const UserInfos = async () => {         
+    const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            makeRequest.get(`/user/${username.toLowerCase()}`).then((res) => {
+            makeRequest.get(`/user/${userid}`).then((res) => {
                 return res.data
             })
         )
-        console.log("dataUser:", dataUser) 
-
+        console.log("dataUser:", dataUser);
+        
         return (
             <>
                 {isLoadingUser ? (
@@ -96,7 +95,7 @@ const User = () => {
                     )}
                     {dataUser && (
                         <>
-                            <Profile {...dataUser}/>
+                            <Profile {...dataUser.datas}/>
                         </>
                     )}
                 </>
@@ -112,7 +111,7 @@ const User = () => {
                 return res.data
             })
         )
-        //console.log("dataPost:", dataPosts);
+        console.log("dataPost:", dataPosts);
 
         return (
             <>
@@ -126,8 +125,8 @@ const User = () => {
                     {dataPosts && (
                         <>
                             {dataPosts.posts.map((post, index) => (
-                                post.status === "public" || authPseudo === username || 
-                                (post.status === "private" && followed.includes(username)) ||
+                                post.status === "public" || authPseudo === userid || 
+                                (post.status === "private" && followed.includes(userid)) ||
                                 (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
                                     <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
                                 ) : null
@@ -155,7 +154,7 @@ const User = () => {
                     <UserInfos />
                 </div>
 
-                { authPseudo === username ? (
+                { authPseudo === userid ? (
                     <NewPost 
                         follower={follower}
                         onChange={handleFollowersChange}

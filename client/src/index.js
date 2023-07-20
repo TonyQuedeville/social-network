@@ -57,7 +57,7 @@ function AppContent() {
       <Route path="/groups" element={<Groupes/>} />
       <Route path="/group/:groupId" element={<Groupe/>} />
       <Route path="/tchat" element={<Tchat/>} />
-      <Route path="/user/:username" element={<User />} />
+      <Route path="/user/:userid" element={<User />} />
       <Route path="*" element={<Error />} />
     </Routes>
   )

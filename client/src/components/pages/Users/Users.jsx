@@ -48,13 +48,13 @@ const StyledLink = styled.div`
 `
 
 const Users = () => {
-  const { authPseudo } = useContext(AuthContext);
-  //console.log("authPseudo: ", authPseudo);
+  const { authPseudo } = useContext(AuthContext)
+  //console.log("authPseudo: ", authPseudo)
 
   const navigate = useNavigate()
-  const handleUserClick = (username) => {
-    //console.log("username:", username)
-    navigate(`/user/${username}`)
+  const handleUserClick = (userid) => {
+    //console.log("userid:", userid)
+    navigate(`/user/${userid}`)
   }
 
   //const [notification, setNotification] = useState('')
@@ -64,7 +64,6 @@ const Users = () => {
         return res.data
       })
     )
-    console.log("dataUsers:", dataUsers);
     
     return (
         <>
@@ -76,12 +75,12 @@ const Users = () => {
                 <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
             )}
             {dataUsers && (
-              dataUsers.users.map((user, index) => (
+              dataUsers.datas.map((user, index) => (
                 authPseudo !== user.pseudo ? 
                   <StyledLink                 
                     key={`${user.pseudo}-${index}`} 
                     id={`user-link-${user.pseudo}`}
-                    onClick={() => handleUserClick(user.pseudo)}
+                    onClick={() => handleUserClick(user.id)}
                   >
                     <>
                       <Profile 
