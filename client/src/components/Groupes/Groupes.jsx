@@ -109,6 +109,7 @@ const Groupes = (props) => {
       return res.data
     })
   )
+  console.log("dataGroups:", data);
 
   // New Group
   const [newGroupeTitle, setNewGroupeTitle] = useState('')

@@ -1,6 +1,11 @@
-// src/components/Header
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Navbar : Barre de navigation
+*/
 
-import React, { useContext } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -10,7 +15,7 @@ import IcnHome from '../../assets/icn/icn-home.jpg'
 import IcnUsers from '../../assets/icn/icn-group.png'
 import IcnGroupe from '../../assets/icn/icn-group-discut.png'
 import IcnTchat from '../../assets/icn/icn-tchat.jpg'
-import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
+//import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 //import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
@@ -35,23 +40,8 @@ const StyledGroupIcn = styled.div `
 
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
-    const { isLoggedIn, setIsLoggedIn, authPseudo, photoProfile } = useContext(AuthContext);
+    const { authPseudo, photoProfile, isAuthenticated, handleLogout } = useContext(AuthContext)
 
-    // Se déconnecter
-    const handleLogout = () => {
-        setIsLoggedIn(false);
-    }
-
-    const getPhotoProfile = () => {
-        if (photoProfile) {
-          //console.log("photoProfile:", photoProfile)
-            return require(`../../assets/img/${photoProfile}`).default
-        } else {
-            return DefaultPictureH
-        }
-    }
-
-    //console.log("Navbar !");
     return (
         <StyledNav theme={theme}>
             <StyledGroupIcn>
@@ -86,7 +76,7 @@ const Navbar = () => {
             </StyledGroupIcn>
 
             <StyledGroupIcn>
-                {isLoggedIn ? (
+                {isAuthenticated ? (
                     <>
                         <Link to="/">
                             <Button text="Se déconnecter" onClick={handleLogout} disabled={false} />
@@ -94,8 +84,8 @@ const Navbar = () => {
                         <Link to={`/user/${authPseudo}`}>
                             <Icone 
                                 alt="Mon profile" 
-                                disabled={!isLoggedIn} 
-                                image={getPhotoProfile()}
+                                disabled={!isAuthenticated} 
+                                image={`http://${window.location.hostname}:4000/download/${photoProfile}`}
                             />
                         </Link>
                     </>

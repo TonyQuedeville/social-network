@@ -9,15 +9,22 @@ const express = require('express')
 const multer = require('multer')
 const cors = require('cors')
 const path = require('path')
-const fs = require('fs');
+const fs = require('fs')
 
 const app = express()
-const upload = multer({ dest: 'uploads/' }) // Le dossier où les fichiers téléchargés seront stockés
+const upload = multer({ dest: 'images/' }) // Le dossier où les fichiers téléchargés seront stockés
 
 app.use(cors())
-app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
+app.use(express.json())
+app.use(express.urlencoded({ extended: true }))
 
+
+// Configurations du serveur
+app.listen(4000, () => {
+  console.log('Serveur app-image-storage en cours d\'exécution sur le port 4000')
+})
+
+// Sauver une image
 app.post('/upload', upload.single('image'), (req, res) => {
   //console.log('req.file:', req.file)
 
@@ -40,8 +47,14 @@ app.post('/upload', upload.single('image'), (req, res) => {
   res.status(200).json({ message: 'Fichier téléchargé avec succès', filename: newFilename, path: newPath })
 })
 
-// Configurations du serveur
-app.listen(4000, () => {
-  console.log('Serveur app-image-storage en cours d\'exécution sur le port 4000')
+// Lire une image
+app.get('/download/:imageName', (req, res) => {
+  const imageName = req.params.imageName
+  const imagePath = path.join(__dirname, 'images', imageName)
+
+  res.sendFile(imagePath)
 })
+app.use('/images', express.static(path.join(__dirname, 'images')))
+
+
 

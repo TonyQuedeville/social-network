@@ -14,6 +14,7 @@ import styled from 'styled-components'
 import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
 import axios from "axios"
+import Cookies from 'js-cookie' // npm install js-cookie
 
 // css
 const StyleLoginContainer = styled.div `
@@ -59,10 +60,10 @@ function isValidEmail(value) {
 /*
 // Validation de l'adresse email ou du nom d'utilisateur
 function isValidPseudo(value) {
-    const usernameRegex = /^[a-zA-Z0-9_-]{4,}$/
+    const useridRegex = /^[a-zA-Z0-9_-]{4,}$/
 
-    if (usernameRegex.test(value)) {
-        //console.log("Using username regex to validate: " + value);
+    if (useridRegex.test(value)) {
+        //console.log("Using userid regex to validate: " + value);
         return true;
     } else {
         return false;
@@ -83,7 +84,7 @@ function LoginForm() {
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
-    const { updateUserData } = useContext(AuthContext) // Utilisateur connecté
+    const { updateUserData, handleLogin } = useContext(AuthContext) // Utilisateur connecté
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
     // Quand toutes les conditions sont ok, le bouton devient cliquable.
@@ -117,20 +118,25 @@ function LoginForm() {
         }
     }
 
+    // Connection de l'utilisateur
     const handleSubmit = async (event) => {
         event.preventDefault()
 
         if (isEmailValid && isPasswordValid) {            
             try{
                 const response = await axios.post(`http://${window.location.hostname}:8080/user/login`, JSON.stringify(formData))
-                const responseData = response.data;
+                const responseData = response.data
 
-                console.log("responseData:", responseData.datas)
+                // Cookie
+                //console.log("uuid:", responseData.datas.uuid)
+                Cookies.set('session', responseData.datas.uuid, { expires: 1, path: '/' }) // définir le cookie 
+
+                // Données AuthUser
+                //console.log("userData:", responseData.datas.user)
                 updateUserData(responseData.datas.user)
-
-                //setIsLoggedIn(true)
+                handleLogin()
                 
-                navigate(`/user/${responseData.datas.user.pseudo}`)
+                navigate(`/user/${responseData.datas.user.id}`)
             }
             catch (err) {
                 setNotification(err.message + " : " + err.response.data.error)
@@ -141,7 +147,7 @@ function LoginForm() {
             //*/
         }
     }
-//
+
     // Annuler
     const handleCancel = () => {
         //setIsLoggedIn(false);
