@@ -2,7 +2,6 @@ package server
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 
 	"github.com/TonyQuedeville/social-network/app-social-network/pkg/api"
@@ -27,7 +26,7 @@ func ApplyMiddleware(next http.Handler) http.Handler {
 func AlowCorse(next http.Handler) http.Handler {
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
 		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Origin", "*") // A CHANGER POUR UN POTENTIEL DEPLOIMENT
+		w.Header().Set("Access-Control-Allow-Origin", "http://localhost:8080") // A CHANGER POUR UN POTENTIEL DEPLOIMENT
 
 		// Allow the use of credentials (like cookies) in the requests
 		w.Header().Set("Access-Control-Allow-Credentials", "true")
@@ -47,7 +46,6 @@ func CheckSession(next http.Handler) http.Handler {
 		if err == nil {
 			u_id = user.GetUserIdByUuid(ck.Value)
 		}
-		fmt.Println("Middleware Session idfind: ", u_id)
 		ctx := context.WithValue(r.Context(), api.USER_ID, u_id)
 		r = r.WithContext(ctx)
 		next.ServeHTTP(w, r)
