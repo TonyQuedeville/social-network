@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Popup : Affiche une fenetre de messages d'erreurs
+*/
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'

@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Comment : Affiche un commentaire
+*/
+
 import React from 'react';
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -12,7 +19,7 @@ const StylePostComment = styled.div`
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 10px;
-	background: ${props => (props.theme === 'light' ? colors.backgroundWhite : colors.backgroundDarkSoft)};
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyleComment = styled.div`
 	width: 100%;

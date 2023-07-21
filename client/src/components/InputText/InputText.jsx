@@ -1,4 +1,9 @@
-// src/components/InputText
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant InputText : 
+*/
 
 import React from 'react'
 import PropTypes from 'prop-types'

@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Cgu : Affiche la fenetre repliable des conditions générale d'utilisation du reseau social.
+*/
+
 import React, {useState, useEffect} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'

@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Post : Affiche un posts et appel les commentaires qui lui sont associés
+*/
+
 import React, {useState, useContext} from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'

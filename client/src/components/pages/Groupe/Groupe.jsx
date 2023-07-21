@@ -1,3 +1,11 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Groupe : Affiche l'ensemble des données d'un groupe de discution
+  Page Groupe : Route http://localhost:3000/group/:groupId
+*/
+
 import React, { useContext } from 'react'
 //import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
@@ -8,7 +16,7 @@ import { makeRequest } from '../../../utils/Axios/Axios.js'
 //import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
-//import colors from '../../../utils/style/Colors.js'
+import colors from '../../../utils/style/Colors.js'
 //import InputText from '../InputText/InputText.jsx'
 //import TextArea from '../TextArea/TextArea.jsx'
 //import Button from '../Button/Button.jsx'
@@ -32,6 +40,7 @@ const PageContainer = styled.div`
 	border-radius: 10px;
   display: flex;
   flex-direction: column;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
   
   overflow: auto;
   overflow-x: hidden;
@@ -48,6 +57,7 @@ const StylePostsContainer = styled.div`
 	border-radius: 10px;
   display: flex;
   flex-direction: column;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 
 // Composant
@@ -68,11 +78,8 @@ const Groupe = () => {
 
   // Posts
   const Posts = () => {    
-    //const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
-    //  fetch(`http://${window.location.hostname}:8080/posts.json`).then((res) => res.json())
-    //)
     const { data, isLoading, error } = useQuery(['dataPost'], () =>
-      makeRequest.get("/posts.json").then((res) => {
+      makeRequest.get(`/groupposts/${data.groupId}`).then((res) => {
         return res.data
       })
     )
@@ -103,7 +110,7 @@ const Groupe = () => {
   }
 
   return (
-    <PageContainer>
+    <PageContainer theme={theme}>
       {/* Infos Groupe */}
       <GroupeInfos {...data} />
 
@@ -118,7 +125,7 @@ const Groupe = () => {
             onChange={handleFollowersChange}
           />
 
-          <StylePostsContainer>
+          <StylePostsContainer theme={theme}>
             <Posts />
           </StylePostsContainer>
         </div>

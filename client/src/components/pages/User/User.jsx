@@ -14,20 +14,12 @@ import { useQuery } from '@tanstack/react-query' //'react-query'
 //import axios from "axios"
 import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
-import styled from 'styled-components'
 import colors from '../../../utils/style/Colors.js'
+import styled from 'styled-components'
 import Profile from '../../Profile/Profile.jsx'
 import Groupes from '../../Groupes/Groupes.jsx'
 import Tchat from '../../Tchat/Tchat.jsx'
 import Popup from '../../Popup/Popup.jsx'
-//import InputText from '../../InputText/InputText.jsx'
-//import TextArea from '../../TextArea/TextArea.jsx'
-//import Button from '../../Button/Button.jsx'
-//import RadioBouton from '../../RadioBouton/RadioBouton.jsx'
-//import Icone from '../../Icone/Icone.jsx'
-//import IcnPhoto from '../../../assets/icn/icn_appareil_photo.svg'
-//import InputFileImage from '../../InputFileImage/InputFileImage.jsx'
-//import DisplayImage from '../../DisplayImage/DisplayImage.jsx'
 import NewPost from '../../NewPost/NewPost.jsx'
 import Post from '../../Post/Post.jsx'
 
@@ -48,7 +40,7 @@ const ProfilContainer = styled.div`
     margin: 1px;
     border: solid 1px;
     border-radius: 10px;
-    background: ${props => (props.theme === 'light' ? colors.backgroundLight : colors.backgroundDark)};
+    background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 
     overflow: auto;
     overflow-x: hidden;
@@ -108,7 +100,7 @@ const User = () => {
     // Posts
     const Posts = () => {    
         const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
-            makeRequest.get(`/posts.json`).then((res) => {
+            makeRequest.get(`/userposts/${userid}`).then((res) => {
                 return res.data
             })
         )

@@ -1,4 +1,10 @@
-// src/utils/style
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Style Permet de definir les thémes de couleur clair ou sombre de l'application
+*/
+
 
 import { useContext } from 'react'
 import { ThemeContext } from '../ThemeProvider/ThemeProvider'
@@ -22,8 +28,6 @@ const StyledGlobalStyle = createGlobalStyle`
 
 function GlobalStyle() {
     const { theme } = useContext(ThemeContext)
-
-    //console.log("GlobalStyle !");
     return <StyledGlobalStyle isDarkMode={theme === 'dark'} />
 }
 

@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	GroupProvider : Contexte groupe de discution
+*/
+
 import React, { createContext, useState } from 'react'
 import PropTypes from 'prop-types'
 

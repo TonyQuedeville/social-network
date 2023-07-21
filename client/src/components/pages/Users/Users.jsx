@@ -12,6 +12,8 @@ import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Loader } from '../../../utils/Atom.jsx'
 import Popup from '../../Popup/Popup.jsx'
+import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+import colors from '../../../utils/style/Colors.js'
 import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
@@ -30,6 +32,7 @@ const ListContainer = styled.div`
   margin: 1px;
   border: solid 1px;
   border-radius: 10px;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyledLink = styled.div`
   text-decoration: none;  
@@ -50,9 +53,11 @@ const StyledLink = styled.div`
 `
 
 const Users = () => {
+  const { theme } = useContext(ThemeContext)
+
   const { authPseudo, followed } = useContext(AuthContext)
   const followedId = (followed||[]).map(follow => follow.id) 
-  console.log("authPseudo:", authPseudo, "followedId:", followedId);
+  //console.log("authPseudo:", authPseudo, "followedId:", followedId);
 
   const navigate = useNavigate()
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -68,7 +73,6 @@ const Users = () => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
       await axios.post(`http://${window.location.hostname}:8080/addfollower/${userid}`)
-
       setFetchError(false)
     }
     catch (err) {
@@ -84,7 +88,6 @@ const Users = () => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
       await axios.post(`http://${window.location.hostname}:8080/supfollower/${userid}`)
-
       setFetchError(false)
     }
     catch (err) {
@@ -155,7 +158,7 @@ const Users = () => {
   }
 
   return (
-    <ListContainer>
+    <ListContainer theme={theme}>
       {/* list users */}
       <QueryClientProvider client={queryClient}>
         <UsersList />

@@ -1,4 +1,11 @@
 // src/components/Footer
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Footer : Pied de page
+*/
+
 
 import { useContext } from 'react'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider'
@@ -13,7 +20,7 @@ const FooterContainer = styled.footer`
     justify-content: center;
     border: solid 1px;
     border-radius: 10px;
-    background: ${props => (props.theme === 'light' ? colors.backgroundLight : colors.backgroundDark)};
+    background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 `
 
 const NightModeButton = styled.button`

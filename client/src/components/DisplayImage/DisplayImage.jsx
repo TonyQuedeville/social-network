@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant DisplayImage : Affiche une image
+*/
+
 import React from 'react'
 import PropTypes from 'prop-types'
 import styled, { css }  from 'styled-components'
