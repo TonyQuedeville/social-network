@@ -10,6 +10,7 @@ CREATE TABLE IF NOT EXISTS post (
     content TEXT,
     image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("user_id") REFERENCES "user"("id")    
 );
 
