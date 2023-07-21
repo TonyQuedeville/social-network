@@ -310,7 +310,7 @@ func AddFollower(user_id, follow_id uint64) (status string) {
 		return "operation inpossible"
 	}
 	table := "follower"
-	if IsUserPrivate(follow_id) {
+	if IsUserPrivate(user_id) {
 		table = "temp_follower"
 	}
 
@@ -321,9 +321,9 @@ func AddFollower(user_id, follow_id uint64) (status string) {
 		return err.Error()
 	}
 	if table == "follower" {
-		return "Follow accepter!"
+		return "Demande acceptée!"
 	} else {
-		return "Acceptation en attente"
+		return "Demande en attente d'acceptation"
 	}
 }
 
@@ -344,9 +344,9 @@ func AcceptFollower(user_id, follow_id uint64, accept bool) (status string) {
 		INSERT INTO follower (user_id, follow_id) VALUES (?, ?)
 	`, user_id, follow_id)
 	if err != nil {
-		return "demande expirer"
+		return "demande expirée"
 	} else {
-		return "demande confirmer"
+		return "demande confirmée"
 	}
 }
 
@@ -356,7 +356,7 @@ func RemoveFollower(user_id, follow_id uint64) (status string) {
 		return "operation inpossible"
 	}
 	_, err := database.Database.Exec(`
-		DELETE FROM TABLE follower WHERE user_id = ? AND follow_id = ?
+		DELETE FROM follower WHERE user_id = ? AND follow_id = ?;
 	`, user_id, follow_id)
 	if err != nil {
 		fmt.Printf("err Remove follower: %v\n", err)
