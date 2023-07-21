@@ -9,6 +9,8 @@ CREATE TABLE IF NOT EXISTS comment (
     content TEXT,
     image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY("post_id") REFERENCES "post"("id"),
+    FOREIGN KEY("user_id") REFERENCES "user"("id")
 );
 
