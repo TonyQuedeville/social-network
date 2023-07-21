@@ -4,6 +4,7 @@ import (
 	"encoding/json"
 	"fmt"
 	"net/http"
+	"strings"
 )
 
 func IsPost(w http.ResponseWriter, r *http.Request) bool {
@@ -39,4 +40,14 @@ func Ok(w http.ResponseWriter, rep interface{}) {
 	w.WriteHeader(http.StatusOK)
 	corp, _ := json.MarshalIndent(reponse{Datas: rep}, "", "	")
 	w.Write(corp)
+}
+
+func GetIdFromPath(r *http.Request) (user_id uint64, err error) {
+	p := strings.Split(r.URL.Path, "/")
+	_, err = fmt.Sscanf(r.URL.Path, strings.Join(p[:len(p)-1], "/")+"/%d", &user_id) // recupere l'id
+	return
+}
+
+func GetIdUser(r *http.Request) uint64 {
+	return r.Context().Value(USER_ID).(uint64)
 }

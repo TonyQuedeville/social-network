@@ -14,7 +14,6 @@ type ck string
 const USER_ID = ck("user_id")
 
 func UserRegister(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("TRY REGISTER")
 	// only post
 	if !IsPost(w, r) {
 		return
@@ -26,7 +25,6 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, err.Error())
 		return
 	}
-	fmt.Printf("Unmarshal user register form %v\n", u)
 
 	if u.Password == "" {
 		BadRequest(w, "no password found")
@@ -40,18 +38,14 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 
 	u, _ = user.GetUserByMail(u.Email)
 
-	fmt.Printf("user form  register %v\n", u)
-
 	Ok(w, u)
 }
 
 func UserLogin(w http.ResponseWriter, r *http.Request) {
-	fmt.Println("TRY LOGIN")
 	// only post
 	if !IsPost(w, r) {
 		return
 	}
-	fmt.Println("Login request")
 
 	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
 	pass := struct {
@@ -80,7 +74,6 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		Uuid: uuid,
 		User: *u,
 	}
-	fmt.Println("LOGIN OK")
 	Ok(w, rep)
 }
 
@@ -89,14 +82,13 @@ func GetUserById(w http.ResponseWriter, r *http.Request) {
 	if !IsGet(w, r) {
 		return
 	}
-	var get_user_id uint64
-	_, err := fmt.Sscanf(r.URL.Path, "/user/%d", &get_user_id) // recupere l'id
+	get_user_id, err := GetIdFromPath(r)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
 	}
 
-	user_id := r.Context().Value(USER_ID).(uint64)
+	user_id := GetIdUser(r)
 
 	Ok(w, user.GetUserById(get_user_id, user_id))
 }
@@ -115,7 +107,7 @@ func GetFollowerUserById(w http.ResponseWriter, r *http.Request) {
 	if !IsGet(w, r) {
 		return
 	}
-	user_id := r.Context().Value(USER_ID).(uint64)
+	user_id := GetIdUser(r)
 	if user_id == 0 {
 		BadRequest(w, "You must be connected")
 		return
@@ -129,11 +121,59 @@ func GetFollowedUserById(w http.ResponseWriter, r *http.Request) {
 	if !IsGet(w, r) {
 		return
 	}
-	user_id := r.Context().Value(USER_ID).(uint64)
+	user_id := GetIdUser(r)
 	if user_id == 0 {
 		BadRequest(w, "You must be connected")
 		return
 	}
 
 	Ok(w, user.GetFollowed(user_id))
+}
+
+func ManageFollower(w http.ResponseWriter, r *http.Request, flag string) {
+	// only post
+	if !IsPost(w, r) {
+		fmt.Println("PAS POST")
+		return
+	}
+	user_id := GetIdUser(r)
+	if user_id == 0 {
+		BadRequest(w, "You must be loged")
+		return
+	}
+	path_id, err := GetIdFromPath(r)
+	if err != nil {
+		BadRequest(w, err.Error())
+		return
+	}
+	var status string
+	switch flag {
+	case "accept":
+		status = user.AcceptFollower(user_id, path_id, true)
+	case "refuse":
+		status = user.AcceptFollower(user_id, path_id, false)
+	case "add":
+		status = user.AddFollower(path_id, user_id)
+	case "sup":
+		status = user.RemoveFollower(path_id, user_id)
+	default:
+		panic("switch manage follower key error")
+	}
+	Ok(w, status)
+}
+
+func AddFollower(w http.ResponseWriter, r *http.Request) {
+	ManageFollower(w, r, "add")
+}
+
+func AcceptFollower(w http.ResponseWriter, r *http.Request) {
+	ManageFollower(w, r, "accept")
+}
+
+func RefuseFollower(w http.ResponseWriter, r *http.Request) {
+	ManageFollower(w, r, "refuse")
+}
+
+func SupFollower(w http.ResponseWriter, r *http.Request) {
+	ManageFollower(w, r, "sup")
 }

@@ -238,7 +238,6 @@ func (u *User) Register() error {
 func Login(password, email string) (*User, string, error) {
 	u, _ := GetUserByMail(email)
 	u.GetHashPass()
-	fmt.Printf("u.Password: %v\n", u.Password)
 	if len(u.Password) == 0 {
 		return u, "", errors.New("invalid mail")
 	}
@@ -296,6 +295,71 @@ func (u *User) AddFollowerFollowed() error {
 	return nil
 }
 
+func IsUserPrivate(id uint64) bool {
+	r := database.Database.QueryRow(`
+	SELECT user.status FROM user WHERE user.id = ?
+	`, id)
+	s := ""
+	r.Scan(&s)
+	return s == "private"
+}
+
 // addFollower
+func AddFollower(user_id, follow_id uint64) (status string) {
+	if user_id == follow_id || user_id == 0 || follow_id == 0 {
+		return "operation inpossible"
+	}
+	table := "follower"
+	if IsUserPrivate(follow_id) {
+		table = "temp_follower"
+	}
+
+	_, err := database.Database.Exec(
+		"INSERT INTO "+table+" (user_id, follow_id) VALUES (?, ?)", user_id, follow_id,
+	)
+	if err != nil {
+		return err.Error()
+	}
+	if table == "follower" {
+		return "Follow accepter!"
+	} else {
+		return "Acceptation en attente"
+	}
+}
+
+// accept follower
+func AcceptFollower(user_id, follow_id uint64, accept bool) (status string) {
+	if user_id == follow_id || user_id == 0 || follow_id == 0 {
+		return "operation inpossible"
+	}
+	check := uint64(0)
+	database.Database.QueryRow(`
+	SELECT user_id FROM temp_follower WHERE follow_id = ?
+	`, follow_id).Scan(&check)
+	if check != user_id {
+		return "operation impossible"
+	}
+
+	_, err := database.Database.Exec(`
+		INSERT INTO follower (user_id, follow_id) VALUES (?, ?)
+	`, user_id, follow_id)
+	if err != nil {
+		return "demande expirer"
+	} else {
+		return "demande confirmer"
+	}
+}
 
 // removeFollower
+func RemoveFollower(user_id, follow_id uint64) (status string) {
+	if user_id == follow_id || user_id == 0 || follow_id == 0 {
+		return "operation inpossible"
+	}
+	_, err := database.Database.Exec(`
+		DELETE FROM TABLE follower WHERE user_id = ? AND follow_id = ?
+	`, user_id, follow_id)
+	if err != nil {
+		fmt.Printf("err Remove follower: %v\n", err)
+	}
+	return "remove suced"
+}
