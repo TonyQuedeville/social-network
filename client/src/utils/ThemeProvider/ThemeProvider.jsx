@@ -1,4 +1,10 @@
-// src/utils/context
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Defini le context des thémes clair ou sombre de l'application
+*/
+
 
 import React, { useState, createContext } from 'react'
 
@@ -11,7 +17,6 @@ export const ThemeProvider = ({ children }) => {
         setTheme(theme === 'light' ? 'dark' : 'light')
     }
 
-    //console.log("ThemeProvider !");
     return (
         <ThemeContext.Provider value={{ theme, toggleTheme }}>
             {children}

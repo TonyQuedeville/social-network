@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant FollowersSelector : Afficher un selecteur de followers avec cases à cocher
+*/
+
 import React from 'react'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'

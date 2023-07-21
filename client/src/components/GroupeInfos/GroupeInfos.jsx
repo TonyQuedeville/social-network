@@ -1,13 +1,20 @@
-import React, { useContext } from 'react'
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant GroupeInfo : Affiche les informations générales d'un groupe de discution
+*/
+
+import React, { useContext, useState } from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import styled from 'styled-components'
-//import colors from '../../utils/style/Colors.js'
-//import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
-//import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnNotification from '../../assets/icn/icn-notification.png'
+import Button from '../Button/Button.jsx'
+import Popup from '../Popup/Popup.jsx'
+import axios from "axios"
 
 // css
 const StyleGroupContainer = styled.div`
@@ -58,6 +65,23 @@ const StyleBold = styled.p`
 const GroupeInfos = (props) => {
 	const {groupId, title, admin, createDate, description, image, nbMembers } = props
 	const { groupListRequested } = useContext(AuthContext)
+	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+  	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
+
+	// Quitter le groupe
+	const handleSupGroupe = async () => {
+		// Requete de demande d'ajout au groupe de discution vers app-social-network
+		try{
+			await axios.post(`http://${window.location.hostname}:8080/supGroup/${groupId}`)
+			setFetchError(false)
+		}
+		catch (err) {
+			setNotification(err.message + " : " + err.response.data.error)
+			setFetchError(true)
+		}
+		finally {
+		}
+	}
 	
 	return (
 		<StyleGroupContainer>
@@ -84,7 +108,7 @@ const GroupeInfos = (props) => {
 			</StyleBanner>
 
 			<>
-				{ groupListRequested.includes(groupId) && (
+				{ groupListRequested.includes(groupId) ? (
 					<StyleRow>
 						<Icone 
 							alt="Demande d'adhésion à ce groupe en cours acception !" 
@@ -93,9 +117,17 @@ const GroupeInfos = (props) => {
 						/>
 						<p>Demande d'adhésion à ce groupe en cours acception !</p>
 					</StyleRow>
-					)
+					) : 
+					<Button 
+						text="Quitter le groupe" 
+						disabled={false} 
+						onClick={handleSupGroupe(groupId)}
+					/> 
 				}
 			</>
+			{ fetchError && notification && (
+				<Popup texte={notification} type='error' />
+			)}
 		</StyleGroupContainer>
 	)
 }

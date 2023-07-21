@@ -29,7 +29,7 @@ const StyledNav = styled.nav `
     justify-content: space-between;
     border: solid 1px;
     border-radius: 10px;
-    background: ${props => (props.theme === 'light' ? colors.backgroundLight : colors.backgroundDark)};
+    background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 `
 
 const StyledGroupIcn = styled.div `

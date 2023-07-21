@@ -1,4 +1,9 @@
-// src/components/RadioButton
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant RadioButton : 
+*/
 
 import React from 'react'
 import styled from 'styled-components'

@@ -1,4 +1,9 @@
-// src/components/Checkbox
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Checkbox : case à cocher
+*/
 
 import React from 'react'
 import styled from 'styled-components'

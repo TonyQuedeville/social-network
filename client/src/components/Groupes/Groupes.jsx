@@ -1,8 +1,15 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant Groupes : Affiche la liste des groupes de discution
+  Page Groupes : Route http://localhost:3000/groups
+*/
+
 import React, {useState, useContext, useEffect} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery, useQueryClient } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
-//import { queryClient } from '../../index.js';
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { GroupContext } from '../../utils/GroupProvider/GroupProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
@@ -14,13 +21,12 @@ import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import InputText from '../InputText/InputText.jsx'
 import TextArea from '../TextArea/TextArea.jsx'
 import Button from '../Button/Button.jsx'
-//import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnPhoto from '../../assets/icn/icn_appareil_photo.svg'
 import IcnNotification from '../../assets/icn/icn-notification.png'
 import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
-//import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
+import axios from "axios"
 
 
 // css
@@ -28,6 +34,7 @@ const PageContainer = styled.div`
   height: 88.5vh;
   display: flex;
   flex-direction: row;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const GroupContainer = styled.div`
   width: 100%;
@@ -69,7 +76,7 @@ const NewGroupeContainer = styled.div`
   padding: 5px;
   border: solid 1px;
   border-radius: 10px;
-  background: ${props => (props.theme === 'light' ? colors.backgroundLightSoft : colors.backgroundDark)};
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 `
 const StyleTitleGroupe = styled.div`
   font-weight : bold;
@@ -77,16 +84,6 @@ const StyleTitleGroupe = styled.div`
   justify-content: center;
   margin: 5px;
 `
-//const StyleInfo = styled.div`
-//	width: 100%;
-//	display: flex;
-//	flex-direction: row;
-//	justify-content: space-between;
-//	margin: 5px;
-//	font-style: italic;
-//	font-size: 0.8em;
-//	color: grey;
-//`
 const StyleGroupButton = styled.div `
   display: flex;
   align-items: center;
@@ -101,11 +98,11 @@ const Groupes = (props) => {
   const { theme } = useContext(ThemeContext)
 
   // AuthUser
-  const { authPseudo, authId, groupListRequested } = useContext(AuthContext);
+  const { authPseudo, authId, groupListRequested } = useContext(AuthContext)
 
   // Requete: Liste des groupes
   const { data, isLoading, error } = useQuery(['dataGroupes'], () =>
-    makeRequest.get("/groupes.json").then((res) => {
+    makeRequest.get("/groups").then((res) => {
       return res.data
     })
   )
@@ -118,6 +115,8 @@ const Groupes = (props) => {
   const [showInputFile, setShowInputFile] = useState(false)
   const [validNewGroupeisDisabled, setValidNewGroupeisDisabled] = useState(true)
   const { updateGroupeData } = useContext(GroupContext)
+  const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+  const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 
   const handleTitleNewGroupeChange = (event) => {
     setNewGroupeTitle(event.target.value)
@@ -153,33 +152,80 @@ const Groupes = (props) => {
     setShowInputFile(false)
   }
 
-  // Groupe
-  const handleAccesGroupe = (e) => {
-    console.log("Rejoindre le groupe ! ",e)
+  // Demander à adhérer au groupe
+  const handleAddGroupe = async (groupid) => {
+    console.log("Rejoindre le groupe :",groupid)
+    // Requete de demande d'ajout au groupe de discution vers app-social-network
+    try{
+      await axios.post(`http://${window.location.hostname}:8080/addGroup/${groupid}`)
+      setFetchError(false)
+    }
+    catch (err) {
+        setNotification(err.message + " : " + err.response.data.error)
+        setFetchError(true)
+    }
+    finally {
+    }
+  }
 
+  // Quitter le groupe
+  const handleSupGroupe = async (groupid) => {
+    console.log("Quitter le groupe :",groupid)
+    // Requete de demande d'ajout au groupe de discution vers app-social-network
+    try{
+      await axios.post(`http://${window.location.hostname}:8080/supGroup/${groupid}`)
+      setFetchError(false)
+    }
+    catch (err) {
+        setNotification(err.message + " : " + err.response.data.error)
+        setFetchError(true)
+    }
+    finally {
+    }
   }
 
   // Redirection vers la page du groupe
-  const queryClient = useQueryClient()
+  //const queryClient = useQueryClient()
   const navigate = useNavigate()
-  const HandleGroupeClick = (id) => {
-    fetch(`http://${window.location.hostname}:8080/groupe-${id}.json`)
-      .then((res) => res.json())
-      .then((dataGroupe) => {
-        queryClient.setQueryData(['dataGroupe', id], dataGroupe)
-        updateGroupeData(dataGroupe)
-        navigate(`/group/${dataGroupe.id}`)
-      })
-      .catch((error) => {
-        // Gérer l'erreur de la requête
-        console.error(error)
-        // Afficher une notification d'erreur
-        // ...
-      })
+
+  const HandleGroupeClick = async (groupid) => {
+        if (groupid) {            
+            try{
+                const response = await axios.post(`http://${window.location.hostname}:8080/group/${groupid}`)
+                const responseData = response.data
+
+                // Données du Groupe
+                //console.log("groupData:", responseData.datas)
+                updateGroupeData(responseData.datas.group)
+                
+                navigate(`/group/${responseData.datas.group.id}`)
+            }
+            catch (err) {
+                setNotification(err.message + " : " + err.response.data.error)
+                setFetchError(true)
+            }
+            finally {
+            }
+            //*/
+        }
+    
+    // fetch(`http://${window.location.hostname}:8080/groupe-${groupid}`)
+    //  .then((res) => res.json())
+    //  .then((dataGroupe) => {
+    //    queryClient.setQueryData(['dataGroupe', id], dataGroupe)
+    //    updateGroupeData(dataGroupe)
+    //    navigate(`/group/${dataGroupe.id}`)
+    //  })
+    //  .catch((error) => {
+    //    // Gérer l'erreur de la requête
+    //    console.error(error)
+    //    // Afficher une notification d'erreur
+    //    // ...
+    //  })
   }
 
   return (
-    <PageContainer larg={larg}>
+    <PageContainer larg={larg} theme={theme}>
       <GroupContainer>
         {/* New Group */}  
         { authPseudo ? (
@@ -263,7 +309,7 @@ const Groupes = (props) => {
                     <StyleGroupeList 
                       key={`${group.title}-${index}`} 
                       id={`group-link-${group.id}`}
-                      onClick={() => HandleGroupeClick(group.id)}
+                      onClick={group.members_id_list.includes(authId) ? () => HandleGroupeClick(group.id) : null}
                       {...group}
                     >
 
@@ -287,10 +333,10 @@ const Groupes = (props) => {
                         <Button 
                           text="Rejoindre le groupe" 
                           disabled={false} 
-                          onClick={handleAccesGroupe}
+                          onClick={handleAddGroupe(group.id)}
                         />                          
-                      ) : <>
-                        { groupListRequested.includes(group.id) && (
+                        ) : <>
+                        { groupListRequested.includes(group.id) ? (
                           <StyleGroupButton>
                             <Icone 
                               alt="Demande d'adhésion à ce groupe en cours acception !" 
@@ -299,8 +345,15 @@ const Groupes = (props) => {
                             />
                             <p>Demande d'adhésion à ce groupe en cours acception !</p>
                           </StyleGroupButton>
-                          )
-                        }</>}
+                          ) : 
+                          <>
+                            <Button 
+                              text="Quitter le groupe" 
+                              disabled={false} 
+                              onClick={handleSupGroupe(group.id)}
+                            /> 
+                          </>
+                        }</>} 
                     </StyleGroupeList>
                   </React.Fragment>
                 ))}
@@ -310,6 +363,10 @@ const Groupes = (props) => {
           )}
         </>
       </GroupContainer>
+
+      { fetchError && notification && (
+        <Popup texte={notification} type='error' />
+      )}
     </PageContainer>
   )
 }

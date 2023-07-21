@@ -24,6 +24,7 @@ const StyleProfilCard = styled.div`
   align-items: center;
   justify-content: centre;
   color: ${props => (props.theme === 'light' ? 'black' : 'white')};
+  
 `
 
 const StyleLabelUser = styled.div`

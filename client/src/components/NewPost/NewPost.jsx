@@ -1,3 +1,10 @@
+/*
+	Projet Zone01 : Social network
+	Tony Quedeville 
+	10/07/2023
+	Composant NewPost : Affiche une fenetre d'édition d'un nouveau post
+*/
+
 import React, { useState, useContext, useEffect } from 'react'
 //import { useParams } from 'react-router-dom'
 //import { Loader } from '../../../utils/Atom.jsx'

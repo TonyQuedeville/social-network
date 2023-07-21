@@ -79,11 +79,11 @@ function LoginForm() {
         password: '',
     })
 
-    const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email ou du nom d'utilisateur
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
+    const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
     const { updateUserData, handleLogin } = useContext(AuthContext) // Utilisateur connecté
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
