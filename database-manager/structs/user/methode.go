@@ -141,7 +141,7 @@ func GetUsers(user_id uint64) []*User {
 	for rows.Next() {
 		u := &User{}
 		rows.Scan(&u.Id, &u.Pseudo, &u.Image, &u.Status, &u.About, &u.Sexe, &u.First_name, &u.Last_name, &u.Born_date)
-		fmt.Printf("u: %v\n", u)
+		// fmt.Printf("u: %v\n", u)
 		result = append(result, u)
 	}
 	return result

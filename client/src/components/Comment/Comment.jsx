@@ -8,6 +8,8 @@
 import React from 'react';
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
+import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
+import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 
 // css
 const StylePostComment = styled.div`
@@ -45,9 +47,20 @@ const Comment = ({ comment, theme }) => {
 		<StylePostComment theme={theme}>
 			<StyleInfo>
 				<div>{comment.pseudo}</div>
-				<div>{comment.create_date}</div>
+				<div>{FrenchFormatDateConvert(comment.updated_date)}</div>
 			</StyleInfo>
+			
 			<StyleComment>{comment.content}</StyleComment>
+
+			{comment.image && (
+					<DisplayImage
+						id="commentImage"
+						src={`http://${window.location.hostname}:4000/download/${comment.image}`} 
+						alt="image commentaire"
+						disabled={false}
+						size={500}
+					/>
+				)}
 		</StylePostComment>
 	)
 }

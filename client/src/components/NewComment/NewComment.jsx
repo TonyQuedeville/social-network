@@ -41,7 +41,7 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewComment = () => {
+const NewComment = ({ postId, updateComments }) => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
@@ -56,11 +56,13 @@ const NewComment = () => {
 	
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
+		post_id: postId,
         user_id: authId,
 		pseudo: authPseudo,
 		content: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
     })
+	const [setComment] = useState("")
 
     // Mise à jour de formData à chaque changement dans le formulaire
     const handleChange = (e) => {
@@ -89,11 +91,13 @@ const NewComment = () => {
     }
 
 	// Soumission du formulaire au server app-social-network
-	const handleNewPostSubmit = async (event) => {
+	const handleNewCommentSubmit = async (event) => {
 		event.preventDefault()
         let data = {
             ...formData,
+				post_id: postId,
                 image: "",
+
         } 
 
         // Requete téléchargement de l'image vers app-image-storage par le hook personnalisé
@@ -104,18 +108,19 @@ const NewComment = () => {
                 data = {
                     ...formData,
                     image: uploadedImageUrl,
-                };
+                }
             }
             catch (err) {
-                console.error("Erreur lors du téléchargement de l'image :", err);
+                console.error("Erreur lors du téléchargement de l'image :", err)
             }
         }
 
         // Requete d'enregistrement vers app-social-network
         try{
-            await axios.post(`http://${window.location.hostname}:8080/newcomment`, JSON.stringify(data))
+            const response = await axios.post(`http://${window.location.hostname}:8080/newcomment`, JSON.stringify(data))
             setFetchError(false)
 			CancelNewComment()
+			updateComments(response.data);
         }
         catch (err) {
             setNotification(err.message + " : " + err.response.data.error)
@@ -146,7 +151,7 @@ const NewComment = () => {
 	// Composant
 	return (
 		<NewCommentContainer theme={theme}> 
-			<form onSubmit={handleNewPostSubmit}>
+			<form onSubmit={handleNewCommentSubmit}>
 				<TextArea
 					id="new-comment"
 					name="content"
@@ -188,6 +193,7 @@ const NewComment = () => {
 						type="submit" 
 						text="Publier" 
 						disabled={!(formData.content)} 
+						onChange={(e) => setComment(formData)}
 					/>
 					<Button 
 						text="Annuler" 

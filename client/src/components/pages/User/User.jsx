@@ -105,7 +105,6 @@ const User = () => {
             })
         )
         //console.log("dataPost:", dataPosts);
-        //console.log("dataPost:", dataPosts.datas);
 
         return (
             <>
@@ -116,14 +115,8 @@ const User = () => {
                     {errorPosts && (
                         <Popup texte="Le chargement des publications de cet utilisateur est erroné !" type='error' />
                     )}
-                    {dataPosts && (
+                    {dataPosts.datas && (
                         <>
-                        {/* post.status === "public" || authPseudo === userid || 
-                                (post.status === "private" && followed.includes(userid)) ||
-                                (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
-                                    <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
-                                    ) : null
-                                */}
                             {dataPosts.datas.map((post, index) => (
                                 <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
                             ))

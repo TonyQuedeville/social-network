@@ -1,15 +1,18 @@
 package comment
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 )
 
-// CRUD
+/* ------- CRUD ------- */
 
 // Create
 func (c *Comment) AddComment() error {
+	fmt.Println("c:", c)
+	
 	_, err := database.Database.Exec(`
 		INSERT INTO comment
 		(
@@ -120,6 +123,7 @@ func GetCommentByPostId(postId uint64) ([]*Comment, error) {
 	if err != nil {
 		return nil, err
 	}
+
 	defer rows.Close()
 
 	var comments []*Comment
