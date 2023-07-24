@@ -19,10 +19,16 @@ const useImageUpload = () => {
 
       const response = await axios.post(`http://${window.location.hostname}:4000/upload`, imageFormData)
 
-      setImageUrl(response.data.filename)
+      const uploadedImageUrl = response.data.filename // URL de l'image renvoyée par le serveur
+      setImageUrl(uploadedImageUrl) // Mettre à jour l'URL de l'image dans le hook
       setSelectedImage(imageFile)
+
+      return uploadedImageUrl; // Renvoyer l'URL de l'image
+
     } catch (err) {
       console.error('Erreur lors du téléchargement de l\'image :', err)
+      
+      return null; // En cas d'erreur, renvoyer null
     }
   }
 

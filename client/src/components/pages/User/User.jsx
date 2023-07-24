@@ -56,14 +56,14 @@ const User = () => {
     const { theme } = useContext(ThemeContext)
 
     // AuthUser
-    const { authPseudo, followed } = useContext(AuthContext)
-    //console.log("authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
+    const { authId, authPseudo, followed, follower } = useContext(AuthContext)
+    //console.log("authId:", authId,  typeof(authId), "authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
     //const follower // users qui suivent authPseudo
     //const followed // users suivis par authPseudo
 
     // User
     const { userid } = useParams()
-    //console.log("userid:", userid);
+    //console.log("userid:", userid, typeof(userid));
 
     let confidencial = false
     if (authPseudo === userid) {confidencial = true}
@@ -75,7 +75,7 @@ const User = () => {
                 return res.data
             })
         )
-        console.log("dataUser:", dataUser);
+        //console.log("dataUser:", dataUser);
         
         return (
             <>
@@ -99,12 +99,13 @@ const User = () => {
 
     // Posts
     const Posts = () => {    
-        const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPost'], () =>
+        const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPosts'], () =>
             makeRequest.get(`/userposts/${userid}`).then((res) => {
                 return res.data
             })
         )
-        console.log("dataPost:", dataPosts);
+        //console.log("dataPost:", dataPosts);
+        //console.log("dataPost:", dataPosts.datas);
 
         return (
             <>
@@ -117,13 +118,16 @@ const User = () => {
                     )}
                     {dataPosts && (
                         <>
-                            {dataPosts.posts.map((post, index) => (
-                                post.status === "public" || authPseudo === userid || 
+                        {/* post.status === "public" || authPseudo === userid || 
                                 (post.status === "private" && followed.includes(userid)) ||
                                 (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
                                     <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
-                                ) : null
-                            ))}
+                                    ) : null
+                                */}
+                            {dataPosts.datas.map((post, index) => (
+                                <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
+                            ))
+                            }
                         </>
                     )}
                 </>
@@ -135,7 +139,9 @@ const User = () => {
     // Composant 
     return (        
         <PageContainer>
+            {/* Groupes 
             <Groupes larg={25}/>
+            */}
 
             <ProfilContainer theme={theme}>
                 {/* Infos user */}
@@ -143,7 +149,7 @@ const User = () => {
                     <UserInfos />
                 </div>
 
-                { authPseudo === userid ? (
+                { authId.toString() === userid ? (
                     <NewPost/>
                 ) : (<></>)}
 
@@ -151,8 +157,6 @@ const User = () => {
                 <div>
                     <Posts />
                 </div>
-
-                {/* Affichage de la private-list */}
                 
             </ProfilContainer>
 

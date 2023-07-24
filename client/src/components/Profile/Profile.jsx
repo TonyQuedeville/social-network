@@ -107,8 +107,14 @@ const Profile = (props) => {
       <StyleLabelUser>
         <Pseudo id={`user-pseudo-${pseudo}`}>{pseudo}</Pseudo>
         {image ? 
-          <StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${image}`} id={`user-photo-${pseudo}`} alt="photoProfile" />
-          : <StylePhotoProfile src={sexe === 'f' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${pseudo}`} alt="photoProfile" />
+          <StylePhotoProfile 
+            src={`http://${window.location.hostname}:4000/download/${image}`} 
+            id={`user-photo-${pseudo}`} 
+            alt="photoProfile" />
+          : <StylePhotoProfile 
+              src={sexe === 'f' ? DefaultPictureF : DefaultPictureH} 
+              id={`user-photo-${pseudo}`} 
+              alt="photoProfile" />
         }
         { authPseudo === pseudo ? 
           <StyleLabInput>

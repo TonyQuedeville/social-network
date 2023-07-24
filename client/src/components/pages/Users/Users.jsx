@@ -20,7 +20,7 @@ import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
 import IcnSupFriend from '../../../assets/icn/icn-supfriend.jpg'
 import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
 import { makeRequest } from '../../../utils/Axios/Axios.js'
-import axios from "axios"
+//import axios from "axios"
 
 const queryClient = new QueryClient()
 
@@ -56,8 +56,9 @@ const Users = () => {
   const { theme } = useContext(ThemeContext)
 
   const { authPseudo, followed } = useContext(AuthContext)
+  //const followerId = (follower||[]).map(follow => follow.id) 
   const followedId = (followed||[]).map(follow => follow.id) 
-  //console.log("authPseudo:", authPseudo, "followedId:", followedId);
+  //console.log("authPseudo:", authPseudo, "followerId:", followerId, "followedId:", followedId);
 
   const navigate = useNavigate()
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -72,7 +73,9 @@ const Users = () => {
   const handleAddFollowerClick = async (userid) => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
-      await axios.post(`http://${window.location.hostname}:8080/addfollower/${userid}`)
+      const response = await makeRequest.post(`/addfollower/${userid}`)
+      const responseData = response.data
+      console.log("addfollower:", responseData.datas)
       setFetchError(false)
     }
     catch (err) {
@@ -87,8 +90,18 @@ const Users = () => {
   const handleSupFollowerClick = async (userid) => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
-      await axios.post(`http://${window.location.hostname}:8080/supfollower/${userid}`)
-      setFetchError(false)
+      try{
+        const response = await makeRequest.post(`/supfollower/${userid}`)
+        const responseData = response.data
+        console.log("supfollower:", responseData.datas)
+        setFetchError(false)
+      }
+      catch (err) {
+          setNotification(err.message + " : " + err.response.data.error)
+          setFetchError(true)
+      }
+      finally {
+      }
     }
     catch (err) {
         setNotification(err.message + " : " + err.response.data.error)

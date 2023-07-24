@@ -80,6 +80,7 @@ function isValidEmail(value) {
 
 // Composant
 function RegisterForm() {
+    const navigate = useNavigate()  // variable permettant de rediriger vers la page /login si l'inscription réussie
     const [isPseudoValid, setIsPseudoValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
     const [isPasswordValid, setIsPasswordValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du mot de passe
@@ -185,22 +186,6 @@ function RegisterForm() {
         }
     }, [isEmailValid])
 
-    /*
-    // UseEffect "componentWillMount" à la création du composant, (s'execute avant le 1er rendu)
-    useEffect(() => {
-        setNotification("")
-        //console.log("Création composant : componentWillMount !");
-    }, []);
-
-    // UseEffect "componentWillUnmount" à la suppression du composant, (s'execute avant la destruction du composant)
-    useEffect(() => {
-        return () => {
-            // Code de nettoyage
-            //console.log("Destruction composant : componentWillUnmount !");
-        };
-    }, []);
-    */
-
     // Mise à jour l'état isDisabled du bouton submit à chaque fois que l'état des champs d'entrée change
     // Quand toutes les conditions sont ok, le bouton devient cliquable.
     useEffect(() => {
@@ -208,27 +193,33 @@ function RegisterForm() {
     }, [isPseudoValid, isEmailValid, isPasswordValid, isConfirmDisabled, cgu])
 
     // Submit
-    const navigate = useNavigate()  // variable permettant de rediriger vers la page /login si l'inscription réussie
+    //const { imageUrl, selectedImage, setImageUrl, setSelectedImage, uploadImage } = useImageUpload()
     const handleSubmit = async (event) => {
         event.preventDefault()
+
         let data = {
             ...formData,
-                image: "",
-        } 
-        
+            image: "",
+        };
+
         // Requete téléchargement de l'image vers app-image-storage par le hook personnalisé
         if (selectedImage) {
-            await uploadImage(selectedImage)
-            data = {
-            ...formData,
-            image: imageUrl,
+            try {
+                const uploadedImageUrl = await uploadImage(selectedImage);
+
+                data = {
+                    ...formData,
+                    image: uploadedImageUrl,
+                };
+            }
+            catch (err) {
+                console.error("Erreur lors du téléchargement de l'image :", err);
             }
         }
-        
+
         // Requete d'enregistrement vers app-social-network
         try{
             await axios.post(`http://${window.location.hostname}:8080/user/register`, JSON.stringify(data))
-
             setFetchError(false)
             if (isPseudoValid && isPasswordValid && cgu) {
                 navigate("/login") // Redirection vers la page de connection

@@ -13,6 +13,7 @@ func InitServer() {
 
 	mux := http.NewServeMux()
 
+	// user
 	mux.Handle("/user/register", ApplyMiddleware(http.HandlerFunc(api.UserRegister)))
 	mux.Handle("/user/login", ApplyMiddleware(http.HandlerFunc(api.UserLogin)))
 	mux.Handle("/users", ApplyMiddleware(http.HandlerFunc(api.GetUsers)))
@@ -21,7 +22,12 @@ func InitServer() {
 	mux.Handle("/acceptfollower/", ApplyMiddleware(http.HandlerFunc(api.AcceptFollower)))
 	mux.Handle("/refusefollower/", ApplyMiddleware(http.HandlerFunc(api.RefuseFollower)))
 	mux.Handle("/supfollower/", ApplyMiddleware(http.HandlerFunc(api.SupFollower)))
-
 	// mux.Handle("/follower/", ApplyMiddleware(http.HandlerFunc(api.GetFollowerUserById)))
+
+	// post
+	mux.Handle("/newpost", ApplyMiddleware(http.HandlerFunc(api.NewPost)))
+	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostByUserId)))
+	//mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostByGrouypId)))
+
 	http.ListenAndServe(ADRESS, mux)
 }
