@@ -18,7 +18,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
-	fmt.Println("Register request")
+	//fmt.Println("Register request")
 	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
 	u := &user.User{}                                   // prepare un user
 	if err := json.Unmarshal(reqBody, &u); err != nil { // unwrap le corp dans user

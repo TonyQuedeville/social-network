@@ -363,3 +363,33 @@ func RemoveFollower(user_id, follow_id uint64) (status string) {
 	}
 	return "remove suced"
 }
+
+// GetFollowerByUserId récupère les IDs des followers d'un utilisateur spécifié par son ID
+func GetFollowerByUserId(userId uint64) ([]uint64, error) {
+	// Prépare une requête SQL pour récupérer les IDs des followers de l'utilisateur
+	query := `
+		SELECT follow_id
+		FROM follower
+		WHERE user_id = ?
+	`
+
+	// Exécute la requête SQL pour récupérer les IDs des followers
+	rows, err := database.Database.Query(query, userId)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+
+	// Parcours les résultats et stocke les IDs des followers dans une liste
+	followerIDs := []uint64{}
+	for rows.Next() {
+		var followerID uint64
+		err := rows.Scan(&followerID)
+		if err != nil {
+			return nil, err
+		}
+		followerIDs = append(followerIDs, followerID)
+	}
+
+	return followerIDs, nil
+}

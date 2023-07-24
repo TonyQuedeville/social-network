@@ -10,8 +10,9 @@ import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
-import Popup from '../Popup/Popup.jsx'
+//import Popup from '../Popup/Popup.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
+import NewComment from '../NewComment/NewComment.jsx'
 import Comment from '../Comment/Comment.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -68,7 +69,6 @@ const StyleGroupButton = styled.div `
 const Post = ({ post, theme, confidencial }) => {
   // AuthUser
   const { follower } = useContext(AuthContext)
-  //console.log("follower:", follower);
   const [privateList, setPrivateList] = useState([])
   const [PostConfidencial, setPostConfidencial] = useState(post.status)
   const [showFollowersSelector, setShowFollowersSelector] = useState(false)
@@ -95,7 +95,7 @@ const Post = ({ post, theme, confidencial }) => {
 
   const Comments = () => {
     const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(['dataComment'], () =>
-      makeRequest.get(`/comments.json`).then((res) => {
+      makeRequest.get(`/comments/${post.id}`).then((res) => {
         return res.data
       })
     )
@@ -106,14 +106,16 @@ const Post = ({ post, theme, confidencial }) => {
           <Loader id="loader" />
         ) : (
           <>
-            {errorComments && <Popup texte="Le chargement des publications de cet utilisateur est erroné !" type="error" />}
-            {dataComments && (
+            {dataComments ? (
               <>
                 {dataComments.comments.map((comment, index) => (
                   <Comment key={index} comment={comment} theme={theme} />
                 ))}
               </>
-            )}
+            ) : <>
+              {/* errorComments && <Popup texte="Post sans commentaire !" type="error" /> */}
+              </>
+            }
           </>
         )}
       </>
@@ -161,12 +163,12 @@ const Post = ({ post, theme, confidencial }) => {
       <StyleTitlePublication>{post.title}</StyleTitlePublication>
 
       {post.image ? (
-      <DisplayImage
-        id={"postImage-" + post.id}
-        src={require(`../../assets/img/${post.image}`).default}
-        alt={"Image " + post.title}
-        disabled={false}
-      />
+        <DisplayImage
+          id={"postImage-" + post.id}
+          src={`http://${window.location.hostname}:4000/download/${post.image}`}
+          alt={"Image " + post.title}
+          disabled={false}
+        />
       ) : <></>}
       
       <StylePostContent>{post.content}</StylePostContent>  
@@ -181,6 +183,7 @@ const Post = ({ post, theme, confidencial }) => {
       />
 			)}
 
+      <NewComment/>
       <Comments/>
     </PostContainer>
   )

@@ -2,33 +2,26 @@
 	Projet Zone01 : Social network
 	Tony Quedeville 
 	10/07/2023
-	Composant NewPost : Affiche une fenetre d'édition d'un nouveau post
+	Composant NewComment : Affiche une fenetre d'édition d'un nouveau commentaire pour un post
 */
 
 import React, { useState, useContext } from 'react'
-//import { useParams } from 'react-router-dom'
-//import { Loader } from '../../../utils/Atom.jsx'
-//import { useQuery } from '@tanstack/react-query' //'react-query'
 import axios from "axios"
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
-
-import InputText from '../InputText/InputText.jsx'
 import TextArea from '../TextArea/TextArea.jsx'
 import Button from '../Button/Button.jsx'
-import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnPhoto from '../../assets/icn/icn_appareil_photo.svg'
 import useImageUpload from '../../utils/hooks/ImageUpload/useImageUpload.js'
 import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 import Popup from '../Popup/Popup.jsx'
-import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 
 // css
-const NewPostContainer = styled.div`
+const NewCommentContainer = styled.div`
 	width: auto;
 	display: flex;
 	flex-direction: column;
@@ -40,12 +33,6 @@ const NewPostContainer = styled.div`
 	border-radius: 10px;
 	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 `
-const StyleTitlePublication = styled.div`
-	font-weight : bold;
-	display: flex;
-	justify-content: center;
-	margin: 5px;
-`
 const StyleGroupButton = styled.div `
     display: flex;
     align-items: center;
@@ -54,29 +41,25 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewPost = () => {
+const NewComment = () => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
-    const { authId, authPseudo, follower } = useContext(AuthContext)
+    const { authId, authPseudo } = useContext(AuthContext)
 	
 	// New Post
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
 	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
-	const [postImage, setPostImage] = useState(null) // 
-	const { imageUrl, selectedImage, setImageUrl, setSelectedImage, uploadImage } = useImageUpload() // Hook personalisé: image selectionnée qui sera envoyée au server app-image-storage
+	const [commentImage, setCommentImage] = useState(null) // 
 	const [showInputFile, setShowInputFile] = useState(false) // fenetre de téléchargement d'image
-	const [showFollowersSelector, setShowFollowersSelector] = useState(false) // fenetre de selection des followers de la liste privé
-
+	const { imageUrl, selectedImage, setImageUrl, setSelectedImage, uploadImage } = useImageUpload() // Hook personalisé: image selectionnée qui sera envoyée au server app-image-storage
+	
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
         user_id: authId,
 		pseudo: authPseudo,
-		status: 'public',
-		title: '',
 		content: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
-		private_list: [],
     })
 
     // Mise à jour de formData à chaque changement dans le formulaire
@@ -90,13 +73,9 @@ const NewPost = () => {
                         setImageUrl(URL.createObjectURL(file))
                         value = file.name
                         setSelectedImage(file)
-						setPostImage(value)
+						setCommentImage(value)
                     }
                     break
-
-				case "status" :
-					if (value === "private-list") setShowFollowersSelector(true)
-					break
 
                 default :
                     break
@@ -134,9 +113,9 @@ const NewPost = () => {
 
         // Requete d'enregistrement vers app-social-network
         try{
-            await axios.post(`http://${window.location.hostname}:8080/newpost`, JSON.stringify(data))
+            await axios.post(`http://${window.location.hostname}:8080/newcomment`, JSON.stringify(data))
             setFetchError(false)
-			CancelNewPost()
+			CancelNewComment()
         }
         catch (err) {
             setNotification(err.message + " : " + err.response.data.error)
@@ -147,68 +126,52 @@ const NewPost = () => {
 	}
 
 	// Image post
-	const loadPhotoPost = () => {
+	const loadPhotoComment = () => {
 		setShowInputFile(true)
 	}
 
 	// Annulation
-	const CancelNewPost = () => {
+	const CancelNewComment = () => {
 		setFormData({
             ...formData,
             user_id: authId,
-			status: 'public',
-			title: '',
 			content: '',
 			image: '', 
-			private_list: [],
             })
-		setPostImage('')
+		setCommentImage('')
 		setSelectedImage(null); // Efface l'image sélectionnée
   		setShowInputFile(false); // Cache l'élément pour sélectionner l'image si nécessaire
 	}
 
 	// Composant
 	return (
-		<NewPostContainer theme={theme}> 
+		<NewCommentContainer theme={theme}> 
 			<form onSubmit={handleNewPostSubmit}>
-				<StyleTitlePublication>Nouvelle publication</StyleTitlePublication>
-
-				<InputText
-					id="titleNewPost"
-					name="title"
-					label="Titre"
-					title="Titre de publication"
-					placeholder="Titre de publication"
-					value={formData.title}
-					onChange={handleChange}
-					required
-					size={470}
-				/>
 				<TextArea
-					id="new-post"
+					id="new-comment"
 					name="content"
-					label=""
-					title="contenu de publication"
+					label="commenter"
+					title="contenu du commentaire"
 					placeholder="c'est là qu'tu cause !"
-					rows={3}
-					cols={61}
+					rows={2}
+					cols={48}
 					value={formData.content}
 					onChange={handleChange}
 				/>
 
 				{showInputFile && (
 					<InputFileImage 
-						id="filePostImage"
+						id="fileCommentImage"
 						name="image"
-                        label="Photo de profil"
+                        label="Photo du commentaire"
 						onChange={(file) => handleChange({ target: { name: 'image', files: [file] } })}
 					/>
 				)}                           
-				{postImage && (
+				{commentImage && (
 					<DisplayImage
-						id="postImage"
+						id="commentImage"
 						src={imageUrl} 
-						alt="Post image"
+						alt="image commentaire"
 						disabled={false}
 						size={500}
 					/>
@@ -216,50 +179,20 @@ const NewPost = () => {
 				
 				<StyleGroupButton>
 					<Icone 
-						alt="Post image" 
+						alt="joindre une image au commentaire" 
 						image={IcnPhoto}
-						onClick={loadPhotoPost}
+						onClick={loadPhotoComment}
 					/>
-
-					<RadioBouton
-						id="newPostStatusPublic"
-						name="status"
-						label="Public"
-						value="public"
-						checked={formData.status === 'public'}
-						onChange={handleChange}
-						alignment="vertical"
-					/>
-					<RadioBouton
-						id="newPostStatusPrivate"
-						name="status"
-						label="Privé"
-						value="private"
-						checked={formData.status === 'private'}
-						onChange={handleChange}
-						alignment="vertical"
-					/>
-					{follower &&
-						<RadioBouton
-							id="newPostStatusPrivateList"
-							name="status"
-							label="Liste"
-							value="private-list"
-							checked={formData.status === 'private-list'}
-							onChange={handleChange}
-							alignment="vertical"
-						/>
-					}
 
 					<Button 
 						type="submit" 
 						text="Publier" 
-						disabled={!(formData.title && formData.content)} 
+						disabled={!(formData.content)} 
 					/>
 					<Button 
 						text="Annuler" 
 						disabled={false} 
-						onClick={CancelNewPost}
+						onClick={CancelNewComment}
 					/>
 				</StyleGroupButton>
 
@@ -267,23 +200,8 @@ const NewPost = () => {
                     <Popup texte={notification} type='error' />
                 )}
 			</form>
-
-			{showFollowersSelector && (
-				<FollowersSelector
-					private_list={formData.private_list}
-					follower={follower}
-					onChange={(updatedFollowers) => {
-						setFormData((prevFormData) => ({
-							...prevFormData,
-							private_list: updatedFollowers,
-							}))
-						}}
-					onClose={() => {setShowFollowersSelector(false)}}
-					theme={theme}
-				/>
-			)}
-		</NewPostContainer>
+		</NewCommentContainer>
 	)
 }
 
-export default NewPost
+export default NewComment
