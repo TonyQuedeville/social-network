@@ -9,7 +9,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -87,7 +86,6 @@ func PostByUserId(w http.ResponseWriter, r *http.Request) {
 			followers, err := user.GetFollowerByUserId(user_id) // Récupérer les followers de l'auteur du post
 			if err == nil {
 				for _, folowerId := range followers {
-					fmt.Println("folowerId:", folowerId)
 					if folowerId == intel_id {
 						// Si l'utilisateur connecté est dans la liste privée, ajouter le post à la liste filtrée
 						filteredPosts = append(filteredPosts, p)

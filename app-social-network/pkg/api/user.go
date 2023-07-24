@@ -2,7 +2,7 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
+
 	"io"
 	"net/http"
 
@@ -133,7 +133,7 @@ func GetFollowedUserById(w http.ResponseWriter, r *http.Request) {
 func ManageFollower(w http.ResponseWriter, r *http.Request, flag string) {
 	// only post
 	if !IsPost(w, r) {
-		fmt.Println("PAS POST")
+		//fmt.Println("PAS POST")
 		return
 	}
 	user_id := GetIdUser(r)

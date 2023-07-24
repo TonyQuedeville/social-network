@@ -5,7 +5,7 @@
 	Composant Post : Affiche un posts et appel les commentaires qui lui sont associés
 */
 
-import React, {useState, useContext} from 'react'
+import React, {useState, useContext, useEffect} from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query'
@@ -19,6 +19,7 @@ import colors from '../../utils/style/Colors.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
+
 
 // css
 const PostContainer = styled.div`
@@ -68,7 +69,7 @@ const StyleGroupButton = styled.div `
 // Composant
 const Post = ({ post, theme, confidencial }) => {
   // AuthUser
-  const { follower } = useContext(AuthContext)
+  const { authId, follower } = useContext(AuthContext)
   const [privateList, setPrivateList] = useState([])
   const [PostConfidencial, setPostConfidencial] = useState(post.status)
   const [showFollowersSelector, setShowFollowersSelector] = useState(false)
@@ -93,12 +94,18 @@ const Post = ({ post, theme, confidencial }) => {
 		}
 }
 
+  // Commentaires
   const Comments = () => {
-    const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(['dataComment'], () =>
-      makeRequest.get(`/comments/${post.id}`).then((res) => {
-        return res.data
-      })
-    )
+    const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
+      ['dataComment', post.id],
+      () =>
+        makeRequest.get(`/comments/${post.id}`).then((res) => {
+          return res.data;
+        }),
+      {
+        cacheTime: 0, // Désactiver la mise en cache
+      }
+    );
 
     return (
       <>
@@ -106,9 +113,9 @@ const Post = ({ post, theme, confidencial }) => {
           <Loader id="loader" />
         ) : (
           <>
-            {dataComments ? (
+            {dataComments.datas ? (
               <>
-                {dataComments.comments.map((comment, index) => (
+                {dataComments.datas.map((comment, index) => (
                   <Comment key={index} comment={comment} theme={theme} />
                 ))}
               </>
@@ -121,6 +128,16 @@ const Post = ({ post, theme, confidencial }) => {
       </>
     )
   }
+
+  useEffect(() => {
+    // Mettre à jour les commentaires du post ici
+  }, [post.id]);
+
+  const [comments, setComments] = useState([]); // Etat des commentaires du post
+  const updateComments = (newComment) => {
+    // Ajouter le nouveau commentaire à la liste des commentaires
+    setComments([...comments, newComment]);
+  };
 
   return (
     <PostContainer  theme={theme}>
@@ -183,7 +200,10 @@ const Post = ({ post, theme, confidencial }) => {
       />
 			)}
 
-      <NewComment/>
+        { authId && 
+          <NewComment postId={post.id} updateComments={updateComments} /> 
+        }
+
       <Comments/>
     </PostContainer>
   )

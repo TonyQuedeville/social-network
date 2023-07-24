@@ -12,6 +12,8 @@ Creation du projet reactJS:
   5 - "yarn add prop-types" Pour le typage des composants
   6 - "yarn add styled-components" pour scoper le style au composants (appliquer du css en JS)
 
+  Lancer l'application : yarn start (option --clear-cach pour vider le cache)
+
 
 A retenir :
 Le state local est présent à l’intérieur d’un composant : ce composant peut être re-render autant de fois que l'on veut, mais les données seront préservées. Pour cela on utilise "useState", un hook qui permet d'ajouter un state local dans un composant fonction.

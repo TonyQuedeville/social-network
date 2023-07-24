@@ -27,6 +27,8 @@ func InitServer() {
 	// post
 	mux.Handle("/newpost", ApplyMiddleware(http.HandlerFunc(api.NewPost)))
 	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostByUserId)))
+	mux.Handle("/newcomment", ApplyMiddleware(http.HandlerFunc(api.NewComment)))
+	mux.Handle("/comments/", ApplyMiddleware(http.HandlerFunc(api.CommentByPostId)))
 	//mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostByGrouypId)))
 
 	http.ListenAndServe(ADRESS, mux)
