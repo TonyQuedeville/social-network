@@ -29,7 +29,14 @@ func InitServer() {
 	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostByUserId)))
 	mux.Handle("/newcomment", ApplyMiddleware(http.HandlerFunc(api.NewComment)))
 	mux.Handle("/comments/", ApplyMiddleware(http.HandlerFunc(api.CommentByPostId)))
-	//mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostByGrouypId)))
+	// mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostByGrouypId)))
 
+	// Event
+	mux.Handle("/events/", ApplyMiddleware(http.HandlerFunc(api.EventsByGroupId)))      // group id
+	mux.Handle("/addevent/", ApplyMiddleware(http.HandlerFunc(api.AddeventInGroupId)))  // group id
+	mux.Handle("/supevent/", ApplyMiddleware(http.HandlerFunc(api.Supevent)))           // event id
+	mux.Handle("/goingevent/", ApplyMiddleware(http.HandlerFunc(api.Goingevent)))       // event id
+	mux.Handle("/notgoingevent/", ApplyMiddleware(http.HandlerFunc(api.Notgoingevent))) // event id
+	mux.Handle("/supgoingevent/", ApplyMiddleware(http.HandlerFunc(api.SupGoingEvent))) // event id
 	http.ListenAndServe(ADRESS, mux)
 }
