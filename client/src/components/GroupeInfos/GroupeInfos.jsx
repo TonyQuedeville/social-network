@@ -5,7 +5,7 @@
 	Composant GroupeInfo : Affiche les informations générales d'un groupe de discution
 */
 
-import React, { useContext, useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import styled from 'styled-components'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
@@ -63,8 +63,8 @@ const StyleBold = styled.p`
 
 // Composant
 const GroupeInfos = (props) => {
-	const {groupId, title, admin, createDate, description, image, nbMembers } = props
-	const { groupListRequested } = useContext(AuthContext)
+	const { authId } = useContext(AuthContext)
+	const {groupId, title, pseudo, description, image, members, createDate } = props
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 
@@ -93,7 +93,7 @@ const GroupeInfos = (props) => {
 				{image ? (
 					<DisplayImage
 						id={"groupImage-" + groupId}
-						src={require(`../../assets/img/${image}`).default}
+						src={`http://${window.location.hostname}:4000/download/${image}`}
 						alt={"Image " + title}
 						disabled={false}
 						size={300}
@@ -101,14 +101,14 @@ const GroupeInfos = (props) => {
 					<StyleInfo>
 						<StyleBold>A propos:</StyleBold>
 						<StyleRow>{description}</StyleRow>
-						<StyleRow><StyleBold>Admin:</StyleBold> {admin}</StyleRow>
+						<StyleRow><StyleBold>Admin:</StyleBold> {pseudo}</StyleRow>
 						<StyleRow><StyleBold>Date de création:</StyleBold>{FrenchFormatDateConvert(createDate)}</StyleRow>
-						<StyleRow><StyleBold>Membres:</StyleBold> {nbMembers}</StyleRow>
+						<StyleRow><StyleBold>Nombre de membres:</StyleBold> {members.length}</StyleRow>
 					</StyleInfo>
 			</StyleBanner>
 
 			<>
-				{ groupListRequested.includes(groupId) ? (
+				{ members.includes(groupId) ? (
 					<StyleRow>
 						<Icone 
 							alt="Demande d'adhésion à ce groupe en cours acception !" 
@@ -118,11 +118,15 @@ const GroupeInfos = (props) => {
 						<p>Demande d'adhésion à ce groupe en cours acception !</p>
 					</StyleRow>
 					) : 
-					<Button 
-						text="Quitter le groupe" 
-						disabled={false} 
-						onClick={handleSupGroupe(groupId)}
-					/> 
+					<>
+						{ authId && (
+							<Button 
+								text="Quitter le groupe" 
+								disabled={false} 
+								onClick={handleSupGroupe}
+							/> 
+						)}
+					</>
 				}
 			</>
 			{ fetchError && notification && (

@@ -6,10 +6,13 @@
   Page Groupe : Route http://localhost:3000/group/:groupId
 */
 
-import React, { useContext } from 'react'
-//import { useParams } from 'react-router-dom'
+import React, { useContext, useEffect, useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { useSelector, useDispatch, connect } from 'react-redux';
+import { updateGroupData } from '../../../redux/actions';
+
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
-import { GroupContext } from '../../../utils/GroupProvider/GroupProvider.jsx'
+//import { GroupContext } from '../../../utils/GroupProvider/GroupProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../../utils/Axios/Axios.js'
@@ -17,6 +20,7 @@ import { makeRequest } from '../../../utils/Axios/Axios.js'
 import styled from 'styled-components'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../../utils/style/Colors.js'
+import extractIdsFromList from "../../../utils/tools/ExtractIdsFromList.js"
 //import InputText from '../InputText/InputText.jsx'
 //import TextArea from '../TextArea/TextArea.jsx'
 //import Button from '../Button/Button.jsx'
@@ -57,48 +61,73 @@ const StylePostsContainer = styled.div`
 	border-radius: 10px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 
 // Composant
 const Groupe = () => {
+  // Contexte
   const { theme } = useContext(ThemeContext)
-
   const { authPseudo, authId } = useContext(AuthContext)
-  //console.log("authPseudo:", authPseudo, "authId:", authId)
-  const data = useContext(GroupContext)
-  //console.log(data)
+  //const { updateGroupeData } = useContext(GroupContext)
+  const { groupId } = useParams()
+  const [groupData, setGroupData] = useState(null);
+  const [isLoading, setIsLoading] = useState(true);
 
-  let confidencial = false
-  if (data.membersIdList.includes(authId)) {confidencial = true}
+  // Redux
+  //const groupData = useSelector((state) => state)
+  const dispatch = useDispatch()
+  
+  /* 
+  Redux Selectors : Les selectors sont des fonctions qui permettent d'accéder aux données spécifiques 
+    du store depuis les composants de votre application.
 
-  const handleFollowersChange = (follower) => {
-    console.log("follower:", follower)
-  }
+  Redux Dispatch : Le dispatch est une fonction qui permet de déclencher une action pour mettre à jour 
+    le store. Lorsque vous dispatchez une action, Redux appelle automatiquement les reducers correspondants 
+    pour mettre à jour l'état du store.
+  */
+
+  useEffect(() => {
+    const fetchData = async () => {
+      if (groupId) {
+        const { data, error } = await makeRequest.get(`/groupe/${groupId}`);
+        if (!error) {
+          setGroupData(data.datas)
+          //dispatch(updateGroupData(data.datas));
+          setIsLoading(false)
+        }
+      }
+    };
+    fetchData();
+  }, [groupId]);
+
+  console.log("groupData :", groupData);
 
   // Posts
-  const Posts = () => {    
-    const { data, isLoading, error } = useQuery(['dataPost'], () =>
-      makeRequest.get(`/groupposts/${data.groupId}`).then((res) => {
+  const Posts = () => {  
+    const { data, isLoading, error } = useQuery(['dataPosts'], async () =>
+      await makeRequest.get(`/groupposts/${groupId}`).then((res) => {
+        //console.log("groupposts !", res.data);
         return res.data
       })
     )
-    //console.log("dataPosts:", data);
+    console.log("dataPosts:", data.datas);
 
     return (
       <>
         {isLoading ? (
-        <Loader id="loader" />
+          <Loader id="loader" />
         ) : (
         <>
           {error && (
             <Popup texte="Le chargement des publications de ce groupe est erroné !" type='error' />
           )}
-          {data && (
+          {data.datas && (
             <>
-              {data.posts.map((post, index) => (
-                (post.status === "private-list" && post.private_list.includes(authPseudo)) ? (
-                  <Post key={index} post={post} theme={theme} confidencial={confidencial}/>
+              {data.datas.map((post, index) => (
+                (post.status === "private-list") ? (
+                  <Post key={index} post={post} theme={theme} confidencial={false}/>
                 ) : null
               ))}
             </>
@@ -109,29 +138,39 @@ const Groupe = () => {
     )
   }
 
+  if (isLoading) {
+    // Affiche un indicateur de chargement tant que les données ne sont pas prêtes
+    return <Loader />;
+  } 
+  
   return (
     <PageContainer theme={theme}>
-      {/* Infos Groupe */}
-      <GroupeInfos {...data} />
+      { groupData && (
+        <>
+          {/* Infos Groupe */}
+          <GroupeInfos {...groupData} />
 
-      {authPseudo && data.membersIdList.includes(authId) && (
-        <div>
-          {data.admin === authPseudo ? (
-            <div>Fonctionnalités supplémentaires réservées à l'administrateur</div>
-          ) : null}
+          {authPseudo && groupData.members.includes(authId) && (
+            <>
+              {groupData.admin === authPseudo ? (
+                <div>Fonctionnalités supplémentaires réservées à l'administrateur</div>
+              ) : null}
 
-          <NewPost
-            follower={data.membersIdList}
-            onChange={handleFollowersChange}
-          />
+              <NewPost
+                group={groupId}
+                groupMembers={groupData.members}
+              />
 
-          <StylePostsContainer theme={theme}>
-            <Posts />
-          </StylePostsContainer>
-        </div>
+              <StylePostsContainer theme={theme}>
+                <Posts />
+              </StylePostsContainer>
+            </>
+          )}
+        </>
       )}
     </PageContainer>
   )
 }
 
 export default Groupe
+//export default connect((state) => ({ groupData: state }), { updateGroupData })(Groupe);

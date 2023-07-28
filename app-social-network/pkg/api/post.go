@@ -2,7 +2,7 @@
 	Projet Zone01 : Social network
 	Tony Quedeville
 	22/07/2023
-	Gestion des publication utilisateur (et groupe de discution)
+	Gestion des publications (utilisateur et groupe de discution)
 */
 
 package api
@@ -43,8 +43,8 @@ func NewPost(w http.ResponseWriter, r *http.Request) {
 	Ok(w, p)
 }
 
-/* Demande de visualisation d'une publication par l'id de l'utilisateur initiateur du post. (Route http://localhost:3000/post/:userid) */
-func PostByUserId(w http.ResponseWriter, r *http.Request) {
+/* Demande de visualisation des publications par l'id de l'utilisateur initiateur du post. (Route http://localhost:3000/post/:userid) */
+func PostsByUserId(w http.ResponseWriter, r *http.Request) {
 	// only get request
 	if !IsGet(w, r) {
 		return
@@ -58,7 +58,7 @@ func PostByUserId(w http.ResponseWriter, r *http.Request) {
 
 	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
 
-	tabPost, err := post.GetPostByUserId(user_id, intel_id)
+	tabPost, err := post.GetPostsByUserId(user_id, intel_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return

@@ -5,7 +5,7 @@ import (
 	"net/http"
 
 	"github.com/TonyQuedeville/social-network/app-social-network/pkg/api"
-	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
+	user "github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
 // func exampleMiddleware(next http.Handler) http.Handler {

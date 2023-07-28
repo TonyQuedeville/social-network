@@ -1,6 +1,11 @@
 # social-network
 Projet Zone01 Reseaux social
 
+  Lancer l'application app-image-storage : node server.js
+  Lancer l'application app-social-network : go run app-social-network/main.go
+  Lancer l'application client : yarn start (option --clear-cach pour vider le cache)
+  
+
 Créer un dossier "server"
   - go mod init
 
@@ -11,9 +16,6 @@ Creation du projet reactJS:
   4 - "yarn add react-router-dom" Librarie Router (version spécifique yarn add react-router-dom@6.10.0 pour ce projet)
   5 - "yarn add prop-types" Pour le typage des composants
   6 - "yarn add styled-components" pour scoper le style au composants (appliquer du css en JS)
-
-  Lancer l'application : yarn start (option --clear-cach pour vider le cache)
-
 
 A retenir :
 Le state local est présent à l’intérieur d’un composant : ce composant peut être re-render autant de fois que l'on veut, mais les données seront préservées. Pour cela on utilise "useState", un hook qui permet d'ajouter un state local dans un composant fonction.
@@ -26,3 +28,40 @@ useState permettra de stocker le retour de l'API dans le  state
 useContext permet de mettre en place les providers évitant ainsi le passage des props en cascade de parents à enfants.
 
  - Simulation reponse server Alann: /Desktop/Div-01/Users$ ./test-api 
+
+
+Conversation GPT :
+
+  Moi - est t'il est possible de faire 2 applications React dans un même projet et qui marcherai ensemble ?
+ Par exemple un reseau social et un tchat.
+
+  GPT - Oui, il est tout à fait possible de créer deux applications React distinctes et de les faire fonctionner ensemble dans un même projet. Voici quelques approches pour y parvenir :
+
+Monorepo : Vous pouvez utiliser un monorepo pour gérer les deux applications dans un seul projet. Un monorepo est un dépôt de code qui contient plusieurs packages ou applications. Chaque application React serait un package distinct dans le monorepo. Vous pouvez utiliser des outils comme Yarn Workspaces ou Lerna pour gérer les dépendances partagées et faciliter le développement.
+
+Composition de projet : Vous pouvez créer deux applications React séparées et les composer ensemble en utilisant une structure de dossiers appropriée. Par exemple, vous pouvez avoir un dossier racine pour le projet et deux sous-dossiers pour chaque application React. Vous pouvez également définir un script dans le package.json pour lancer les deux applications simultanément.
+
+Intégration via des API : Si les deux applications sont indépendantes mais doivent communiquer entre elles, vous pouvez les intégrer en utilisant des API. Par exemple, si vous avez une application de réseau social et une application de tchat, vous pouvez créer une API pour gérer les messages et les conversations, et les deux applications peuvent communiquer avec cette API pour échanger des données.
+
+Partage de composants : Si les deux applications ont des composants communs, vous pouvez les extraire dans une bibliothèque de composants partagés et les importer dans les deux applications. Cela permet de réutiliser le code et de maintenir une cohérence visuelle entre les deux applications.
+
+Il est important de garder à l'esprit que chaque approche a ses avantages et ses inconvénients en termes de complexité, de maintenabilité et de performances. Choisissez celle qui correspond le mieux à vos besoins et à la taille de votre projet.
+
+En fin de compte, l'idée est que les deux applications fonctionnent ensemble comme un ensemble cohérent, même si elles sont développées séparément. L'utilisation de bonnes pratiques de développement, de modularité et de partage de code vous aidera à obtenir un projet bien structuré et facile à maintenir. Bon courage pour votre projet de développement ! Si vous avez besoin d'aide supplémentaire ou de plus de détails, n'hésitez pas à demander.
+
+ Moi - dis m'en plus sur la bibliothèque de composants partagés : dans lequel des deux projet se situent ces composants ou bien est'ce une tierce application ? 
+
+ GPT - Une bibliothèque de composants partagés est un ensemble de composants réutilisables qui sont regroupés dans une seule et même bibliothèque, et qui peuvent être utilisés dans plusieurs projets. L'idée est de créer une source unique de vérité pour ces composants, de sorte qu'ils puissent être facilement mis à jour et utilisés de manière cohérente dans tous les projets qui en ont besoin.
+
+La bibliothèque de composants partagés peut être située dans un projet séparé (tierce application) ou elle peut être intégrée dans l'un des deux projets existants. Voici quelques options possibles :
+
+Bibliothèque externe : Vous pouvez créer un projet distinct dédié à la bibliothèque de composants partagés. Ce projet aura son propre référentiel Git et ses propres outils de construction. Les composants réutilisables seront développés, testés et maintenus dans ce projet. Vous pouvez publier cette bibliothèque sur un registre de packages public ou privé (comme npm ou GitHub Packages) afin que d'autres projets puissent l'installer et l'utiliser en tant que dépendance externe.
+
+Bibliothèque interne : Vous pouvez également inclure la bibliothèque de composants partagés en tant que sous-dossier dans l'un des deux projets existants (ou dans le monorepo si vous utilisez cette approche). Cela permet de garder tous les composants au même endroit que le projet principal et facilite leur développement et leur maintenance. Vous pouvez utiliser des outils comme Yarn Workspaces ou Lerna pour gérer les dépendances entre le projet principal et la bibliothèque partagée.
+
+Quelle que soit l'approche choisie, l'objectif est de créer une bibliothèque de composants réutilisables qui peut être utilisée dans plusieurs projets, garantissant ainsi la cohérence du design et du code. Les avantages d'une telle bibliothèque incluent la réduction des redondances de code, l'amélioration de la maintenabilité et la facilitation de l'évolutivité de vos projets.
+
+En fin de compte, la décision dépendra de la taille de vos projets, de la complexité des composants partagés et de la façon dont vous préférez organiser votre code. Quelle que soit votre approche, assurez-vous d'avoir une bonne documentation pour les composants partagés afin que les autres développeurs puissent les utiliser efficacement.
+
+
+

@@ -56,10 +56,7 @@ const User = () => {
     const { theme } = useContext(ThemeContext)
 
     // AuthUser
-    const { authId, authPseudo, followed, follower } = useContext(AuthContext)
-    //console.log("authId:", authId,  typeof(authId), "authPseudo: ", authPseudo, "followed:", followed, "follower:", follower);
-    //const follower // users qui suivent authPseudo
-    //const followed // users suivis par authPseudo
+    const { authId, authPseudo } = useContext(AuthContext)
 
     // User
     const { userid } = useParams()
@@ -132,9 +129,8 @@ const User = () => {
     // Composant 
     return (        
         <PageContainer>
-            {/* Groupes 
+            {/* Groupes */}
             <Groupes larg={25}/>
-            */}
 
             <ProfilContainer theme={theme}>
                 {/* Infos user */}

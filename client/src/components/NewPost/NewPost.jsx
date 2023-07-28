@@ -6,7 +6,7 @@
 */
 
 import React, { useState, useContext } from 'react'
-//import { useParams } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 //import { Loader } from '../../../utils/Atom.jsx'
 //import { useQuery } from '@tanstack/react-query' //'react-query'
 import axios from "axios"
@@ -54,8 +54,9 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewPost = () => {
+const NewPost = ( groupMembers ) => {
 	const { theme } = useContext(ThemeContext)
+	const { groupId } = useParams()
 
 	// AuthUser
     const { authId, authPseudo, follower } = useContext(AuthContext)
@@ -70,13 +71,14 @@ const NewPost = () => {
 
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
+        group_id: groupId ? Number(groupId) : 0,
         user_id: authId,
 		pseudo: authPseudo,
-		status: 'public',
+		status: groupMembers ? 'private-list' : 'public',
 		title: '',
 		content: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
-		private_list: [],
+		private_list: groupMembers ? groupMembers.groupMembers : [],
     })
 
     // Mise à jour de formData à chaque changement dans le formulaire
@@ -155,13 +157,15 @@ const NewPost = () => {
 	const CancelNewPost = () => {
 		setFormData({
             ...formData,
-            user_id: authId,
-			status: 'public',
+            group_id: groupId ? groupId : '',
+			user_id: authId,
+			pseudo: authPseudo,
+			status: groupMembers ? 'private-list' : 'public',
 			title: '',
 			content: '',
-			image: '', 
-			private_list: [],
-            })
+			image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
+			private_list: groupMembers ? groupMembers : [],
+        })
 		setPostImage('')
 		setSelectedImage(null); // Efface l'image sélectionnée
   		setShowInputFile(false); // Cache l'élément pour sélectionner l'image si nécessaire
@@ -221,35 +225,39 @@ const NewPost = () => {
 						onClick={loadPhotoPost}
 					/>
 
-					<RadioBouton
-						id="newPostStatusPublic"
-						name="status"
-						label="Public"
-						value="public"
-						checked={formData.status === 'public'}
-						onChange={handleChange}
-						alignment="vertical"
-					/>
-					<RadioBouton
-						id="newPostStatusPrivate"
-						name="status"
-						label="Privé"
-						value="private"
-						checked={formData.status === 'private'}
-						onChange={handleChange}
-						alignment="vertical"
-					/>
-					{follower &&
-						<RadioBouton
-							id="newPostStatusPrivateList"
-							name="status"
-							label="Liste"
-							value="private-list"
-							checked={formData.status === 'private-list'}
-							onChange={handleChange}
-							alignment="vertical"
-						/>
-					}
+					{ !groupMembers && (
+						<>
+							<RadioBouton
+								id="newPostStatusPublic"
+								name="status"
+								label="Public"
+								value="public"
+								checked={formData.status === 'public'}
+								onChange={handleChange}
+								alignment="vertical"
+							/>
+							<RadioBouton
+								id="newPostStatusPrivate"
+								name="status"
+								label="Privé"
+								value="private"
+								checked={formData.status === 'private'}
+								onChange={handleChange}
+								alignment="vertical"
+							/>
+							{follower &&
+								<RadioBouton
+									id="newPostStatusPrivateList"
+									name="status"
+									label="Liste"
+									value="private-list"
+									checked={formData.status === 'private-list'}
+									onChange={handleChange}
+									alignment="vertical"
+								/>
+							}
+						</>
+					)}
 
 					<Button 
 						type="submit" 

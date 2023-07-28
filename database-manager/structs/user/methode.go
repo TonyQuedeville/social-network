@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
+	group "github.com/TonyQuedeville/social-network/database-manager/structs/group_"
 	"github.com/gofrs/uuid"
 	"golang.org/x/crypto/bcrypt"
 )
@@ -86,6 +87,9 @@ func GetUserByMail(email string) (*User, error) {
 	}
 
 	u.AddFollowerFollowed()
+
+	u.Groups_members = group.GetGroupsByUserId(u.Id)
+	u.Wait_groups_members = group.GetWaitGroupsByUserId(u.Id)
 
 	return u, err
 }
@@ -261,6 +265,10 @@ func Login(password, email string) (*User, string, error) {
 		return u, "", err
 	}
 	u.Password = ""
+
+	u.Groups_members = group.GetGroupsByUserId(u.Id)
+	u.Wait_groups_members = group.GetWaitGroupsByUserId(u.Id)
+
 	return u, uuid.String(), nil
 }
 

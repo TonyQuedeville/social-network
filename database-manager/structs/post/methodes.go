@@ -1,19 +1,21 @@
 package post
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
-	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
 /* ------------------- CRUD Post -----------------------*/
 
 // Create post
 func (p *Post) AddPost() error {
+	fmt.Println("p.Group_id:", p.Group_id)
 	result, err := database.Database.Exec(`
 		INSERT INTO post
 		(
+			group_id,
 			user_id,
 			pseudo,
 			status,
@@ -24,8 +26,8 @@ func (p *Post) AddPost() error {
 			updated_at
 		)
 		VALUES
-		(?, ?, ?, ?, ?, ?, ?, ?)
-	`, p.User_id, p.Pseudo, p.Status, p.Title, p.Content, p.Image, time.Now(), time.Now())
+		(?, ?, ?, ?, ?, ?, ?, ?, ?)
+	`, p.Group_id, p.User_id, p.Pseudo, p.Status, p.Title, p.Content, p.Image, time.Now(), time.Now())
 	if err != nil {
 		return err
 	}
@@ -126,10 +128,11 @@ func GetPostById(id uint64) (*Post, error) {
 }
 
 // Read posts by user id
-func GetPostByUserId(userId, intelId uint64) ([]*Post, error) {
+func GetPostsByUserId(userId, intelId uint64) ([]*Post, error) {
 	// userId : Utilisateur initiateur du post (qui a créé le post)
 	// intelId : (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
 
+	// WHERE user_id = ? AND group_id = NULL (pour ne pas récupérer les posts publiés par le user dans un groupe. à voir ?)
 	rows, err := database.Database.Query(`
 		SELECT
 			id,
@@ -173,6 +176,54 @@ func GetPostByUserId(userId, intelId uint64) ([]*Post, error) {
 	return posts, nil
 }
 
+// Read posts by group id
+func GetPostsByGroupId(groupId uint64) ([]*Post, error) {
+	rows, err := database.Database.Query(`
+		SELECT
+			id,
+			group_id,
+			user_id,
+			pseudo,
+			status,
+			title,
+			content,
+			image,
+			created_at,
+			updated_at
+		FROM post
+		WHERE group_id = ?
+	`, groupId)
+	if err != nil {
+		return nil, err
+	}
+
+	defer rows.Close()
+
+	var posts []*Post
+	for rows.Next() {
+		var post Post
+		err := rows.Scan(
+			&post.Id,
+			&post.Group_id,
+			&post.User_id,
+			&post.Pseudo,
+			&post.Status,
+			&post.Title,
+			&post.Content,
+			&post.Image,
+			&post.Created_at,
+			&post.Updated_at,
+		)
+		if err != nil {
+			return nil, err
+		}
+		posts = append(posts, &post)
+	}
+	fmt.Println("GetPostsByGroupId !", posts)
+
+	return posts, nil
+}
+
 // Update post
 func (p *Post) UpdatePost() error {
 	_, err := database.Database.Exec(`
@@ -210,12 +261,12 @@ func (p *Post) DeletePost() error {
 /* ------------------- CRUD Private list -----------------------*/
 
 // Create
-func AddPostPrivateList(postID uint64, users []*user.User) error {
-	for _, u := range users {
+func AddPostPrivateList(postID uint64, usersId []uint64) error {
+	for _, id := range usersId {
 		_, err := database.Database.Exec(`
 			INSERT INTO post_private_list (post_id, user_id)
 			VALUES (?, ?)
-		`, postID, u.Id)
+		`, postID, id)
 		if err != nil {
 			return err
 		}

@@ -11,6 +11,7 @@ CREATE TABLE IF NOT EXISTS post (
     image TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    group_id INTEGER NOT NULL DEFAULT 0,
     FOREIGN KEY("user_id") REFERENCES "user"("id") 
 );
 

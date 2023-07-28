@@ -18,7 +18,7 @@ export const GroupProvider = ({ children }) => {
     const [image, setImage] = useState("")
     const [admin, setAdmin] = useState("")
     const [nbMembers, setNbMembers] = useState("")
-    const [membersIdList, setMembersIdList] = useState("")
+    const [members, setMembers] = useState("")
 
     const updateGroupeData = (data) => {
         //console.log("Data GroupProvider :", data);
@@ -29,7 +29,7 @@ export const GroupProvider = ({ children }) => {
         setImage(data.image)
         setAdmin(data.admin)
         setNbMembers(data.nb_members)
-        setMembersIdList(data.members_id_list)
+        setMembers(data.groups_members)
     }
 
     return (
@@ -41,7 +41,7 @@ export const GroupProvider = ({ children }) => {
             image, setImage,
             admin, setAdmin,
             nbMembers, setNbMembers,
-            membersIdList, setMembersIdList,
+            members, setMembers,
             updateGroupeData,
         }}>
             {children}
@@ -57,6 +57,6 @@ GroupProvider.propTypes = {
     image: PropTypes.string,
     admin: PropTypes.string,
     nbMembers: PropTypes.number,
-    membersIdList: PropTypes.arrayOf(PropTypes.number),
+    members: PropTypes.arrayOf(PropTypes.object),
     updateGroupeData: PropTypes.func,
 }

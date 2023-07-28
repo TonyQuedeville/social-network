@@ -7,6 +7,8 @@
 
 import React from 'react'
 import ReactDOM from 'react-dom'
+import { Provider } from 'react-redux';
+import store from './redux/store';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom'
 import { AuthProvider } from './utils/AuthProvider/AuthProvider'
 import { GroupProvider } from './utils/GroupProvider/GroupProvider'
@@ -29,6 +31,7 @@ const queryClient = new QueryClient()
 
 ReactDOM.render(
   <React.StrictMode>
+    <Provider store={store}>
       <Router>
         <QueryClientProvider client={queryClient}>
           <AuthProvider>
@@ -43,6 +46,7 @@ ReactDOM.render(
           </AuthProvider>
           </QueryClientProvider>
       </Router>
+    </Provider>
   </React.StrictMode>,
   document.getElementById('root')
 )

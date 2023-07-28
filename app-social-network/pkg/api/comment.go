@@ -9,7 +9,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 
@@ -27,16 +26,12 @@ func NewComment(w http.ResponseWriter, r *http.Request) {
 	c := &comment.Comment{}                // prepare une publication
 	if err := json.Unmarshal(reqBody, &c); // unwrap le corp dans post
 	err != nil {
-		fmt.Println("error json.Unmarshal:", err)
 		BadRequest(w, err.Error())
 		return
 	}
 
-	fmt.Println("c:", c)
-
 	if err := c.AddComment(); // Execute la méthode du CRUD (requete sql Create)
 	err != nil {
-		fmt.Println("error AddComment:", err)
 		BadRequest(w, err.Error())
 		return
 	}
@@ -59,15 +54,13 @@ func CommentByPostId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fmt.Println("post_id:", post_id)
-
 	tabPost, err := comment.GetCommentByPostId(post_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
 	}
 
-	//fmt.Println("tabPost:", tabPost)
+	// fmt.Println("tabPost:", tabPost)
 
 	Ok(w, tabPost)
 }

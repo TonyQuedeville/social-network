@@ -53,17 +53,29 @@ const StyleInfo = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: row;
-	justify-content: space-between;
+	justify-content: center;
 	margin: 5px;
-	font-style: italic;
-	font-size: 0.8em;
-	color: grey;
 `
 const StyleGroupButton = styled.div `
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: row;
+`
+const StyleItalic = styled.div `
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-around;
+  flex-direction: row;
+  font-style: italic;
+  font-size: 0.8em;
+	color: grey;
+`
+const Style33 = styled.div`
+  display: flex;
+  align-items: center;
+  justify-content: center;
 `
 
 // Composant
@@ -96,7 +108,7 @@ const Post = ({ post, theme, confidencial }) => {
 
   // Commentaires
   const Comments = () => {
-    const { data: dataComments, isLoading: isLoadingComments, error: errorComments } = useQuery(
+    const { data: dataComments, isLoading: isLoadingComments } = useQuery(
       ['dataComment', post.id],
       () =>
         makeRequest.get(`/comments/${post.id}`).then((res) => {
@@ -142,39 +154,42 @@ const Post = ({ post, theme, confidencial }) => {
   return (
     <PostContainer  theme={theme}>
       <StyleInfo>
-        <div>{post.pseudo}</div>
-        <div>{FrenchFormatDateConvert(post.create_date)}</div>
-        <div>{confidencial ? (
-          <StyleGroupButton>
-            <RadioBouton
-              id={`PostConfidencialPublic-${post['post_id']}`}
-              label="Public"
-              value="public"
-              checked={PostConfidencial === 'public'}
-              onChange={handlePostConfidencialChange}
-              alignment="vertical"
-            />
-            <RadioBouton
-              id={`PostConfidencialPrivate-${post['post_id']}`}
-              label="Privé"
-              value="private"
-              checked={PostConfidencial === 'private'}
-              onChange={handlePostConfidencialChange}
-              alignment="vertical"
-            />
-            <RadioBouton
-              id={`PostConfidencialPrivateList-${post['post_id']}`}
-              label="Liste"
-              value="private-list"
-              checked={PostConfidencial === 'private-list'}
-              onChange={handlePostConfidencialChange}
-              alignment="vertical"
-            />
-        </StyleGroupButton>
-        ) : (
-          post.confidentialité
-        )}
-        </div>
+        <StyleItalic>
+          <Style33>{post.pseudo}</Style33>
+          <Style33>{FrenchFormatDateConvert(post.create_date)}</Style33>
+          <Style33>{post.status}</Style33>
+        </StyleItalic>
+        <>{confidencial ? (
+            <StyleGroupButton>
+              <RadioBouton
+                id={`PostConfidencialPublic-${post['post_id']}`}
+                label="Public"
+                value="public"
+                checked={PostConfidencial === 'public'}
+                onChange={handlePostConfidencialChange}
+                alignment="vertical"
+              />
+              <RadioBouton
+                id={`PostConfidencialPrivate-${post['post_id']}`}
+                label="Privé"
+                value="private"
+                checked={PostConfidencial === 'private'}
+                onChange={handlePostConfidencialChange}
+                alignment="vertical"
+              />
+              <RadioBouton
+                id={`PostConfidencialPrivateList-${post['post_id']}`}
+                label="Liste"
+                value="private-list"
+                checked={PostConfidencial === 'private-list'}
+                onChange={handlePostConfidencialChange}
+                alignment="vertical"
+              />
+            </StyleGroupButton>
+          ) : (
+            post.confidentialité
+          )
+        }</>
       </StyleInfo>
 
       <StyleTitlePublication>{post.title}</StyleTitlePublication>

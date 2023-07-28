@@ -143,12 +143,12 @@ const Users = () => {
                     { authPseudo && 
                       <>
                         { followed && followedId.includes(user.id) ?
-                          <Icone 
-                            alt="Ne plus suivre"
-                            image={IcnSupFriend}
-                            disabled={false}
-                            onClick={() => handleSupFollowerClick(user.id)}
-                          />
+                            <Icone 
+                              alt="Ne plus suivre"
+                              image={IcnSupFriend}
+                              disabled={false}
+                              onClick={() => handleSupFollowerClick(user.id)}
+                            />
                           : <Icone 
                               alt="Suivre"
                               image={IcnAddFriend}

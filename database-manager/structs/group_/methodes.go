@@ -1,53 +1,58 @@
 package group
 
 import (
+	"fmt"
 	"time"
 
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 )
 
-// CRUD
+/* ---------------- CRUD Group --------------------*/
 
 // Create
-func (g *Group) AddGroup() error {
-	_, err := database.Database.Exec(`
-		INSERT INTO groups
+func (g *Group) AddGroup() (uint64, error) {
+	result, err := database.Database.Exec(`
+		INSERT INTO 'group'
 		(
 			user_id,
 			admin,
 			title,
 			description,
 			image,
-			nb_members,
-			created_at,
-			updated_at
+			nb_members
 		)
 		VALUES
-		(?, ?, ?, ?, ?, ?, ?, ?)
-	`, g.User_id, g.Admin, g.Title, g.Description, g.Image, g.Nb_members, time.Now(), time.Now())
+		(?, ?, ?, ?, ?, ?)
+	`, g.User_id, g.Admin, g.Title, g.Description, g.Image, g.Nb_members)
 	if err != nil {
-		return err
+		return 0, err
 	}
 
-	return nil
+	groupID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+
+	return uint64(groupID), nil
 }
 
 // Read
 func (g *Group) GetGroups() ([]*Group, error) {
 	rows, err := database.Database.Query(`
 		SELECT
-			id,
-			user_id,
-			admin,
-			title,
-			description,
-			image,
-			nb_members,
-			created_at,
-			updated_at
-		FROM groups
+			g.id,
+			g.user_id,
+			g.admin,
+			g.title,
+			g.description,
+			g.image,
+			g.nb_members,
+			g.created_at,
+			g.updated_at
+		FROM 'group' AS g
 	`)
 	if err != nil {
+		fmt.Printf("err: %v\n", err)
 		return nil, err
 	}
 	defer rows.Close()
@@ -67,8 +72,12 @@ func (g *Group) GetGroups() ([]*Group, error) {
 			&group.Updated_at,
 		)
 		if err != nil {
+			fmt.Println("error :", err)
 			return nil, err
 		}
+		
+		group.GetGroupMembers()
+		group.GetGroupMembersWait()
 		groups = append(groups, &group)
 	}
 
@@ -80,7 +89,7 @@ func GetGroupById(id uint64) (*Group, error) {
 	err := database.Database.QueryRow(`
 		SELECT
 			id,
-			user_id,
+			user_id, 
 			admin,
 			title,
 			description,
@@ -88,7 +97,7 @@ func GetGroupById(id uint64) (*Group, error) {
 			nb_members,
 			created_at,
 			updated_at
-		FROM groups
+		FROM 'group'
 		WHERE id = ?
 	`, id).Scan(
 		&group.Id,
@@ -108,30 +117,19 @@ func GetGroupById(id uint64) (*Group, error) {
 	return &group, nil
 }
 
-func GetGroupByUserId(userId uint64) ([]*Group, error) {
-	rows, err := database.Database.Query(`
-		SELECT
-			id,
-			user_id,
-			admin,
-			title,
-			description,
-			image,
-			nb_members,
-			created_at,
-			updated_at
-		FROM groups
-		WHERE user_id = ?
-	`, userId)
-	if err != nil {
-		return nil, err
-	}
+/* Retourne les groupes dont l'utilisateur fait parti */
+func GetGroupsByUserId(user_id uint64) []*Group {
+	rows, _ := database.Database.Query(`
+	SELECT 'group'.* FROM 'group'
+	JOIN groupmembers AS gm ON gm.user_id = ? AND gm.status IS NULL
+	WHERE 'group'.id = gm.group_id
+	`, user_id)
 	defer rows.Close()
 
 	var groups []*Group
 	for rows.Next() {
 		var group Group
-		err := rows.Scan(
+		rows.Scan(
 			&group.Id,
 			&group.User_id,
 			&group.Admin,
@@ -142,19 +140,45 @@ func GetGroupByUserId(userId uint64) ([]*Group, error) {
 			&group.Created_at,
 			&group.Updated_at,
 		)
-		if err != nil {
-			return nil, err
-		}
 		groups = append(groups, &group)
 	}
 
-	return groups, nil
+	return groups
+}
+
+/* Retourne les groupes dont l'utilisateur est en attente d'acceptation */
+func GetWaitGroupsByUserId(user_id uint64) []*Group {
+	rows, _ := database.Database.Query(`
+	SELECT 'group'.* FROM 'group'
+	JOIN groupmembers AS gm ON gm.user_id = ? AND gm.status IS NOT NULL
+	WHERE 'group'.id = gm.group_id
+	`, user_id)
+	defer rows.Close()
+
+	var groups []*Group
+	for rows.Next() {
+		var group Group
+		rows.Scan(
+			&group.Id,
+			&group.User_id,
+			&group.Admin,
+			&group.Title,
+			&group.Description,
+			&group.Image,
+			&group.Nb_members,
+			&group.Created_at,
+			&group.Updated_at,
+		)
+		groups = append(groups, &group)
+	}
+
+	return groups
 }
 
 // Update
 func (g *Group) UpdateGroup() error {
 	_, err := database.Database.Exec(`
-		UPDATE groups
+		UPDATE 'group'
 		SET
 			user_id = ?,
 			admin = ?,
@@ -175,7 +199,7 @@ func (g *Group) UpdateGroup() error {
 // Delete
 func (g *Group) DeleteGroup() error {
 	_, err := database.Database.Exec(`
-		DELETE FROM groups
+		DELETE FROM 'group'
 		WHERE id = ?
 	`, g.Id)
 	if err != nil {
@@ -183,4 +207,132 @@ func (g *Group) DeleteGroup() error {
 	}
 
 	return nil
+}
+
+/* ---------------- CRUD Group --------------------*/
+
+// Create
+/* Ajoute un membre au groupe de discution */
+func (g *Group) AddGroupMember(user_id uint64) error {
+	_, err := database.Database.Exec(`
+		INSERT INTO groupmembers
+		(
+			group_id,
+			user_id
+		)
+		VALUES
+		(?, ?)
+	`, g.Id, user_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Delete
+/* Supprime un membre du groupe de discution */
+func (g *Group) DeleteGroupMember(user_id uint64) error {
+	_, err := database.Database.Exec(`
+		DELETE FROM groupmembers
+		WHERE id = ? AND member_id = ?
+	`, g.Id, user_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// Read
+/* Retourne les membres du groupe */
+func (g *Group) GetGroupMembers() {
+	rows, _ := database.Database.Query(`
+	SELECT user_id
+	FROM groupmembers
+	WHERE group_id = ? AND status IS NULL
+	`, g.Id)
+	defer rows.Close()
+
+	var groupMembers []uint64
+	for rows.Next() {
+		var memberID uint64
+		rows.Scan(
+			&memberID,
+		)
+		groupMembers = append(groupMembers, memberID)
+	}
+
+	g.Members = groupMembers
+
+	// rows, _ := database.Database.Query(`
+	// SELECT user.id, user.pseudo, user.first_name, user.last_name, user.sexe, user.about, user.image
+	// FROM user
+	// JOIN groupmembers AS gm ON gm.group_id = ? AND gm.status IS NULL
+	// WHERE user.id = gm.user_id
+	// `, group_id)
+	// defer rows.Close()
+
+	// var users []*User
+	// for rows.Next() {
+	// 	var u User
+	// 	rows.Scan(
+	// 		&u.Id,
+	// 		&u.Pseudo,
+	// 		&u.First_name,
+	// 		&u.Last_name,
+	// 		&u.Sexe,
+	// 		&u.About,
+	// 		&u.Image,
+	// 	)
+	// 	users = append(users, &u)
+	// }
+
+	// return users
+}
+
+/* Retourne les membres du groupe en attente d'acceptation */
+func (g *Group) GetGroupMembersWait() {
+	rows, _ := database.Database.Query(`
+	SELECT user_id
+	FROM groupmembers
+	WHERE group_id = ? AND status IS NOT NULL
+	`, g.Id)
+	defer rows.Close()
+
+	var groupWaitMembers []uint64
+	for rows.Next() {
+		var memberID uint64
+		rows.Scan(
+			&memberID,
+		)
+		groupWaitMembers = append(groupWaitMembers, memberID)
+	}
+
+	g.WaitMembers = groupWaitMembers
+
+	// rows, _ := database.Database.Query(`
+	// SELECT user.id, user.pseudo, user.first_name, user.last_name, user.sexe, user.about, user.image
+	// FROM user
+	// JOIN groupmembers AS gm ON gm.group_id = ? AND gm.status IS NULL
+	// WHERE user.id = gm.user_id
+	// `, group_id)
+	// defer rows.Close()
+
+	// var users []*User
+	// for rows.Next() {
+	// 	var u User
+	// 	rows.Scan(
+	// 		&u.Id,
+	// 		&u.Pseudo,
+	// 		&u.First_name,
+	// 		&u.Last_name,
+	// 		&u.Sexe,
+	// 		&u.About,
+	// 		&u.Image,
+	// 	)
+	// 	users = append(users, &u)
+	// }
+
+	// return users
 }

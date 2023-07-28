@@ -26,10 +26,13 @@ func InitServer() {
 
 	// post
 	mux.Handle("/newpost", ApplyMiddleware(http.HandlerFunc(api.NewPost)))
-	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostByUserId)))
+	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByUserId)))
 	mux.Handle("/newcomment", ApplyMiddleware(http.HandlerFunc(api.NewComment)))
 	mux.Handle("/comments/", ApplyMiddleware(http.HandlerFunc(api.CommentByPostId)))
-	//mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostByGrouypId)))
+	mux.Handle("/newgroup", ApplyMiddleware(http.HandlerFunc(api.NewGroup)))
+	mux.Handle("/groupes", ApplyMiddleware(http.HandlerFunc(api.Groups)))
+	mux.Handle("/groupe/", ApplyMiddleware(http.HandlerFunc(api.GroupById)))
+	mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByGrouypId)))
 
 	http.ListenAndServe(ADRESS, mux)
 }

@@ -25,7 +25,8 @@ export const AuthProvider = ({ children }) => {
     const [statusProfil, setStatusProfil] = useState("")
     const [follower, setFollower] = useState("")
     const [followed, setFollowed] = useState("")
-    const [groupListRequested, setGroupListRequested] = useState("")
+    const [groups, setGroups] = useState("")
+    const [waitGroups, setWaitGroups] = useState("")
 
     const updateUserData = (data) => {
         //console.log("updateUserData:", data);
@@ -41,7 +42,8 @@ export const AuthProvider = ({ children }) => {
         setStatusProfil(data.status)
         setFollower(data.follower)
         setFollowed(data.followed)
-        setGroupListRequested(data.group_list_requested)
+        setGroups(data.groups_members)
+        setWaitGroups(data.wait_groups_members)
     }
 
     const handleLogin = () => {
@@ -69,7 +71,8 @@ export const AuthProvider = ({ children }) => {
             statusProfil, setStatusProfil,
             follower, setFollower,
             followed, setFollowed,
-            groupListRequested, setGroupListRequested,
+            groups, setGroups,
+            waitGroups, setWaitGroups,
             updateUserData,
             handleLogin,
             handleLogout,
@@ -94,5 +97,6 @@ AuthProvider.propTypes = {
     updateUserData: PropTypes.func,
     follower: PropTypes.arrayOf(PropTypes.object),
     followed: PropTypes.arrayOf(PropTypes.object),
-    groupListRequested: PropTypes.arrayOf(PropTypes.number),
+    groups: PropTypes.arrayOf(PropTypes.object),
+    waitGroups: PropTypes.arrayOf(PropTypes.object),
 }
