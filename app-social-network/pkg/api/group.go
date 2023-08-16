@@ -125,3 +125,39 @@ func PostsByGrouypId(w http.ResponseWriter, r *http.Request) {
 
 	Ok(w, posts)
 }
+
+/* Demande d'adhésion au groupe par un utilisateur */
+func JoinGroup(w http.ResponseWriter, r *http.Request) {
+	// only post request
+	if !IsPost(w, r) {
+		return
+	}
+
+}
+
+/* Acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */
+func AcceptGroup(w http.ResponseWriter, r *http.Request) {
+	// only post request
+	if !IsPost(w, r) {
+		return
+	}
+
+}
+
+/* Refut d'acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */
+func RefuseGroup(w http.ResponseWriter, r *http.Request) {
+	// only post request
+	if !IsPost(w, r) {
+		return
+	}
+
+}
+
+/* Quitter le groupe */
+func QuitGroup(w http.ResponseWriter, r *http.Request) {
+	// only post request
+	if !IsPost(w, r) {
+		return
+	}
+	
+}
