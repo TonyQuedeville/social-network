@@ -36,5 +36,12 @@ func InitServer() {
 	mux.Handle("/groupe/", ApplyMiddleware(http.HandlerFunc(api.GroupById)))
 	mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByGrouypId)))
 
+	// Event
+	mux.Handle("/events/", ApplyMiddleware(http.HandlerFunc(api.EventsByGroupId)))      // group id
+	mux.Handle("/addevent/", ApplyMiddleware(http.HandlerFunc(api.AddeventInGroupId)))  // group id
+	mux.Handle("/supevent/", ApplyMiddleware(http.HandlerFunc(api.Supevent)))           // event id
+	mux.Handle("/goingevent/", ApplyMiddleware(http.HandlerFunc(api.Goingevent)))       // event id
+	mux.Handle("/notgoingevent/", ApplyMiddleware(http.HandlerFunc(api.Notgoingevent))) // event id
+	mux.Handle("/supgoingevent/", ApplyMiddleware(http.HandlerFunc(api.SupGoingEvent))) // event id
 	http.ListenAndServe(ADRESS, mux)
 }
