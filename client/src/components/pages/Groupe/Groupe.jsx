@@ -8,8 +8,8 @@
 
 import React, { useContext, useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { useSelector, useDispatch, connect } from 'react-redux';
-import { updateGroupData } from '../../../redux/actions';
+//import { useSelector, useDispatch, connect } from 'react-redux';
+//import { updateGroupData } from '../../../redux/actions';
 
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 //import { GroupContext } from '../../../utils/GroupProvider/GroupProvider.jsx'
@@ -20,7 +20,7 @@ import { makeRequest } from '../../../utils/Axios/Axios.js'
 import styled from 'styled-components'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../../utils/style/Colors.js'
-import extractIdsFromList from "../../../utils/tools/ExtractIdsFromList.js"
+//import extractIdsFromList from "../../../utils/tools/ExtractIdsFromList.js"
 //import InputText from '../InputText/InputText.jsx'
 //import TextArea from '../TextArea/TextArea.jsx'
 //import Button from '../Button/Button.jsx'
@@ -77,7 +77,7 @@ const Groupe = () => {
 
   // Redux
   //const groupData = useSelector((state) => state)
-  const dispatch = useDispatch()
+  //const dispatch = useDispatch()
   
   /* 
   Redux Selectors : Les selectors sont des fonctions qui permettent d'accéder aux données spécifiques 

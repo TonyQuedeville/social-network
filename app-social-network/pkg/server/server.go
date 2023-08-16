@@ -29,6 +29,8 @@ func InitServer() {
 	mux.Handle("/userposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByUserId)))
 	mux.Handle("/newcomment", ApplyMiddleware(http.HandlerFunc(api.NewComment)))
 	mux.Handle("/comments/", ApplyMiddleware(http.HandlerFunc(api.CommentByPostId)))
+
+	// groupes
 	mux.Handle("/newgroup", ApplyMiddleware(http.HandlerFunc(api.NewGroup)))
 	mux.Handle("/groupes", ApplyMiddleware(http.HandlerFunc(api.Groups)))
 	mux.Handle("/groupe/", ApplyMiddleware(http.HandlerFunc(api.GroupById)))
