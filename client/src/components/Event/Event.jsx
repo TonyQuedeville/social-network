@@ -65,7 +65,7 @@ const Event = ({ event, theme }) => {
 	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 
 	// Champs du formulaire
-	const [formData, setFormData] = useState({
+	const [data, setData] = useState({
 		event_id: event.id,
 		going: 'pas intérréssé',
 	})
@@ -80,11 +80,17 @@ const Event = ({ event, theme }) => {
 
 			console.log("value:",value );
 
-			setFormData(prev => ({
+			setData(prev => ({
 				...prev,
 					[e.target.name]: value
 			}))
 		}
+
+		const formData = {
+			...data,
+			event_id: event.id,
+			going: value,
+	};
 
 		// Requete d'enregistrement vers app-social-network
 		try{
@@ -108,7 +114,7 @@ const Event = ({ event, theme }) => {
 			<StyleCheckBox>
 				<RadioBouton
 					id={eventGoingId}
-					name="going"
+					name={"going" + event.id}
 					label="je participe"
 					value="je participe"
 					onChange={handleChange}
@@ -116,7 +122,7 @@ const Event = ({ event, theme }) => {
 					/>
 					<RadioBouton
 					id={eventNotGoingId}
-					name="going"
+					name={"going" + event.id}
 					label="je ne participe pas"
 					value="je ne participe pas"
 					onChange={handleChange}
@@ -124,7 +130,7 @@ const Event = ({ event, theme }) => {
 					/>
 				<RadioBouton
 					id={eventNotId}
-					name="going"
+					name={"going" + event.id}
 					label="pas intérréssé"
 					value="pas intérréssé"
 					onChange={handleChange}
