@@ -29,7 +29,7 @@ const StyleWindow = styled.div`
 	left: 50%;
 	transform: translate(-50%, -50%);
 	width: 80%;
-	height: 75%;
+	height: 70%;
 	padding: 20px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	z-index: 9999;
@@ -37,6 +37,14 @@ const StyleWindow = styled.div`
 	border-radius: 5px;
 	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite})` : colors.backgroundDark)};
 	box-shadow: 10px 5px 25px 0px black;
+
+	overflow: auto;
+  overflow-x: hidden;
+  scrollbar-width: none; /* Masque l'ascenseur Firefox */
+  -ms-overflow-style: none; /* Masque l'ascenseur IE 10+ */
+  &::-webkit-scrollbar {
+      width: 0; /* Masque l'ascenseur Chrome, Safari et Opera */
+  }
 `
 const StyleEventsContainer = styled.div`
   margin: 1px;

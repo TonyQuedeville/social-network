@@ -30,7 +30,7 @@ const RegisterContainer = styled.div `
     justify-content: start;
     margin: 1px;
     border: solid 1px;
-    border-radius: 10px;
+    border-radius: 5px;
 `
 const StyleRegisterForm = styled.form `
     display: flex;

@@ -21,7 +21,7 @@ const TchatContainer = styled.div`
 	justify-content: center;
 	margin: 1px;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
 	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 	

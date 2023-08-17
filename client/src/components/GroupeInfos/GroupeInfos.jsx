@@ -26,7 +26,7 @@ const StyleGroupContainer = styled.div`
 	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
 `
 const StyleTitleGroupe = styled.div`
 	font-weight : bold;
@@ -42,7 +42,7 @@ const StyleBanner = styled.div`
 	align-items: center;
 	justify-content: space-around;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
 `
 const StyleInfo = styled.div`
 	width: 30%;

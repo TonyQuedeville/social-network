@@ -28,7 +28,7 @@ const StyledNav = styled.nav `
     align-items: center;
     justify-content: space-between;
     border: solid 1px;
-    border-radius: 10px;
+    border-radius: 5px;
     background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 `
 

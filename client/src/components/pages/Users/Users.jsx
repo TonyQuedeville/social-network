@@ -31,7 +31,7 @@ const ListContainer = styled.div`
   justify-content: center;
   margin: 1px;
   border: solid 1px;
-  border-radius: 10px;
+  border-radius: 5px;
   background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyledLink = styled.div`
@@ -41,7 +41,7 @@ const StyledLink = styled.div`
   flex-direction: row;
   align-items: end;
   justify-content: end;
-  border-radius: 10px;        
+  border-radius: 5px;        
   box-shadow: 1px 1px 5px 1px rgba(0, 0, 0, 0.5);
   margin: 10px;
   transition: 200ms;

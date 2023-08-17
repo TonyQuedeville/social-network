@@ -31,7 +31,7 @@ const PostContainer = styled.div`
 	margin: 10px;
 	padding: 5px;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
 	background: ${props => (props.theme === 'light' ? colors.backgroundWhite : colors.backgroundDarkSoft)};
 `
 const StyleTitlePublication = styled.div`
