@@ -10,10 +10,11 @@ import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import styled from 'styled-components'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
-import Icone from '../Icone/Icone.jsx'
-import IcnNotification from '../../assets/icn/icn-notification.png'
+//import Icone from '../Icone/Icone.jsx'
+//import IcnNotification from '../../assets/icn/icn-notification.png'
 import Button from '../Button/Button.jsx'
 import Popup from '../Popup/Popup.jsx'
+import EventWindow from '../EventWindow/EventWindow.jsx'
 import axios from "axios"
 
 // css
@@ -21,7 +22,7 @@ const StyleGroupContainer = styled.div`
 	display: flex;
 	flex-direction: column;
 	align-items: center;
-	justify-content: start;
+	justify-content: center;
 	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
@@ -52,9 +53,11 @@ const StyleInfo = styled.div`
 	color: grey;
 `
 const StyleRow = styled.div`
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
+	justify-content: space-around;
 `
 const StyleBold = styled.p`
 	font-weight : bold;
@@ -64,15 +67,16 @@ const StyleBold = styled.p`
 // Composant
 const GroupeInfos = (props) => {
 	const { authId } = useContext(AuthContext)
-	const {groupId, title, pseudo, description, image, members, createDate } = props
+	const {id, title, pseudo, description, image, members, createDate } = props
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
+	const [showEventWindow, setShowEventWindow] = useState(false) // fenetre des évènements
 
 	// Quitter le groupe
 	const handleSupGroupe = async () => {
 		// Requete de demande d'ajout au groupe de discution vers app-social-network
 		try{
-			await axios.post(`http://${window.location.hostname}:8080/supGroup/${groupId}`)
+			await axios.post(`http://${window.location.hostname}:8080/supGroup/${id}`)
 			setFetchError(false)
 		}
 		catch (err) {
@@ -81,6 +85,10 @@ const GroupeInfos = (props) => {
 		}
 		finally {
 		}
+	}
+
+	const handleEventGroupe = () => {
+		setShowEventWindow(true)
 	}
 	
 	return (
@@ -92,42 +100,48 @@ const GroupeInfos = (props) => {
 			<StyleBanner>
 				{image ? (
 					<DisplayImage
-						id={"groupImage-" + groupId}
+						id={"groupImage-" + id}
 						src={`http://${window.location.hostname}:4000/download/${image}`}
 						alt={"Image " + title}
 						disabled={false}
 						size={300}
 					/>) : <></>}
-					<StyleInfo>
-						<StyleBold>A propos:</StyleBold>
-						<StyleRow>{description}</StyleRow>
-						<StyleRow><StyleBold>Admin:</StyleBold> {pseudo}</StyleRow>
-						<StyleRow><StyleBold>Date de création:</StyleBold>{FrenchFormatDateConvert(createDate)}</StyleRow>
-						<StyleRow><StyleBold>Nombre de membres:</StyleBold> {members.length}</StyleRow>
-					</StyleInfo>
+
+				<StyleInfo>
+					<StyleBold>A propos:</StyleBold>
+					<StyleRow>{description}</StyleRow>
+					<StyleRow><StyleBold>Admin:</StyleBold> {pseudo}</StyleRow>
+					<StyleRow><StyleBold>Date de création:</StyleBold>{FrenchFormatDateConvert(createDate)}</StyleRow>
+					<StyleRow><StyleBold>Nombre de membres:</StyleBold> {members.length}</StyleRow>
+				</StyleInfo>
 			</StyleBanner>
 
 			<>
-				{ members.includes(groupId) ? (
+				{ members.includes(authId) && (
 					<StyleRow>
-						<Icone 
-							alt="Demande d'adhésion à ce groupe en cours acception !" 
-							image={IcnNotification}
-							size={0.5}
-						/>
-						<p>Demande d'adhésion à ce groupe en cours acception !</p>
-					</StyleRow>
-					) : 
-					<>
 						{ authId && (
-							<Button 
-								text="Quitter le groupe" 
-								disabled={false} 
-								onClick={handleSupGroupe}
-							/> 
+							<>
+								<Button 
+									text="Quitter le groupe" 
+									disabled={false} 
+									onClick={handleSupGroupe}
+								/> 
+								<Button 
+									text="Evenements" 
+									disabled={false} 
+									onClick={handleEventGroupe}
+								/> 
+							</>
 						)}
-					</>
-				}
+
+						{showEventWindow && (
+							<EventWindow
+								groupId={id}
+								onClose={() => {setShowEventWindow(false)}}
+							/>
+						)}
+					</StyleRow>
+				)}
 			</>
 			{ fetchError && notification && (
 				<Popup texte={notification} type='error' />

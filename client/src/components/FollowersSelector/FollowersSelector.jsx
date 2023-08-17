@@ -27,7 +27,7 @@ const StyleWindow = styled.div`
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 	z-index: 9999;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
 	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 	box-shadow: 10px 5px 25px 0px black;
 `

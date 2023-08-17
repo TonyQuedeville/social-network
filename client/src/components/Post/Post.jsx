@@ -5,7 +5,7 @@
 	Composant Post : Affiche un posts et appel les commentaires qui lui sont associés
 */
 
-import React, {useState, useContext, useEffect} from 'react'
+import React, {useState, useContext} from 'react'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query'
@@ -141,15 +141,11 @@ const Post = ({ post, theme, confidencial }) => {
     )
   }
 
-  useEffect(() => {
-    // Mettre à jour les commentaires du post ici
-  }, [post.id]);
-
-  const [comments, setComments] = useState([]); // Etat des commentaires du post
+  const [comments, setComments] = useState([]) // Etat des commentaires du post
   const updateComments = (newComment) => {
     // Ajouter le nouveau commentaire à la liste des commentaires
-    setComments([...comments, newComment]);
-  };
+    setComments([...comments, newComment])
+  }
 
   return (
     <PostContainer  theme={theme}>
@@ -216,7 +212,10 @@ const Post = ({ post, theme, confidencial }) => {
 			)}
 
         { authId && 
-          <NewComment postId={post.id} updateComments={updateComments} /> 
+          <NewComment 
+            postId={post.id} 
+            updateComments={updateComments} 
+          /> 
         }
 
       <Comments/>

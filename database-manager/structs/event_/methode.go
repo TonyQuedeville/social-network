@@ -18,7 +18,7 @@ func (e *Event) CreateEvent() error {
 	)
 	VALUES
 	(?, ?, ?, ?)
-`, e.Group_id, e.Titre, e.Description, e.Date)
+	`, e.Group_id, e.Titre, e.Description, e.Date)
 	return err
 }
 
@@ -35,9 +35,9 @@ func ReadEventByGroupId(group_id uint64) (e []*Event) {
 		rows.Scan(
 			&ev.Id,
 			&ev.Group_id,
-			&ev.Date,
 			&ev.Titre,
 			&ev.Description,
+			&ev.Date,
 			&ev.Created_at,
 			&ev.Update_at,
 		)

@@ -9,6 +9,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -36,19 +37,19 @@ func AddeventInGroupId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
-	e := &event.Event{}                                 // prepare un user
-	if err := json.Unmarshal(reqBody, &e); err != nil { // unwrap le corp dans user
+	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
+	e := &event.Event{}
+	if err := json.Unmarshal(reqBody, &e); err != nil { // unwrap le corp de la requete
 		BadRequest(w, err.Error())
 		return
 	}
 	if e.Group_id == 0 || e.Titre == "" || e.Description == "" || e.Date == (time.Time{}) {
 		BadRequest(w, `need json example : {
 			"group_id": 10,
-			"titre":"LeTitre",
+			"titre":"Le Titre",
 			"description":"La description",
 			"date":"2023-09-30T14:20:28.000+07:00"
-		  }`)
+			}`)
 		return
 	}
 
@@ -77,14 +78,19 @@ func Supevent(w http.ResponseWriter, r *http.Request) {
 	Ok(w, "Deleted")
 }
 
-func goEvent(w http.ResponseWriter, r *http.Request, b bool) {
+func GoEvent(w http.ResponseWriter, r *http.Request) {
 	// only Post
 	if !IsPost(w, r) {
 		return
 	}
 
-	event_id, err := GetIdFromPath(r)
-	if err != nil {
+	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
+	eventdata := &struct {
+		Event_id uint64 `json:"event_id"`
+		Going    string `json:"going"`
+	}{}
+	fmt.Printf("string(reqBody): %v\n", string(reqBody))
+	if err := json.Unmarshal(reqBody, &eventdata); err != nil { // unwrap le corp de la requete
 		BadRequest(w, err.Error())
 		return
 	}
@@ -96,45 +102,23 @@ func goEvent(w http.ResponseWriter, r *http.Request, b bool) {
 		return
 	}
 
-	e := event.Event{Id: event_id}
-	e.GoingEvent(u_id, b)
+	e := event.Event{Id: eventdata.Event_id}
+	fmt.Println("id:", eventdata.Event_id)
+	fmt.Println("event:", eventdata.Going)
+	switch eventdata.Going {
+	case "je participe":
+		e.GoingEvent(u_id, true)
+		Ok(w, "Vous participez à l'évènement")
 
-	if b {
-		Ok(w, "Vous allez à l'evenement")
-	} else {
-		Ok(w, "Vous allez pas à l'evenement")
+	case "je ne participe pas":
+		e.GoingEvent(u_id, false)
+		Ok(w, "Vous ne participez pas à l'évènement")
+
+	case "pas intérréssé":
+		e.UnGoingEvent(u_id)
+		Ok(w, "l'événement ne vous intéresse pas")
+
+	default:
+		BadRequest(w, "Type d'événement inconnu")
 	}
-}
-
-func Goingevent(w http.ResponseWriter, r *http.Request) {
-	goEvent(w, r, true)
-}
-
-func Notgoingevent(w http.ResponseWriter, r *http.Request) {
-	goEvent(w, r, false)
-}
-
-func SupGoingEvent(w http.ResponseWriter, r *http.Request) {
-	// only Post
-	if !IsPost(w, r) {
-		return
-	}
-
-	event_id, err := GetIdFromPath(r)
-	if err != nil {
-		BadRequest(w, err.Error())
-		return
-	}
-
-	u_id := GetIdUser(r)
-
-	if u_id == 0 {
-		BadRequest(w, "User not find")
-		return
-	}
-
-	e := event.Event{Id: event_id}
-	e.UnGoingEvent(u_id)
-
-	Ok(w, "Vous avez annuler votre satus")
 }

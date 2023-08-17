@@ -10,6 +10,8 @@ function extractIdsFromList(list) {
     return [];
   }
 
+  //console.log(list);
+
   return list.map(item => item.id);
 }
 

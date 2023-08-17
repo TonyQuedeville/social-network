@@ -5,7 +5,7 @@
 	Composant NewPost : Affiche une fenetre d'édition d'un nouveau post
 */
 
-import React, { useState, useContext } from 'react'
+import React, { useState, useContext, useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 //import { Loader } from '../../../utils/Atom.jsx'
 //import { useQuery } from '@tanstack/react-query' //'react-query'
@@ -30,6 +30,7 @@ import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 // css
 const NewPostContainer = styled.div`
 	width: auto;
+	max-width: 600px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;
@@ -54,9 +55,8 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewPost = ( groupMembers ) => {
+const NewPost = ( props, updatePosts ) => {	
 	const { theme } = useContext(ThemeContext)
-	const { groupId } = useParams()
 
 	// AuthUser
     const { authId, authPseudo, follower } = useContext(AuthContext)
@@ -71,14 +71,14 @@ const NewPost = ( groupMembers ) => {
 
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
-        group_id: groupId ? Number(groupId) : 0,
+        group_id: props.group ? Number(props.group) : 0,
         user_id: authId,
 		pseudo: authPseudo,
-		status: groupMembers ? 'private-list' : 'public',
+		status: props.group ? 'private-list' : 'public',
 		title: '',
 		content: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
-		private_list: groupMembers ? groupMembers.groupMembers : [],
+		private_list: props.group ? props.groupMembers : [],
     })
 
     // Mise à jour de formData à chaque changement dans le formulaire
@@ -136,9 +136,10 @@ const NewPost = ( groupMembers ) => {
 
         // Requete d'enregistrement vers app-social-network
         try{
-            await axios.post(`http://${window.location.hostname}:8080/newpost`, JSON.stringify(data))
+            const response = await axios.post(`http://${window.location.hostname}:8080/newpost`, JSON.stringify(data))
             setFetchError(false)
 			CancelNewPost()
+			updatePosts=(response.data)
         }
         catch (err) {
             setNotification(err.message + " : " + err.response.data.error)
@@ -157,14 +158,14 @@ const NewPost = ( groupMembers ) => {
 	const CancelNewPost = () => {
 		setFormData({
             ...formData,
-            group_id: groupId ? groupId : '',
+            group_id: props.group ? Number(props.group) : '',
 			user_id: authId,
 			pseudo: authPseudo,
-			status: groupMembers ? 'private-list' : 'public',
+			status: props.group ? 'private-list' : 'public',
 			title: '',
 			content: '',
 			image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
-			private_list: groupMembers ? groupMembers : [],
+			private_list: props.group ? props.groupMembers : [],
         })
 		setPostImage('')
 		setSelectedImage(null); // Efface l'image sélectionnée
@@ -225,7 +226,7 @@ const NewPost = ( groupMembers ) => {
 						onClick={loadPhotoPost}
 					/>
 
-					{ !groupMembers && (
+					{ Number(props.userId) === authId && (
 						<>
 							<RadioBouton
 								id="newPostStatusPublic"
