@@ -181,6 +181,21 @@ func GetFollowed(user_id uint64) (result []*User) {
 	return
 }
 
+func GetTempFolower(user_id uint64) (result []*User) {
+	rows, err := database.Database.Query(`SELECT u.id, u.pseudo, u.image FROM user u
+	LEFT JOIN temp_follower f ON f.user_id = ?
+	WHERE u.id = f.follow_id AND f.user_id IS NOT NULL;`, user_id)
+	if err != nil {
+		fmt.Println("err GetFollowed:", err)
+	}
+	for rows.Next() {
+		u := User{}
+		rows.Scan(&u.Id, &u.Pseudo, &u.Image)
+		result = append(result, &u)
+	}
+	return
+}
+
 /*< GETER */
 
 func (u *User) RemoveCriticalData() {
@@ -268,6 +283,7 @@ func Login(password, email string) (*User, string, error) {
 
 	u.Groups_members = group.GetGroupsByUserId(u.Id)
 	u.Wait_groups_members = group.GetWaitGroupsByUserId(u.Id)
+	u.Invit_groups = group.GetInvitGroupsByUserId(u.Id)
 
 	return u, uuid.String(), nil
 }

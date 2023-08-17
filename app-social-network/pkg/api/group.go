@@ -185,10 +185,17 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	group.GetGroupMembers()
-	if !slices.Contains(group.Members, intel_id) {
-		BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
-		return
+	if group.GetMemberStatus(user_id) == "invit" {
+		if user_id != intel_id {
+			BadRequest(w, "Tu n'a pas le droit d'utiliser cette invitation")
+			return
+		}
+	} else {
+		group.GetGroupMembers()
+		if !slices.Contains(group.Members, intel_id) {
+			BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
+			return
+		}
 	}
 
 	err = group.AcceptGroupMember(user_id)
@@ -230,13 +237,18 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, "User not connected")
 		return
 	}
-
-	group.GetGroupMembers()
-	if !slices.Contains(group.Members, intel_id) {
-		BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
-		return
+	if group.GetMemberStatus(user_id) == "invit" {
+		if user_id != intel_id {
+			BadRequest(w, "Tu n'a pas le droit d'utiliser cette invitation")
+			return
+		}
+	} else {
+		group.GetGroupMembers()
+		if !slices.Contains(group.Members, intel_id) {
+			BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
+			return
+		}
 	}
-
 	err = group.RefuseGroupMember(user_id)
 	if err != nil {
 		BadRequest(w, err.Error())

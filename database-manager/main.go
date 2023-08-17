@@ -9,7 +9,6 @@ func main() {
 	// test
 	database.OpenDatabase()
 	defer database.CloseDatabase()
-
 	// e := event.Event{
 	// 	Group_id:    1,
 	// 	Titre:       "TitreEvent",

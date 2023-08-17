@@ -22,6 +22,7 @@ type User struct {
 	Followed            []*User        `json:"followed"`
 	Groups_members      []*group.Group `json:"groups_members"`
 	Wait_groups_members []*group.Group `json:"wait_groups_members"`
+	Invit_groups        []*group.Group `json:"invit_groups"`
 	Created_at          time.Time      `json:"created_date,omitempty"`
 	Updated_at          time.Time      `json:"updated_date,omitempty"`
 }
