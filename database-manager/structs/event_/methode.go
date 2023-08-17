@@ -59,6 +59,11 @@ func DeleteEventById(event_id uint64) {
 // GOING / NOT GOING
 
 func (e *Event) GoingEvent(user_id uint64, going bool) string {
+	exist := false
+	database.Database.QueryRow(`SELECT 1 FROM going_event WHERE user_id = ? AND event_id = ?`, user_id, e.Id).Scan(&exist)
+	if exist {
+		e.UnGoingEvent(user_id)
+	}
 	_, err := database.Database.Exec(`
 	INSERT INTO 'going_event'
 	(

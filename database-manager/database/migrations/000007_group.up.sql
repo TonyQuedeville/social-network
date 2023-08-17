@@ -20,8 +20,8 @@ CREATE TABLE IF NOT EXISTS `groupmembers` (
     id INTEGER PRIMARY KEY UNIQUE,
     group_id INTEGER NOT NULL,
     user_id INTEGER NOT NULL,
-    UNIQUE (group_id, user_id),
-    status TEXT DEFAULT NULL,
+    status TEXT DEFAULT 'wait',
+	UNIQUE (group_id, user_id),
     FOREIGN KEY("user_id") REFERENCES "user"("id") ON DELETE CASCADE,
     FOREIGN KEY("group_id") REFERENCES "group"("id") ON DELETE CASCADE
 );

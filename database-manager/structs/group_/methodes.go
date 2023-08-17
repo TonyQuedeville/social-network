@@ -11,6 +11,7 @@ import (
 
 // Create
 func (g *Group) AddGroup() (uint64, error) {
+	database.Database.QueryRow(`SELECT pseudo FROM user WHERE id = ?`, g.User_id).Scan(&g.Admin)
 	result, err := database.Database.Exec(`
 		INSERT INTO 'group'
 		(
@@ -32,11 +33,31 @@ func (g *Group) AddGroup() (uint64, error) {
 	if err != nil {
 		return 0, err
 	}
+	g.Id = uint64(groupID)
+
+	err = g.AddGroupMember(g.User_id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	err = g.AcceptGroupMember(g.User_id)
+	if err != nil {
+		return 0, err
+	}
 
 	return uint64(groupID), nil
 }
 
 // Read
+
+func (g *Group) GetMemberStatus(user_id uint64) (status string) {
+	database.Database.QueryRow(`
+		SELECT status FROM groupmembers WHERE group_id = ? AND user_id = ?
+	`, g.Id, user_id).Scan(&status)
+	return
+}
+
 func (g *Group) GetGroups() ([]*Group, error) {
 	rows, err := database.Database.Query(`
 		SELECT
@@ -75,7 +96,7 @@ func (g *Group) GetGroups() ([]*Group, error) {
 			fmt.Println("error :", err)
 			return nil, err
 		}
-		
+
 		group.GetGroupMembers()
 		group.GetGroupMembersWait()
 		groups = append(groups, &group)
@@ -146,13 +167,12 @@ func GetGroupsByUserId(user_id uint64) []*Group {
 	return groups
 }
 
-/* Retourne les groupes dont l'utilisateur est en attente d'acceptation */
-func GetWaitGroupsByUserId(user_id uint64) []*Group {
-	rows, _ := database.Database.Query(`
+func getWaitGroupsBy(user_id uint64, status string) []*Group {
+	rows, _ := database.Database.Query(fmt.Sprintf(`
 	SELECT 'group'.* FROM 'group'
-	JOIN groupmembers AS gm ON gm.user_id = ? AND gm.status IS NOT NULL
+	JOIN groupmembers AS gm ON gm.user_id = ? AND gm.status = '%s'
 	WHERE 'group'.id = gm.group_id
-	`, user_id)
+	`, status), user_id)
 	defer rows.Close()
 
 	var groups []*Group
@@ -175,6 +195,16 @@ func GetWaitGroupsByUserId(user_id uint64) []*Group {
 	return groups
 }
 
+/* Retourne les groupes dont l'utilisateur est en attente d'acceptation */
+func GetWaitGroupsByUserId(user_id uint64) []*Group {
+	return getWaitGroupsBy(user_id, "wait")
+}
+
+/* Retourne les groupes dont l'utilisateur est en attente d'acceptation */
+func GetInvitGroupsByUserId(user_id uint64) []*Group {
+	return getWaitGroupsBy(user_id, "invit")
+}
+
 // Update
 func (g *Group) UpdateGroup() error {
 	_, err := database.Database.Exec(`
@@ -193,6 +223,30 @@ func (g *Group) UpdateGroup() error {
 		return err
 	}
 
+	return nil
+}
+
+/* Accept un membre au groupe de discution */
+func (g *Group) AcceptGroupMember(user_id uint64) error {
+	_, err := database.Database.Exec(`
+		UPDATE groupmembers
+		SET status = ?
+		WHERE user_id = ?
+
+	`, nil, user_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+/* Refuse un membre au groupe de discution */
+func (g *Group) RefuseGroupMember(user_id uint64) error {
+	err := g.DeleteGroupMember(user_id)
+	if err != nil {
+		return err
+	}
 	return nil
 }
 
@@ -235,7 +289,7 @@ func (g *Group) AddGroupMember(user_id uint64) error {
 func (g *Group) DeleteGroupMember(user_id uint64) error {
 	_, err := database.Database.Exec(`
 		DELETE FROM groupmembers
-		WHERE id = ? AND member_id = ?
+		WHERE id = ? AND user_id = ?
 	`, g.Id, user_id)
 	if err != nil {
 		return err
