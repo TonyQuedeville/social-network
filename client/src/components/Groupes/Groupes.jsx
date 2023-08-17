@@ -42,10 +42,10 @@ const GroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: start;
   margin: 1px;
   border: solid 1px;
-  border-radius: 10px;
+  border-radius: 5px;
 
   overflow: auto;
   overflow-x: hidden;
@@ -64,7 +64,7 @@ const StyleGroupeList = styled.div`
   margin: 1px;
   padding: 5px;
   border: solid 1px;
-  border-radius: 10px;
+  border-radius: 5px;
 `
 const StyleTitleGroupe = styled.div`
   font-weight : bold;

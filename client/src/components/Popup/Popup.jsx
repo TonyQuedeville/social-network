@@ -13,7 +13,7 @@ import IcnNotification from '../../assets/icn/icn-notification.png'
 import IcnErreur from '../../assets/icn/icn-error.png'
 
 const PopupContainer = styled.div `
-  border-radius: 10px;
+  border-radius: 5px;
   box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
   color: red;
   display: flex;

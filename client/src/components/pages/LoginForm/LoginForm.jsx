@@ -25,7 +25,7 @@ const StyleLoginContainer = styled.div `
     justify-content: start;
     margin: 1px;
     border: solid 1px;
-    border-radius: 10px;
+    border-radius: 5px;
 `
 const StyleLoginForm = styled.form `
     display: flex;

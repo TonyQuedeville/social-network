@@ -30,7 +30,7 @@ const CguContainer = styled.div`
   margin: 1px;
   padding: 5px;
   border: solid 1px;
-  border-radius: 10px;
+  border-radius: 5px;
   overflow: hidden;
 `
 

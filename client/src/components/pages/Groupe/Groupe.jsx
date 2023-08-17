@@ -41,7 +41,7 @@ const PageContainer = styled.div`
 	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -59,7 +59,7 @@ const StylePostsContainer = styled.div`
   margin: 1px;
 	padding: 5px;
 	border: solid 1px;
-	border-radius: 10px;
+	border-radius: 5px;
   display: flex;
   flex-direction: column;
   align-items: center;
