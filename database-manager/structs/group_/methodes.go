@@ -11,6 +11,7 @@ import (
 
 // Create
 func (g *Group) AddGroup() (uint64, error) {
+	database.Database.QueryRow(`SELECT pseudo FROM user WHERE id = ?`, g.User_id).Scan(&g.Admin)
 	result, err := database.Database.Exec(`
 		INSERT INTO 'group'
 		(
@@ -29,6 +30,18 @@ func (g *Group) AddGroup() (uint64, error) {
 	}
 
 	groupID, err := result.LastInsertId()
+	if err != nil {
+		return 0, err
+	}
+	g.Id = uint64(groupID)
+
+	err = g.AddGroupMember(g.User_id)
+
+	if err != nil {
+		return 0, err
+	}
+
+	err = g.AcceptGroupMember(g.User_id)
 	if err != nil {
 		return 0, err
 	}
@@ -75,7 +88,7 @@ func (g *Group) GetGroups() ([]*Group, error) {
 			fmt.Println("error :", err)
 			return nil, err
 		}
-		
+
 		group.GetGroupMembers()
 		group.GetGroupMembersWait()
 		groups = append(groups, &group)
@@ -196,6 +209,30 @@ func (g *Group) UpdateGroup() error {
 	return nil
 }
 
+/* Accept un membre au groupe de discution */
+func (g *Group) AcceptGroupMember(user_id uint64) error {
+	_, err := database.Database.Exec(`
+		UPDATE groupmembers
+		SET status = ?
+		WHERE user_id = ?
+
+	`, nil, user_id)
+	if err != nil {
+		return err
+	}
+
+	return nil
+}
+
+/* Refuse un membre au groupe de discution */
+func (g *Group) RefuseGroupMember(user_id uint64) error {
+	err := g.DeleteGroupMember(user_id)
+	if err != nil {
+		return err
+	}
+	return nil
+}
+
 // Delete
 func (g *Group) DeleteGroup() error {
 	_, err := database.Database.Exec(`
@@ -235,7 +272,7 @@ func (g *Group) AddGroupMember(user_id uint64) error {
 func (g *Group) DeleteGroupMember(user_id uint64) error {
 	_, err := database.Database.Exec(`
 		DELETE FROM groupmembers
-		WHERE id = ? AND member_id = ?
+		WHERE id = ? AND user_id = ?
 	`, g.Id, user_id)
 	if err != nil {
 		return err

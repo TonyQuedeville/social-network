@@ -36,8 +36,8 @@ func InitServer() {
 	mux.Handle("/groupe/", ApplyMiddleware(http.HandlerFunc(api.GroupById)))
 	mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByGrouypId)))
 	mux.Handle("/joingroup/", ApplyMiddleware(http.HandlerFunc(api.JoinGroup)))
-	mux.Handle("/acceptgroup/", ApplyMiddleware(http.HandlerFunc(api.AcceptGroup)))
-	mux.Handle("/refusegroup/", ApplyMiddleware(http.HandlerFunc(api.RefuseGroup)))
+	mux.Handle("/acceptgroup/", ApplyMiddleware(http.HandlerFunc(api.AcceptGroup))) // suivi de l'id du user accepter, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
+	mux.Handle("/refusegroup/", ApplyMiddleware(http.HandlerFunc(api.RefuseGroup))) // suivi de l'id du user accepter, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
 	mux.Handle("/quitgroup/", ApplyMiddleware(http.HandlerFunc(api.QuitGroup)))
 
 	// Event
