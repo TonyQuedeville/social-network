@@ -27,9 +27,9 @@ func BadRequest(w http.ResponseWriter, message_error string) {
 	w.WriteHeader(http.StatusBadRequest)
 	fmt.Fprintf(w,
 		`{
-	"error": "%s"
-}`,
-		message_error)
+		"error": "%s"
+	}`,
+	message_error)
 }
 
 type reponse struct {

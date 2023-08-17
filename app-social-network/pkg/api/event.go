@@ -9,7 +9,6 @@ package api
 
 import (
 	"encoding/json"
-	"fmt"
 	"io"
 	"net/http"
 	"time"
@@ -89,7 +88,7 @@ func GoEvent(w http.ResponseWriter, r *http.Request) {
 		Event_id uint64 `json:"event_id"`
 		Going    string `json:"going"`
 	}{}
-	fmt.Printf("string(reqBody): %v\n", string(reqBody))
+
 	if err := json.Unmarshal(reqBody, &eventdata); err != nil { // unwrap le corp de la requete
 		BadRequest(w, err.Error())
 		return
@@ -103,8 +102,7 @@ func GoEvent(w http.ResponseWriter, r *http.Request) {
 	}
 
 	e := event.Event{Id: eventdata.Event_id}
-	fmt.Println("id:", eventdata.Event_id)
-	fmt.Println("event:", eventdata.Going)
+
 	switch eventdata.Going {
 	case "je participe":
 		e.GoingEvent(u_id, true)

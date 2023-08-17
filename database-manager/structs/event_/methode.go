@@ -1,8 +1,6 @@
 package event
 
 import (
-	"fmt"
-
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 )
 
@@ -63,7 +61,6 @@ func DeleteEventById(event_id uint64) {
 func (e *Event) GoingEvent(user_id uint64, going bool) string {
 	exist := false
 	database.Database.QueryRow(`SELECT 1 FROM going_event WHERE user_id = ? AND event_id = ?`, user_id, e.Id).Scan(&exist)
-	fmt.Println("dqdqs", exist)
 	if exist {
 		e.UnGoingEvent(user_id)
 	}
@@ -78,7 +75,6 @@ func (e *Event) GoingEvent(user_id uint64, going bool) string {
 	(?, ?, ?)
 	`, e.Id, user_id, going)
 	if err != nil {
-		fmt.Println("err goign event", err)
 		return err.Error()
 	}
 	return "going sucess"
@@ -90,7 +86,6 @@ func (e *Event) UnGoingEvent(user_id uint64) string {
 	WHERE event_id = ? AND user_id = ?
 	`, e.Id, user_id)
 	if err != nil {
-		fmt.Println("dqsd", err)
 		return err.Error()
 	}
 	return "ungoing sucess"
