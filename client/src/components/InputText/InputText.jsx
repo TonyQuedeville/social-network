@@ -20,7 +20,7 @@ const InputStyle = styled.input `
 `
 
 const InputText = (props) => {
-    const { onChange, id, name, label, placeholder, title, value, type, disabled, required, size } = props
+    const { onChange, id, name, label, placeholder, title, value, type, disabled, required, size, minDate, maxDate } = props
 
     const handleChange = (event) => {
         const { value } = event.target
@@ -51,6 +51,8 @@ const InputText = (props) => {
                 disabled={disabled}
                 required={required}
                 size={size}
+                min={type === 'date' ? minDate : undefined}
+                max={type === 'date' ? maxDate : undefined}
             />
         </div>
     )
@@ -72,7 +74,9 @@ InputText.propTypes = {
     onChange: PropTypes.func,
     disabled: PropTypes.bool,
     required: PropTypes.bool,
-    size: PropTypes.oneOfType([PropTypes.number, PropTypes.string])
+    size: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    minDate: PropTypes.string,
+    maxDate: PropTypes.string,
 }
 
 export default InputText

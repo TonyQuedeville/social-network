@@ -232,6 +232,13 @@ function RegisterForm() {
         finally {
         }
     }
+
+    // Date du jour - 15 ans (age minimal autorisé pour un reseaux social selon la loi française)
+    const today = new Date()
+    const year = today.getFullYear() - 15
+    const month = String(today.getMonth() + 1).padStart(2, '0')
+    const day = String(today.getDate()).padStart(2, '0')
+    const formattedToday = `${year}-${month}-${day}`
     
     // Rendu du composant
     return (
@@ -288,7 +295,7 @@ function RegisterForm() {
                         name="born_date"
                         label="* Date de naissance"
                         title={confidentialite + " : Inscription interdite au moins de 15 ans"}
-                        //value={bornDate}
+                        maxDate={formattedToday}
                         onChange={handleChange}
                         required
                     />

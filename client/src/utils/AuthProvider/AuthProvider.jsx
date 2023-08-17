@@ -27,6 +27,7 @@ export const AuthProvider = ({ children }) => {
     const [followed, setFollowed] = useState("")
     const [groups, setGroups] = useState("")
     const [waitGroups, setWaitGroups] = useState("")
+    const [invitGroups, setInvitGroups] = useState("")
 
     const updateUserData = (data) => {
         //console.log("updateUserData:", data);
@@ -44,6 +45,7 @@ export const AuthProvider = ({ children }) => {
         setFollowed(data.followed)
         setGroups(data.groups_members)
         setWaitGroups(data.wait_groups_members)
+        setInvitGroups(data.invit_groups)
     }
 
     const handleLogin = () => {
@@ -73,6 +75,7 @@ export const AuthProvider = ({ children }) => {
             followed, setFollowed,
             groups, setGroups,
             waitGroups, setWaitGroups,
+            invitGroups, setInvitGroups,
             updateUserData,
             handleLogin,
             handleLogout,
@@ -99,4 +102,5 @@ AuthProvider.propTypes = {
     followed: PropTypes.arrayOf(PropTypes.object),
     groups: PropTypes.arrayOf(PropTypes.object),
     waitGroups: PropTypes.arrayOf(PropTypes.object),
+    invitGroups: PropTypes.arrayOf(PropTypes.object),
 }
