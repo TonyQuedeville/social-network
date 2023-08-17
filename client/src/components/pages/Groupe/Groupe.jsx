@@ -44,6 +44,7 @@ const PageContainer = styled.div`
 	border-radius: 10px;
   display: flex;
   flex-direction: column;
+  align-items: center;
   background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
   
   overflow: auto;
@@ -102,7 +103,7 @@ const Groupe = () => {
     fetchData();
   }, [groupId]);
 
-  console.log("groupData :", groupData);
+  //console.log("groupData :", groupData);
 
   // Posts
   const Posts = () => {  
@@ -112,7 +113,7 @@ const Groupe = () => {
         return res.data
       })
     )
-    console.log("dataPosts:", data.datas);
+    //console.log("dataPosts:", data.datas);
 
     return (
       <>

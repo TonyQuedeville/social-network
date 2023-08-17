@@ -42,7 +42,7 @@ const GroupContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: start;
+  justify-content: center;
   margin: 1px;
   border: solid 1px;
   border-radius: 10px;
@@ -87,6 +87,7 @@ const Groupes = (props) => {
   // AuthUser
   const { authPseudo, authId, waitGroups } = useContext(AuthContext)
   const waitGroupIds = extractIdsFromList(waitGroups)
+  //console.log("waitGroupIds:", waitGroupIds);
 
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   const [notification, setNotification] = useState('') // Message de notification dans le composant Popup

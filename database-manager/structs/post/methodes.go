@@ -145,7 +145,7 @@ func GetPostsByUserId(userId, intelId uint64) ([]*Post, error) {
 			created_at,
 			updated_at
 		FROM post
-		WHERE user_id = ?
+		WHERE user_id = ? AND group_id = 0
 	`, userId)
 	if err != nil {
 		return nil, err
@@ -219,7 +219,6 @@ func GetPostsByGroupId(groupId uint64) ([]*Post, error) {
 		}
 		posts = append(posts, &post)
 	}
-	fmt.Println("GetPostsByGroupId !", posts)
 
 	return posts, nil
 }

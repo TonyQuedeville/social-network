@@ -6,7 +6,7 @@
     Page User : Route http://localhost:3000/user/:userid
 */
 
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { useParams } from 'react-router-dom'
 import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
@@ -126,6 +126,12 @@ const User = () => {
         )
     }
 
+    const [posts, setPosts] = useState([]) // Etat des post de l'utilisateur
+    const updatePosts = (newPost) => {
+        // Ajouter le nouveau post à la liste des posts
+        setPosts([...posts, newPost])
+    }
+
     // Composant 
     return (        
         <PageContainer>
@@ -139,7 +145,10 @@ const User = () => {
                 </div>
 
                 { authId.toString() === userid ? (
-                    <NewPost/>
+                    <NewPost
+                        userId={authId}
+                        updatePosts={updatePosts} 
+                    />
                 ) : (<></>)}
 
                 {/* Posts */}
