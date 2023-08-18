@@ -28,6 +28,7 @@ export const AuthProvider = ({ children }) => {
     const [followed, setFollowed] = useState("")
     const [groups, setGroups] = useState("")
     const [waitGroups, setWaitGroups] = useState("")
+    const [waitGroupsAccept, setWaitGroupsAccept] = useState("")
     const [invitGroups, setInvitGroups] = useState("")
     const [events, setEvents] = useState("")
 
@@ -47,8 +48,9 @@ export const AuthProvider = ({ children }) => {
         setWaitFollowers(data.wait_followers)
         setFollowed(data.followed)
         setGroups(data.groups_members)
-        setWaitGroups(data.wait_groups)
-        setInvitGroups(data.invit_groups)
+        setWaitGroups(data.wait_groups_members) // groupes dont je suis en attente d'acceptation
+        setWaitGroupsAccept(data.wait_groups_notif) // utilisateurs en attente d'acceptation des groupes dont je fait parti
+        setInvitGroups(data.invit_groups) 
         setEvents(data.events)
     }
 
@@ -80,6 +82,7 @@ export const AuthProvider = ({ children }) => {
             followed, setFollowed,
             groups, setGroups,
             waitGroups, setWaitGroups,
+            waitGroupsAccept, setWaitGroupsAccept,
             invitGroups, setInvitGroups,
             events, setEvents,
             updateUserData,
@@ -109,6 +112,7 @@ AuthProvider.propTypes = {
     followed: PropTypes.arrayOf(PropTypes.object),
     groups: PropTypes.arrayOf(PropTypes.object),
     waitGroups: PropTypes.arrayOf(PropTypes.object),
+    waitGroupsAccept: PropTypes.arrayOf(PropTypes.object),
     invitGroups: PropTypes.arrayOf(PropTypes.object),
     events: PropTypes.arrayOf(PropTypes.object),
 }

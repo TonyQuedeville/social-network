@@ -69,7 +69,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	askFollowers := user.GetTempFolower(u.Id)
-	waitGroups := group.GetWaitGroupsByUserId(u.Id)
+	//waitGroups := group.GetWaitUsersInGroupsByUserId(u.Id)
 	invitGroups := group.GetInvitGroupsByUserId(u.Id)
 	events := event.CheckNewEvent(u.Id)
 
@@ -77,14 +77,14 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		Uuid         string    `json:"uuid"`
 		User         user.User `json:"user"`
 		AskFollowers []*user.User `json:"wait_followers"`
-		WaitGroups   []*group.Group `json:"wait_groups"`
+		//WaitGroups   []*group.Group `json:"wait_groups_notif"`
 		InvitGroups  []*group.Group `json:"invit_groups"`
 		Events       []*event.Event `json:"events"`
 	}{
 		Uuid:         uuid,
 		User:         *u,
 		AskFollowers: askFollowers,
-		WaitGroups:   waitGroups,
+		//WaitGroups:   waitGroups,
 		InvitGroups:  invitGroups,
 		Events: events,
 	}

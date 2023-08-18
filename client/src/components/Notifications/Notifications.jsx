@@ -14,6 +14,7 @@ import { Loader } from '../../utils/Atom.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
+import Notification from '../Notification/Notification.jsx'
 import Popup from '../Popup/Popup.jsx'
 import NewEvent from '../NewEvent/NewEvent.jsx'
 import Event from '../Event/Event.jsx'
@@ -25,9 +26,9 @@ const StyleWindow = styled.div`
 	justify-content: start;
 	flex-direction: column;
 	position: absolute;
-	top: 55%;
-	left: 50%;
-	transform: translate(50%, -370%);
+	top: 2%;
+	left: 65%;
+	//transform: translate(50%, -370%);
 	width: 30%;
 	max-height: 80%;
 	padding: 20px;
@@ -92,7 +93,34 @@ const Notifications = ({groupId, onClose}) => {
 			</StyleTitleGroupe>
 
 			<StyleNotificationsContainer theme={theme}>
-        
+        {/* {waitFollowers.map((waitFollower, index) => (
+          <Notification 
+            key={index} 
+            notif={waitFollower} 
+            theme={theme}
+          />
+        ))} */}
+				{waitGroups.map((waitGroup, index) => (
+          <Notification 
+            key={index} 
+            notif={waitGroup} 
+            theme={theme}
+          />
+        ))}
+				{invitGroups.map((invitGroup, index) => (
+          <Notification 
+            key={index} 
+            notif={invitGroup} 
+            theme={theme}
+          />
+        ))}
+				{/*events.map((event, index) => (
+          <Notification 
+            key={index} 
+            notif={event} 
+            theme={theme}
+          />
+        ))*/}
       </StyleNotificationsContainer>
 
 			<StyleGroupButton>
