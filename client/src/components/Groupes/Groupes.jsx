@@ -87,7 +87,7 @@ const Groupes = (props) => {
   // AuthUser
   const { authPseudo, authId, waitGroups } = useContext(AuthContext)
   const waitGroupIds = extractIdsFromList(waitGroups)
-  console.log("waitGroupIds:", waitGroupIds);
+  // console.log("waitGroupIds:", waitGroupIds);
   
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
