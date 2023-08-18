@@ -5,16 +5,18 @@
 	Composant Navbar : Barre de navigation
 */
 
-import React, { useContext } from 'react'
+import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
+import Notifications from '../Notifications/Notifications.jsx'
 import Icone from '../Icone/Icone.jsx'
 import IcnHome from '../../assets/icn/icn-home.jpg'
 import IcnUsers from '../../assets/icn/icn-group.png'
 import IcnGroupe from '../../assets/icn/icn-group-discut.png'
 import IcnTchat from '../../assets/icn/icn-tchat.jpg'
+import IcnNotif from '../../assets/icn/icn-notification.png'
 //import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 //import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
@@ -41,6 +43,11 @@ const StyledGroupIcn = styled.div `
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
     const { authId, photoProfile, isAuthenticated, handleLogout } = useContext(AuthContext)
+    const [showNotificationsWindow, setShowNotificationsWindow] = useState(false) // fenetre des notifications
+
+    const handleNotifications = () => {
+		setShowNotificationsWindow(true)
+	}
 
     return (
         <StyledNav theme={theme}>
@@ -88,6 +95,18 @@ const Navbar = () => {
                                 image={`http://${window.location.hostname}:4000/download/${photoProfile}`}
                             />
                         </Link>
+                        <Icone 
+                            alt="Notifications" 
+                            image={IcnNotif}
+                            disabled={false}
+                            onClick={handleNotifications}
+                        />
+                        {showNotificationsWindow && (
+                            <Notifications
+                                onClose={() => {setShowNotificationsWindow(false)}}
+                            />						
+						)}
+                        
                     </>
                 ) : (
                     <>

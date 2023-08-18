@@ -2,7 +2,7 @@
 	Projet Zone01 : Social network
 	Alann Schnebelen
 	25/07/2023
-	Gestion des Event dans les groups
+	Gestion des Evènements dans les groupes de discution
 */
 
 package api

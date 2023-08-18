@@ -1,6 +1,8 @@
 package event
 
 import (
+	"fmt"
+
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 )
 
@@ -50,10 +52,11 @@ func ReadEventByGroupId(group_id uint64) (e []*Event) {
 
 // DELETE
 func DeleteEventById(event_id uint64) {
-	database.Database.Exec(`
-	DELETE FROM 'event'
+	_, err := database.Database.Exec(`
+	DELETE FROM `+"`event`"+`
 	WHERE id = ?;
 	`, event_id)
+	fmt.Println("err:", err)
 }
 
 // GOING / NOT GOING
@@ -91,7 +94,7 @@ func (e *Event) UnGoingEvent(user_id uint64) string {
 	return "ungoing sucess"
 }
 
-func (e *Event) CheckNewEvent(user_id uint64) (es []*Event) {
+func CheckNewEvent(user_id uint64) (es []*Event) {
 	rows, _ := database.Database.Query(`
 	SELECT *
 	FROM 'going_event'

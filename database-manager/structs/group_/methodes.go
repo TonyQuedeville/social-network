@@ -35,7 +35,7 @@ func (g *Group) AddGroup() (uint64, error) {
 	}
 	g.Id = uint64(groupID)
 
-	err = g.AddGroupMember(g.User_id)
+	err = AddGroupMember(g.User_id, g.Id)
 
 	if err != nil {
 		return 0, err
@@ -200,7 +200,7 @@ func GetWaitGroupsByUserId(user_id uint64) []*Group {
 	return getWaitGroupsBy(user_id, "wait")
 }
 
-/* Retourne les groupes dont l'utilisateur est en attente d'acceptation */
+/* Retourne les groupes dont l'utilisateur est invité */
 func GetInvitGroupsByUserId(user_id uint64) []*Group {
 	return getWaitGroupsBy(user_id, "invit")
 }
@@ -267,7 +267,7 @@ func (g *Group) DeleteGroup() error {
 
 // Create
 /* Ajoute un membre au groupe de discution */
-func (g *Group) AddGroupMember(user_id uint64) error {
+func AddGroupMember(user_id, group_id uint64) error {
 	_, err := database.Database.Exec(`
 		INSERT INTO groupmembers
 		(
@@ -276,7 +276,7 @@ func (g *Group) AddGroupMember(user_id uint64) error {
 		)
 		VALUES
 		(?, ?)
-	`, g.Id, user_id)
+	`, group_id, user_id)
 	if err != nil {
 		return err
 	}

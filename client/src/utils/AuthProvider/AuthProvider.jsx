@@ -24,10 +24,12 @@ export const AuthProvider = ({ children }) => {
     const [photoProfile, setPhotoProfile] = useState("")
     const [statusProfil, setStatusProfil] = useState("")
     const [follower, setFollower] = useState("")
+    const [waitFollowers, setWaitFollowers] = useState("")
     const [followed, setFollowed] = useState("")
     const [groups, setGroups] = useState("")
     const [waitGroups, setWaitGroups] = useState("")
     const [invitGroups, setInvitGroups] = useState("")
+    const [events, setEvents] = useState("")
 
     const updateUserData = (data) => {
         //console.log("updateUserData:", data);
@@ -42,10 +44,12 @@ export const AuthProvider = ({ children }) => {
         setPhotoProfile(data.image)
         setStatusProfil(data.status)
         setFollower(data.follower)
+        setWaitFollowers(data.wait_followers)
         setFollowed(data.followed)
         setGroups(data.groups_members)
-        setWaitGroups(data.wait_groups_members)
+        setWaitGroups(data.wait_groups)
         setInvitGroups(data.invit_groups)
+        setEvents(data.events)
     }
 
     const handleLogin = () => {
@@ -72,10 +76,12 @@ export const AuthProvider = ({ children }) => {
             photoProfile, setPhotoProfile,
             statusProfil, setStatusProfil,
             follower, setFollower,
+            waitFollowers, setWaitFollowers,
             followed, setFollowed,
             groups, setGroups,
             waitGroups, setWaitGroups,
             invitGroups, setInvitGroups,
+            events, setEvents,
             updateUserData,
             handleLogin,
             handleLogout,
@@ -99,8 +105,10 @@ AuthProvider.propTypes = {
     statusProfil: PropTypes.string,
     updateUserData: PropTypes.func,
     follower: PropTypes.arrayOf(PropTypes.object),
+    waitFollowers: PropTypes.arrayOf(PropTypes.object),
     followed: PropTypes.arrayOf(PropTypes.object),
     groups: PropTypes.arrayOf(PropTypes.object),
     waitGroups: PropTypes.arrayOf(PropTypes.object),
     invitGroups: PropTypes.arrayOf(PropTypes.object),
+    events: PropTypes.arrayOf(PropTypes.object),
 }
