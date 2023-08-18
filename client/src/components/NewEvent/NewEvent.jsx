@@ -38,11 +38,18 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const NewEvent = ({ groupId, updateEvents }) => {
+const NewEvent = ({ groupId, addEvents }) => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
     // const { authId, authPseudo } = useContext(AuthContext)
+
+	// Date du jour
+    const today = new Date();
+    const year = today.getFullYear();
+    const month = String(today.getMonth() + 1).padStart(2, '0');
+    const day = String(today.getDate()).padStart(2, '0');
+    const formattedToday = `${year}-${month}-${day}`;
 	
 	// New Post
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -53,7 +60,7 @@ const NewEvent = ({ groupId, updateEvents }) => {
         group_id: groupId,
 		titre: '',
 		description: '',
-		date: '', // Date de l'évènement
+		date: formattedToday, // Date de l'évènement
     })
 	const [setEvent] = useState("")
 
@@ -61,14 +68,6 @@ const NewEvent = ({ groupId, updateEvents }) => {
     const handleChange = (e) => {
 		if (e && e.target && e.target.name) {
 			var value = e.target.value
-            switch(e.target.name) {
-				case "date" :
-                    value = value + "T00:00:00.000+00:00"
-                    break
-
-                default :
-                    break
-            }
 
             setFormData(prev => ({
 				...prev,
@@ -82,15 +81,15 @@ const NewEvent = ({ groupId, updateEvents }) => {
 		event.preventDefault()
         let data = {
             ...formData,
+			date: formData.date + "T00:00:00.000+00:00"
         } 
-		console.log("data:", data);
 
         // Requete d'enregistrement vers app-social-network
         try{
             const response = await axios.post(`http://${window.location.hostname}:8080/addevent`, JSON.stringify(data))
             setFetchError(false)
 			CancelNewEvent()
-			updateEvents(response.data);
+			addEvents(response.data);
         }
         catch (err) {
             setNotification(err.message + " : " + err.response.data.error)
@@ -107,16 +106,9 @@ const NewEvent = ({ groupId, updateEvents }) => {
             group_id: groupId,
 			titre: '',
 			description: '',
-			date: '', // Date de l'évènement
-            })
+			date: formattedToday, // Date de l'évènement
+        })
 	}
-
-	// Date du jour
-    const today = new Date();
-    const year = today.getFullYear();
-    const month = String(today.getMonth() + 1).padStart(2, '0');
-    const day = String(today.getDate()).padStart(2, '0');
-    const formattedToday = `${year}-${month}-${day}`;
 
 	// Composant
 	return (
@@ -127,6 +119,7 @@ const NewEvent = ({ groupId, updateEvents }) => {
 					name="titre"
 					label="* Titre"
 					title="Titre de l'évènement"
+					value={formData.titre} 
 					onChange={handleChange}
 					required
 				/>
@@ -136,10 +129,10 @@ const NewEvent = ({ groupId, updateEvents }) => {
 					name="description"
 					label="* Déscription"
 					content="contenu de l'évènement"
+					value={formData.description} 
 					placeholder="c'est là qu'tu décrit ton évènement !"
 					rows={2}
 					cols={48}
-					value={formData.content}
 					onChange={handleChange}
 					required
 				/>
@@ -149,6 +142,7 @@ const NewEvent = ({ groupId, updateEvents }) => {
 					id="event-date"
 					name="date"
 					label="* Date de l'évènement"
+					value={formData.date}
 					title={"Séléctionnez une date pour votre évènement."}
 					onChange={handleChange}
 					minDate={formattedToday}

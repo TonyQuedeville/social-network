@@ -6,12 +6,14 @@
 */
 
 import React, {useState} from 'react'
-import axios from "axios"
+//import axios from "axios"
+import { useQuery } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
+import Button from '../Button/Button.jsx'
 import Popup from '../Popup/Popup.jsx'
 
 // css
@@ -25,7 +27,7 @@ const EventContainer = styled.div`
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
-	background: ${props => (props.theme === 'light' ? colors.backgroundWhite : colors.backgroundDarkSoft)};
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite})` : colors.backgroundDark)};
 `
 const StyleEventDate = styled.div`
 	width: 100%;
@@ -50,14 +52,15 @@ const StyleEventContent = styled.div`
 	padding: 5px;
 `
 const StyleCheckBox = styled.div`
+	width: 100%;
 	display: flex;
 	flex-direction: row;
 	align-items: center;
-	justify-content: center;
+	justify-content: space-around;
 `
 
 // Composant
-const Event = ({ event, theme }) => {
+const Event = ({ event, theme, onDelete }) => {
 	const eventGoingId = `eventgoing-${event.id}`
 	const eventNotGoingId = `eventnotgoing-${event.id}`
 	const eventNotId = `eventnot-${event.id}`
@@ -78,8 +81,6 @@ const Event = ({ event, theme }) => {
 					break
 			}
 
-			console.log("value:",value );
-
 			setData(prev => ({
 				...prev,
 					[e.target.name]: value
@@ -90,13 +91,12 @@ const Event = ({ event, theme }) => {
 			...data,
 			event_id: event.id,
 			going: value,
-	};
+		};
 
 		// Requete d'enregistrement vers app-social-network
 		try{
-			const response = await makeRequest.post(`/goingevent`, JSON.stringify(formData))
+			await makeRequest.post(`/goingevent`, JSON.stringify(formData))
 			setFetchError(false)
-			console.log(response);
 		}
 		catch (err) {
 			setNotification(err.message + " : " + err.response.data.error)
@@ -104,13 +104,38 @@ const Event = ({ event, theme }) => {
 		}
 		finally {
 		}
-	};
+	}
+
+	// Suppresion de l'évènement
+	const handleSup = async (e) => {
+		e.preventDefault()
+		try{
+			await makeRequest.post(`/supevent/${event.id}`, JSON.stringify(data))
+			setFetchError(false)
+			onDelete(event.id)
+		}
+		catch (err) {
+			setNotification(err.message + " : " + err.response.data.error)
+			setFetchError(true)
+		}
+		finally {
+		}
+	}
 
 	return (
     <EventContainer  theme={theme}>
-      <StyleEventDate>{FrenchFormatDateConvert(event.date)}</StyleEventDate>  
-      <StyleTitle>{event.titre}</StyleTitle>      
-      <StyleEventContent>{event.description}</StyleEventContent>  
+			<StyleCheckBox>
+				<StyleEventDate>{FrenchFormatDateConvert(event.date)}</StyleEventDate>  
+				<Button 
+						text="Supprimer" 
+						onClick={handleSup}
+					/>
+			</StyleCheckBox>
+
+			<StyleTitle>{event.titre}</StyleTitle>   
+
+			<StyleEventContent>{event.description}</StyleEventContent>  
+
 			<StyleCheckBox>
 				<RadioBouton
 					id={eventGoingId}
@@ -143,7 +168,7 @@ const Event = ({ event, theme }) => {
 			)}
 
     </EventContainer>
-  )
+	)
 }
 
 export default Event;

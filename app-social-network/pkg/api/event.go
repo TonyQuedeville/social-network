@@ -74,7 +74,7 @@ func Supevent(w http.ResponseWriter, r *http.Request) {
 
 	event.DeleteEventById(event_id)
 
-	Ok(w, "Deleted")
+	Ok(w, "Evènement supprimé")
 }
 
 func GoEvent(w http.ResponseWriter, r *http.Request) {

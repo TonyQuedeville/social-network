@@ -181,6 +181,7 @@ func GetFollowed(user_id uint64) (result []*User) {
 	return
 }
 
+// Récupère les users qui demandent à suivre le user (utile pour les notifications)
 func GetTempFolower(user_id uint64) (result []*User) {
 	rows, err := database.Database.Query(`SELECT u.id, u.pseudo, u.image FROM user u
 	LEFT JOIN temp_follower f ON f.user_id = ?

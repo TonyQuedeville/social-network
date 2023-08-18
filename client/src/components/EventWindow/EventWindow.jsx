@@ -39,22 +39,22 @@ const StyleWindow = styled.div`
 	box-shadow: 10px 5px 25px 0px black;
 
 	overflow: auto;
-  overflow-x: hidden;
-  scrollbar-width: none; /* Masque l'ascenseur Firefox */
-  -ms-overflow-style: none; /* Masque l'ascenseur IE 10+ */
-  &::-webkit-scrollbar {
-      width: 0; /* Masque l'ascenseur Chrome, Safari et Opera */
-  }
+	overflow-x: hidden;
+	scrollbar-width: none; /* Masque l'ascenseur Firefox */
+	-ms-overflow-style: none; /* Masque l'ascenseur IE 10+ */
+	&::-webkit-scrollbar {
+	width: 0; /* Masque l'ascenseur Chrome, Safari et Opera */
+}
 `
 const StyleEventsContainer = styled.div`
-  margin: 1px;
+	margin: 1px;
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
+	display: flex;
+	flex-direction: column;
+	align-items: center;
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyleTitleGroupe = styled.div`
 	font-weight : bold;
@@ -74,23 +74,32 @@ const StyleGroupButton = styled.div `
 const EventWindow = ({groupId, onClose}) => {
 	// Contexte
   const { theme } = useContext(ThemeContext)
+	const [events, setEvents] = useState([])
 
-	const updateEvents = () => {
-		console.log("updateEvents !");
-	}
-
-	const handleClose = () => {
-		onClose();
+	const addEvents = (newEvent) => {
+		const listEvents = [...events, newEvent]
+		setEvents(listEvents)
 	}
 
 	// Events
   const Events = () => {  
     const { data, isLoading, error } = useQuery(['dataEvents'], async () =>
       await makeRequest.get(`/events/${groupId}`).then((res) => {
-        console.log("groupevents !", res.data);
         return res.data
       })
     )
+
+		useEffect(() => {
+			if (data && data.datas) {
+				setEvents(data.datas);
+			}
+		}, [data]);
+		
+    const handleEventDelete = (eventId) => {
+			// Mise à jour de la liste des événements sans l'événement supprimé
+			const listEvents = events.filter((event) => event.id !== eventId)
+			setEvents(listEvents)
+    }
 
 		return (
       <>
@@ -103,11 +112,12 @@ const EventWindow = ({groupId, onClose}) => {
           )}
           {data.datas && (
             <>
-              {data.datas.map((event, index) => (
+              {events.map((event, index) => (
                 <Event 
 									key={index} 
 									event={event} 
 									theme={theme}
+									onDelete={handleEventDelete}
 								/>
               ))}
             </>
@@ -118,6 +128,10 @@ const EventWindow = ({groupId, onClose}) => {
     )
   }
 
+	const handleClose = () => {
+		onClose();
+	}
+
 	return (
     <StyleWindow theme={theme}>
 			<StyleTitleGroupe>
@@ -126,7 +140,7 @@ const EventWindow = ({groupId, onClose}) => {
 
 			<NewEvent
 				groupId = {groupId} 
-				updateEvents = {updateEvents()}
+				addEvents = {addEvents}
 			/>
 
 			<StyleEventsContainer theme={theme}>
