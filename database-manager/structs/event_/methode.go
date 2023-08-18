@@ -60,7 +60,7 @@ func DeleteEventById(event_id uint64) {
 
 func (e *Event) GoingEvent(user_id uint64, going bool) string {
 	exist := false
-	database.Database.QueryRow(`SELECT 1 FROM going_event WHERE user_id = ? AND event_id = ?`, user_id, e.Id).Scan(&exist)
+	database.Database.QueryRow(`SELECT 1 FROM going_event WHERE user_id = ? AND event_id = ? AND going IS NULL`, user_id, e.Id).Scan(&exist)
 	if exist {
 		e.UnGoingEvent(user_id)
 	}
@@ -89,4 +89,26 @@ func (e *Event) UnGoingEvent(user_id uint64) string {
 		return err.Error()
 	}
 	return "ungoing sucess"
+}
+
+func (e *Event) CheckNewEvent(user_id uint64) (es []*Event) {
+	rows, _ := database.Database.Query(`
+	SELECT *
+	FROM 'going_event'
+	WHERE user_id = ? AND going IS NULL
+	`, user_id)
+	for rows.Next() {
+		ev := &Event{}
+		rows.Scan(
+			&ev.Id,
+			&ev.Group_id,
+			&ev.Titre,
+			&ev.Description,
+			&ev.Date,
+			&ev.Created_at,
+			&ev.Update_at,
+		)
+		es = append(es, ev)
+	}
+	return
 }

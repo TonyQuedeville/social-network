@@ -14,9 +14,9 @@ CREATE TABLE IF NOT EXISTS 'event' (
 
 -- Create the "going_event" table
 CREATE TABLE IF NOT EXISTS 'going_event' (
-    event_id INTEGER UNIQUE NOT NULL,
-    user_id INTEGER UNIQUE NOT NULL,
-    going BOOLEAN NOT NULL,
+    event_id INTEGER NOT NULL,
+    user_id INTEGER NOT NULL,
+    going BOOLEAN,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     UNIQUE (event_id, user_id),
