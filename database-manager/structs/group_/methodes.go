@@ -150,7 +150,7 @@ func GetGroupsByUserId(user_id uint64) []*Group {
 	var groups []*Group
 	for rows.Next() {
 		var group Group
-		rows.Scan(
+		err := rows.Scan(
 			&group.Id,
 			&group.User_id,
 			&group.Admin,
@@ -161,6 +161,7 @@ func GetGroupsByUserId(user_id uint64) []*Group {
 			&group.Created_at,
 			&group.Updated_at,
 		)
+		fmt.Println("errrr", err)
 		groups = append(groups, &group)
 	}
 
