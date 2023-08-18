@@ -84,7 +84,7 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		Uuid:         uuid,
 		User:         *u,
 		AskFollowers: askFollowers,
-		WaitGroups:   waitGroups,
+		//WaitGroups:   waitGroups,
 		InvitGroups:  invitGroups,
 		Events:       events,
 	}

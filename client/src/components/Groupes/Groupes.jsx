@@ -87,8 +87,8 @@ const Groupes = (props) => {
   // AuthUser
   const { authPseudo, authId, waitGroups } = useContext(AuthContext)
   const waitGroupIds = extractIdsFromList(waitGroups)
-  //console.log("waitGroupIds:", waitGroupIds);
-
+  console.log("waitGroupIds:", waitGroupIds);
+  
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 
@@ -97,7 +97,7 @@ const Groupes = (props) => {
     console.log("Rejoindre le groupe :",groupid)
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await axios.post(`http://${window.location.hostname}:8080/joingroup/${groupid}`)
+      await makeRequest.post(`http://${window.location.hostname}:8080/joingroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {
@@ -113,7 +113,7 @@ const Groupes = (props) => {
     console.log("Quitter le groupe :", groupid)
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await axios.post(`http://${window.location.hostname}:8080/quitgroup/${groupid}`)
+      await makeRequest.post(`http://${window.location.hostname}:8080/quitgroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {
@@ -180,7 +180,7 @@ const Groupes = (props) => {
                         <Button 
                           text="Rejoindre le groupe" 
                           disabled={false} 
-                          onClick={handleJoinGroupe}
+                          onClick={()=>{handleJoinGroupe(group.id)}}
                         />                          
                         ) : <>
                         { waitGroupIds.includes(group.id) ? (

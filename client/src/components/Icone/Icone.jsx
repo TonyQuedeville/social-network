@@ -38,8 +38,7 @@ const IcnContainer = styled.div `
     
 `
 const IcnStyle = styled.img `
-    width: 90%;
-    margin: 3px;
+    width: 80%;
     transition: 300ms;
     transform: rotate(${props => props.rotate}deg);
 `
