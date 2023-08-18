@@ -127,7 +127,7 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
-	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
+	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté
 
 	group_id, err := GetIdFromPath(r) // Recupere l'id du group
 	if err != nil {
@@ -135,17 +135,12 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
-	if err != nil {
-		BadRequest(w, err.Error())
-		return
-	}
 	if intel_id == 0 {
 		BadRequest(w, "User not connected")
 		return
 	}
 
-	group.AddGroupMember(intel_id)
+	group.AddGroupMember(intel_id, group_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return

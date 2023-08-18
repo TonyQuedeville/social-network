@@ -2,10 +2,11 @@ package api
 
 import (
 	"encoding/json"
-
 	"io"
 	"net/http"
 
+	event "github.com/TonyQuedeville/social-network/database-manager/structs/event_"
+	group "github.com/TonyQuedeville/social-network/database-manager/structs/group_"
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
@@ -18,7 +19,7 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
-	//fmt.Println("Register request")
+	// fmt.Println("Register request")
 	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
 	u := &user.User{}                                   // prepare un user
 	if err := json.Unmarshal(reqBody, &u); err != nil { // unwrap le corp dans user
@@ -67,12 +68,25 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	askFollowers := user.GetTempFolower(u.Id)
+	waitGroups := group.GetWaitGroupsByUserId(u.Id)
+	invitGroups := group.GetInvitGroupsByUserId(u.Id)
+	events := event.CheckNewEvent(u.Id)
+
 	rep := struct {
-		Uuid string    `json:"uuid"`
-		User user.User `json:"user"`
+		Uuid         string    `json:"uuid"`
+		User         user.User `json:"user"`
+		AskFollowers []*user.User `json:"wait_followers"`
+		WaitGroups   []*group.Group `json:"wait_groups"`
+		InvitGroups  []*group.Group `json:"invit_groups"`
+		Events       []*event.Event `json:"events"`
 	}{
-		Uuid: uuid,
-		User: *u,
+		Uuid:         uuid,
+		User:         *u,
+		AskFollowers: askFollowers,
+		WaitGroups:   waitGroups,
+		InvitGroups:  invitGroups,
+		Events: events,
 	}
 	Ok(w, rep)
 }
@@ -133,7 +147,7 @@ func GetFollowedUserById(w http.ResponseWriter, r *http.Request) {
 func ManageFollower(w http.ResponseWriter, r *http.Request, flag string) {
 	// only post
 	if !IsPost(w, r) {
-		//fmt.Println("PAS POST")
+		// fmt.Println("PAS POST")
 		return
 	}
 	user_id := GetIdUser(r)
