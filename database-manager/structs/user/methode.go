@@ -197,6 +197,31 @@ func GetTempFolower(user_id uint64) (result []*User) {
 	return
 }
 
+// Recupere les utilateurs en wait des groupes dont "user_id" fait parti
+func GetWaitUsersInGroupsByUserId(user_id uint64) (result []interface{}) {
+	groups := group.GetGroupsByUserId(user_id)
+	for _, g := range groups {
+		g.GetGroupMembersWait()
+		for _, m := range g.WaitMembers {
+			data := struct {
+				Id          uint64
+				Pseudo      string
+				Image       string
+				Group_title string
+				Group_id    uint64
+			}{}
+			database.Database.QueryRow(`
+				SELECT u.id, u.pseudo, u.image FROM user u
+				WHERE u.id = ?
+			`, m).Scan(&data.Id, &data.Pseudo, &data.Image)
+			data.Group_title = g.Title
+			data.Group_id = g.Id
+			result = append(result, data)
+		}
+	}
+	return
+}
+
 /*< GETER */
 
 func (u *User) RemoveCriticalData() {
