@@ -18,7 +18,7 @@ func TestAddGroupMember(t *testing.T) {
 
 	// Appeler la fonction AddGroupMember avec des valeurs de test appropriées
 	memberID := uint64(1) // Remplacez cette valeur par un ID de membre valide pour vos tests
-	err := group.AddGroupMember(memberID)
+	err := AddGroupMember(memberID, group.Id)
 	// Vérifier que l'erreur est nulle (pas d'erreur)
 	if err != nil {
 		t.Errorf("AddGroupMember a retourné une erreur: %v", err)
