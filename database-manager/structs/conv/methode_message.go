@@ -13,6 +13,11 @@ func GetLastMessage(conv_id uint64) (m *Message) {
 	return
 }
 
+// recupere les derniers message non lu d'une conv suivant l'utilisateur
+func GetNewLastMessages(conv_id, user_id uint64) (ms []*Message) {
+	return
+}
+
 // recupere tout les message d'une conv, mettre 0 a offset et start pour recuperer TOUT les messages
 func GetMessageConv(conv_id, start, offset uint64) (ms []*Message) {
 	return
