@@ -289,7 +289,7 @@ func AddGroupMember(user_id, group_id uint64) error {
 func (g *Group) DeleteGroupMember(user_id uint64) error {
 	_, err := database.Database.Exec(`
 		DELETE FROM groupmembers
-		WHERE id = ? AND user_id = ?
+		WHERE group_id = ? AND user_id = ?
 	`, g.Id, user_id)
 	if err != nil {
 		return err
