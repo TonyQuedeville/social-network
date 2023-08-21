@@ -150,7 +150,7 @@ func GetGroupsByUserId(user_id uint64) []*Group {
 	var groups []*Group
 	for rows.Next() {
 		var group Group
-		err := rows.Scan(
+		rows.Scan(
 			&group.Id,
 			&group.User_id,
 			&group.Admin,
@@ -161,7 +161,6 @@ func GetGroupsByUserId(user_id uint64) []*Group {
 			&group.Created_at,
 			&group.Updated_at,
 		)
-		fmt.Println("errrr", err)
 		groups = append(groups, &group)
 	}
 
@@ -232,9 +231,9 @@ func (g *Group) AcceptGroupMember(user_id uint64) error {
 	_, err := database.Database.Exec(`
 		UPDATE groupmembers
 		SET status = ?
-		WHERE user_id = ?
+		WHERE user_id = ? AND group_id = ?
 
-	`, nil, user_id)
+	`, nil, user_id, g.Id)
 	if err != nil {
 		return err
 	}
