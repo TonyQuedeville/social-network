@@ -216,13 +216,9 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, err.Error())
 		return
 	}
-	group_id := g.Id
+	group_id := g.Group_id
 
-	user_id, err := GetIdFromPath(r) // Recupere l'id du group
-	if err != nil {
-		BadRequest(w, err.Error())
-		return
-	}
+	user_id := g.User_id
 
 	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
 	if err != nil {
