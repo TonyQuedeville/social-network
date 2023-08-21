@@ -128,8 +128,7 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
-	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté
-
+	intel_id := GetIdUser(r)          // (cookie) Utilisateur connecté
 	group_id, err := GetIdFromPath(r) // Recupere l'id du group
 	if err != nil {
 		BadRequest(w, err.Error())
@@ -179,18 +178,20 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, "User not connected")
 		return
 	}
-
-	if group.GetMemberStatus(user_id) == "invit" {
+	status := group.GetMemberStatus(user_id)
+	if status == "invit" {
 		if user_id != intel_id {
 			BadRequest(w, "Tu n'a pas le droit d'utiliser cette invitation")
 			return
 		}
-	} else {
+	} else if status == "wait" {
 		group.GetGroupMembers()
 		if !slices.Contains(group.Members, intel_id) {
 			BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
 			return
 		}
+	} else {
+		BadRequest(w, "Utilisateur deja dans le groupe")
 	}
 
 	err = group.AcceptGroupMember(user_id)

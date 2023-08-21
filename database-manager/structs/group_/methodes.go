@@ -232,7 +232,6 @@ func (g *Group) AcceptGroupMember(user_id uint64) error {
 		UPDATE groupmembers
 		SET status = ?
 		WHERE user_id = ? AND group_id = ?
-
 	`, nil, user_id, g.Id)
 	if err != nil {
 		return err
