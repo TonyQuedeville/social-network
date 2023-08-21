@@ -98,8 +98,8 @@ func CheckNewEvent(user_id uint64) (es []*Event) {
 	rows, _ := database.Database.Query(`
 	SELECT e.*
 	FROM 'event' e
-	LEFT JOIN 'going_event' ge
-	WHERE ge.user_id = ? AND ge.going IS NULL
+	JOIN 'going_event' ge ON e.id = ge.event_id
+	WHERE ge.user_id = ? AND ge.going IS NULL;
 	`, user_id)
 	for rows.Next() {
 		ev := &Event{}
