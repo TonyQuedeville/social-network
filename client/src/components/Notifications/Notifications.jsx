@@ -72,15 +72,32 @@ const StyleGroupButton = styled.div `
 `
 
 // Composant
-const Notifications = ({groupId, onClose}) => {
+const Notifications = ({onClose}) => {
 	// Contexte
   const { theme } = useContext(ThemeContext)
 	const [notifications, setNotifications] = useState([])
-	const { waitFollowers, waitGroups, invitGroups, events } = useContext(AuthContext) // Utilisateur connecté
+	const { waitFollowers, waitGroupsAccept, invitGroups, events } = useContext(AuthContext) // Utilisateur connecté
   console.log("waitFollowers:", waitFollowers);
-  console.log("waitGroups:", waitGroups);
+  console.log("waitGroupsAccept:", waitGroupsAccept);
   console.log("invitGroups:", invitGroups);
   console.log("events:", events);
+
+	const addNotifications = (newNotification) => {
+		const listNotifications = [...notifications, newNotification]
+		setNotifications(listNotifications)
+	}
+
+	// useEffect(() => {
+	// 	if (data && data.datas) {
+	// 		setEvents(data.datas);
+	// 	}
+	// }, [data]);
+	
+	const handleNotificationDelete = (notifId) => {
+		// Mise à jour de la liste des événements sans l'événement supprimé
+		const listNotifications = notifications.filter((notif) => notif.id !== notifId)
+		setNotifications(listNotifications)
+	}
 
 	const handleClose = () => {
 		onClose();
@@ -93,34 +110,60 @@ const Notifications = ({groupId, onClose}) => {
 			</StyleTitleGroupe>
 
 			<StyleNotificationsContainer theme={theme}>
-        {/* {waitFollowers.map((waitFollower, index) => (
-          <Notification 
-            key={index} 
-            notif={waitFollower} 
-            theme={theme}
-          />
-        ))} */}
-				{waitGroups.map((waitGroup, index) => (
-          <Notification 
-            key={index} 
-            notif={waitGroup} 
-            theme={theme}
-          />
-        ))}
-				{invitGroups.map((invitGroup, index) => (
-          <Notification 
-            key={index} 
-            notif={invitGroup} 
-            theme={theme}
-          />
-        ))}
-				{/*events.map((event, index) => (
-          <Notification 
-            key={index} 
-            notif={event} 
-            theme={theme}
-          />
-        ))*/}
+				{ waitFollowers && (
+					<>
+					{waitFollowers.map((waitFollower, index) => ( // Utilisateurs qui demande à me suivre
+						<Notification 
+							key={index} 
+							notif={waitFollower}
+							typeNotif="waitFollowers"
+							theme={theme}
+							addNotifications = {addNotifications}
+							onDelete = {handleNotificationDelete}
+						/>
+					))}
+					</>
+				)}
+					
+				{ waitGroupsAccept && (
+					<>
+					{waitGroupsAccept.map((waitGroupAccept, index) => ( // Utilisateurs en attente d'acceptation des groupes dont je fait parti
+						<Notification 
+							key={index} 
+							notif={waitGroupAccept} 
+							typeNotif="waitGroupsAccept" 
+							theme={theme}
+						/>
+					))}
+					</>
+				)}
+
+				{ invitGroups && (
+					<>
+					{invitGroups.map((invitGroup, index) => ( // Utilisateurs invité dans les groupes
+						<Notification 
+							key={index} 
+							notif={invitGroup}
+							typeNotif="invitGroups"  
+							theme={theme}
+						/>
+					))}
+					</>
+				)}
+
+				{ events && (
+					<>
+					{events.map((event, index) => ( // Nouveaux évènements de groupe
+						<Notification 
+							key={index} 
+							notif={event} 
+							typeNotif="events" 
+							theme={theme}
+						/>
+					))}
+					</>
+				)}
+
       </StyleNotificationsContainer>
 
 			<StyleGroupButton>

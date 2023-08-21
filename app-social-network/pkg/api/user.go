@@ -6,7 +6,6 @@ import (
 	"net/http"
 
 	event "github.com/TonyQuedeville/social-network/database-manager/structs/event_"
-	group "github.com/TonyQuedeville/social-network/database-manager/structs/group_"
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
 
@@ -69,25 +68,30 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 	}
 
 	askFollowers := user.GetTempFolower(u.Id)
-	//waitGroups := user.GetWaitUsersInGroupsByUserId(u.Id)
-	invitGroups := group.GetInvitGroupsByUserId(u.Id)
+	waitGroups := user.GetWaitUsersInGroupsByUserId(u.Id)
+	// invitGroups := group.GetInvitGroupsByUserId(u.Id)
 	events := event.CheckNewEvent(u.Id)
 
 	rep := struct {
-		Uuid         string         `json:"uuid"`
-		User         user.User      `json:"user"`
-		AskFollowers []*user.User   `json:"wait_followers"`
-		//WaitGroups   []interface{}  `json:"wait_groups"`
-		InvitGroups  []*group.Group `json:"invit_groups"`
-		Events       []*event.Event `json:"events"`
+		Uuid         string        `json:"uuid"`
+		User         user.User     `json:"user"`
+		AskFollowers []*user.User  `json:"wait_followers"`
+		WaitGroups   []interface{} `json:"wait_groups_accept"`
+		// InvitGroups  []*group.Group `json:"invit_groups"`
+		Events []*event.Event `json:"events"`
 	}{
 		Uuid:         uuid,
 		User:         *u,
 		AskFollowers: askFollowers,
-		//WaitGroups:   waitGroups,
-		InvitGroups:  invitGroups,
-		Events:       events,
+		WaitGroups:   waitGroups,
+		// InvitGroups:  invitGroups,
+		Events: events,
 	}
+
+	// fmt.Println("AskFollowers:", rep.AskFollowers)
+	// fmt.Println("WaitGroups:", rep.WaitGroups)
+	// fmt.Println("WaitGroups:", rep.WaitGroups)
+
 	Ok(w, rep)
 }
 

@@ -49,7 +49,7 @@ export const AuthProvider = ({ children }) => {
         setFollowed(data.followed)
         setGroups(data.groups_members)
         setWaitGroups(data.wait_groups_members) // groupes dont je suis en attente d'acceptation
-        setWaitGroupsAccept(data.wait_groups_notif) // utilisateurs en attente d'acceptation des groupes dont je fait parti
+        setWaitGroupsAccept(data.wait_groups_accept) // utilisateurs en attente d'acceptation des groupes dont je fait parti
         setInvitGroups(data.invit_groups) 
         setEvents(data.events)
     }

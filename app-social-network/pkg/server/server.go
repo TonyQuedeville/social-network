@@ -36,14 +36,14 @@ func InitServer() {
 	mux.Handle("/groupe/", ApplyMiddleware(http.HandlerFunc(api.GroupById)))
 	mux.Handle("/groupposts/", ApplyMiddleware(http.HandlerFunc(api.PostsByGrouypId)))
 	mux.Handle("/joingroup/", ApplyMiddleware(http.HandlerFunc(api.JoinGroup)))
-	mux.Handle("/acceptgroup/", ApplyMiddleware(http.HandlerFunc(api.AcceptGroup))) // suivi de l'id du user accepter, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
-	mux.Handle("/refusegroup/", ApplyMiddleware(http.HandlerFunc(api.RefuseGroup))) // suivi de l'id du user accepter, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
+	mux.Handle("/acceptgroup/", ApplyMiddleware(http.HandlerFunc(api.AcceptGroup))) // suivi de l'id du user accepté, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
+	mux.Handle("/refusegroup/", ApplyMiddleware(http.HandlerFunc(api.RefuseGroup))) // suivi de l'id du user accepté, il faut aussi le corp avec l'id du group sous cette forme {"id": 1}
 	mux.Handle("/quitgroup/", ApplyMiddleware(http.HandlerFunc(api.QuitGroup)))
 
 	// events
-	mux.Handle("/events/", ApplyMiddleware(http.HandlerFunc(api.EventsByGroupId)))      // group id
+	mux.Handle("/events/", ApplyMiddleware(http.HandlerFunc(api.EventsByGroupId))) // group id
 	mux.Handle("/addevent", ApplyMiddleware(http.HandlerFunc(api.AddeventInGroupId)))
-	mux.Handle("/supevent/", ApplyMiddleware(http.HandlerFunc(api.Supevent)))           // event id
+	mux.Handle("/supevent/", ApplyMiddleware(http.HandlerFunc(api.Supevent))) // event id
 	mux.Handle("/goingevent", ApplyMiddleware(http.HandlerFunc(api.GoEvent)))
 
 	http.ListenAndServe(ADRESS, mux)

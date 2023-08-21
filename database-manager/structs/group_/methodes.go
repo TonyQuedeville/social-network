@@ -351,7 +351,7 @@ func (g *Group) GetGroupMembersWait() {
 	rows, _ := database.Database.Query(`
 	SELECT user_id
 	FROM groupmembers
-	WHERE group_id = ? AND status IS NOT NULL
+	WHERE group_id = ? AND status = 'wait'
 	`, g.Id)
 	defer rows.Close()
 
