@@ -9,6 +9,7 @@ package api
 
 import (
 	"encoding/json"
+	"fmt"
 	"io"
 	"net/http"
 
@@ -169,6 +170,7 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 	user_id := g.User_id
 
 	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
+	fmt.Println("GROUPIDALANN:", group_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return

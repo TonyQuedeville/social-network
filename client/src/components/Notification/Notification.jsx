@@ -7,6 +7,7 @@
 
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components'
+import { Link, useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
@@ -25,70 +26,108 @@ const StyleNotif = styled.div`
 
 // Composant
 const Notification = ({ notif, typeNotif, onDelete, theme }) => {
-  // AuthUser
+  console.log("notif:", notif);
   const { authId } = useContext(AuthContext)
-
-  // Erreurs
-  const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
-  const [fetchError, setFetchError] = useState(false) // Affichage de l'erreur
+  const navigate = useNavigate() // variable permettant de rediriger vers la page /user/pseudo si le login réussie
 
   // waitFollowers
   const HandleWaitFollowersAccept = () => {
     const { data: dataWaitFollowers, isLoading: isLoading } = useQuery(
-      ['dataWaitFollowers', notif.user_id],
+      ['dataWaitFollowers', notif.id],
       () =>
-        makeRequest.get(`/acceptfollower/${notif.user_id}`).then((res) => {
+        makeRequest.get(`/acceptfollower/${notif.id}`).then((res) => {
           return res.data;
         }),
       {
         cacheTime: 0, // Désactiver la mise en cache
       }
     );
-    onDelete(notif.id)
   }
 
   const HandleWaitFollowersRefuse = () => {
     const { data: dataWaitFollowers, isLoading: isLoading } = useQuery(
-      ['dataWaitFollowers', notif.user_id],
+      ['dataWaitFollowers', notif.id],
       () =>
-        makeRequest.get(`/refusefollower/${notif.user_id}`).then((res) => {
+        makeRequest.get(`/refusefollower/${notif.id}`).then((res) => {
           return res.data;
         }),
       {
         cacheTime: 0, // Désactiver la mise en cache
       }
     );
-    onDelete(notif.id)
   }
 
   // waitGroupsAccept
-  const handleWaitGroupAccept = async () => {
+  const [waitGroupsData] = useState({
+		group_id: notif.Group_id,
+		user_id: 0,
+	})
+
+  const handleWaitGroupAccept = async(e) => {
+    console.log("handleWaitGroupAccept !");
+    const data = {
+			...waitGroupsData,
+			user_id: notif.user_id,
+		};
+    
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(waitGroupsData))
-      setFetchError(false)
-      onDelete(notif.id)
+      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(data))
     }
     catch (err) {
-        setNotification(err.message + " : " + err.response.data.error)
-        setFetchError(true)
+      console.log("err:", err);
     }
     finally {
     }
   }
 
-  const handleWaitGroupRefuse = () => {
-    // post
+  const handleWaitGroupRefuse = async(e) => {
+    const data = {
+			...waitGroupsData,
+			user_id: notif.user_id,
+		};
+    
+    try{
+      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(data))
+    }
+    catch (err) {
+      console.log("err:", err);
+    }
+    finally {
+    }
   }
 
   // invitGroups
-  const handleInvitGroupAccept = () => {
-    // post
+  const handleInvitGroupAccept = async (e) => {
+    const data = {
+			...waitGroupsData,
+			user_id: authId,
+		};
+
+    try{
+      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(data))
+    }
+    catch (err) {
+      console.log("err:", err);
+    }
+    finally {
+    }
   }
 
-  const handleInvitGroupRefuse = () => {
-    // post
-  }
+  const handleInvitGroupRefuse = async(e) => {
+    const data = {
+			...waitGroupsData,
+			user_id: authId,
+		};
 
+    try{
+      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(data))
+    }
+    catch (err) {
+      console.log("err:", err);
+    }
+    finally {
+    }
+  }
 
   switch (typeNotif) {
     case "waitFollowers":
@@ -109,7 +148,7 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
     case "waitGroupsAccept":
       return (
         <StyleNotif theme={theme}>
-          <>{notif.pseudo + " demande à faire parti du groupe " + notif.title}</>
+          <>{notif.Pseudo + " demande à rejoindre le groupe " + notif.Group_title}</>
           <Button 
             text="Accepter" 
             onClick={handleWaitGroupAccept}
@@ -127,11 +166,11 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
           <>{notif.pseudo + " vous invite à rejoindre le groupe " + notif.title}</>
           <Button 
             text="Accepter" 
-            onClick={handleWaitGroupAccept}
+            onClick={handleInvitGroupAccept}
           />
           <Button 
             text="Refuser" 
-            onClick={handleWaitGroupRefuse}
+            onClick={handleInvitGroupRefuse}
           />
         </StyleNotif>
       )
@@ -139,18 +178,15 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
     case "events":
       return (
         <StyleNotif theme={theme}>
-          <>{"Evènement: " + notif.title + ", dans le groupe " + notif.title}</>
+          <>{"Evènement: " + notif.titre + ", description :" + notif.description}</>
+          <Link to={`/group/${notif.group_id}`}>
+            {" Groupe: " + notif.group_name}
+          </Link>
         </StyleNotif>
       )
 
     default:
   }
-
-  <>
-  {fetchError && notification && (
-    <Popup texte={notification} type='error' />
-    )}
-  </>
 }
 
 export default Notification

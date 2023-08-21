@@ -32,25 +32,25 @@ export const AuthProvider = ({ children }) => {
     const [invitGroups, setInvitGroups] = useState("")
     const [events, setEvents] = useState("")
 
-    const updateUserData = (data) => {
+    const updateUserData = (data, dataUser) => {
         //console.log("updateUserData:", data);
-        setEmail(data.email)
-        setPseudo(data.pseudo)
-        setAuthId(data.id)
-        setLastname(data.lastname)
-        setFirstname(data.firstname)
-        setSexe(data.sexe)
-        setBornDate(data.born_date)
-        setAbout(data.about)
-        setPhotoProfile(data.image)
-        setStatusProfil(data.status)
-        setFollower(data.follower)
+        setEmail(dataUser.email)
+        setPseudo(dataUser.pseudo)
+        setAuthId(dataUser.id)
+        setLastname(dataUser.lastname)
+        setFirstname(dataUser.firstname)
+        setSexe(dataUser.sexe)
+        setBornDate(dataUser.born_date)
+        setAbout(dataUser.about)
+        setPhotoProfile(dataUser.image)
+        setStatusProfil(dataUser.status)
+        setFollower(dataUser.follower)
         setWaitFollowers(data.wait_followers)
-        setFollowed(data.followed)
+        setFollowed(dataUser.followed)
         setGroups(data.groups_members)
         setWaitGroups(data.wait_groups_members) // groupes dont je suis en attente d'acceptation
         setWaitGroupsAccept(data.wait_groups_accept) // utilisateurs en attente d'acceptation des groupes dont je fait parti
-        setInvitGroups(data.invit_groups) 
+        setInvitGroups(dataUser.invit_groups) 
         setEvents(data.events)
     }
 

@@ -119,7 +119,7 @@ const Notifications = ({onClose}) => {
 							typeNotif="waitFollowers"
 							theme={theme}
 							addNotifications = {addNotifications}
-							onDelete = {handleNotificationDelete}
+							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -133,6 +133,7 @@ const Notifications = ({onClose}) => {
 							notif={waitGroupAccept} 
 							typeNotif="waitGroupsAccept" 
 							theme={theme}
+							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -146,6 +147,7 @@ const Notifications = ({onClose}) => {
 							notif={invitGroup}
 							typeNotif="invitGroups"  
 							theme={theme}
+							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -159,6 +161,7 @@ const Notifications = ({onClose}) => {
 							notif={event} 
 							typeNotif="events" 
 							theme={theme}
+							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>

@@ -133,7 +133,7 @@ function LoginForm() {
 
                 // Données AuthUser
                 console.log("userData:", responseData.datas)
-                updateUserData(responseData.datas.user)
+                updateUserData(responseData.datas, responseData.datas.user)
                 handleLogin()
                 
                 navigate(`/user/${responseData.datas.user.id}`)
