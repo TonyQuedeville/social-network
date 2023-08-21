@@ -149,9 +149,9 @@ func GetFollowedUserById(w http.ResponseWriter, r *http.Request) {
 }
 
 func ManageFollower(w http.ResponseWriter, r *http.Request, flag string) {
-	// only post
-	if !IsPost(w, r) {
-		// fmt.Println("PAS POST")
+	// only get
+	if !IsGet(w, r) {
+		// fmt.Println("PAS GET")
 		return
 	}
 	user_id := GetIdUser(r)

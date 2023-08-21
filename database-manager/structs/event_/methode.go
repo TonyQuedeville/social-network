@@ -26,7 +26,7 @@ func (e *Event) CreateEvent() error {
 
 // Read
 
-func ReadEventByGroupId(group_id uint64) (e []*Event) {
+func ReadEventByGroupId(group_id uint64) (es []*Event) {
 	rows, _ := database.Database.Query(`
 	SELECT *
 	FROM 'event'
@@ -43,7 +43,7 @@ func ReadEventByGroupId(group_id uint64) (e []*Event) {
 			&ev.Created_at,
 			&ev.Update_at,
 		)
-		e = append(e, ev)
+		es = append(es, ev)
 	}
 	return
 }
@@ -96,9 +96,10 @@ func (e *Event) UnGoingEvent(user_id uint64) string {
 
 func CheckNewEvent(user_id uint64) (es []*Event) {
 	rows, _ := database.Database.Query(`
-	SELECT *
-	FROM 'going_event'
-	WHERE user_id = ? AND going IS NULL
+	SELECT e.*
+	FROM 'event' e
+	LEFT JOIN 'going_event' ge
+	WHERE ge.user_id = ? AND ge.going IS NULL
 	`, user_id)
 	for rows.Next() {
 		ev := &Event{}

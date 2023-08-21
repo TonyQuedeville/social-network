@@ -156,19 +156,17 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 	}
 	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
 
-	reqBody, _ := io.ReadAll(r.Body)                    // récupere le corp json
-	g := &group.Group{}                                 // prepare un user
+	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
+	g := &struct {
+		Group_id uint64 `json:"group_id"`
+		User_id  uint64 `json:"user_id"`
+	}{} // prepare un user
 	if err := json.Unmarshal(reqBody, &g); err != nil { // unwrap le corp dans user
 		BadRequest(w, err.Error())
 		return
 	}
-	group_id := g.Id
-
-	user_id, err := GetIdFromPath(r) // Recupere l'id du group
-	if err != nil {
-		BadRequest(w, err.Error())
-		return
-	}
+	group_id := g.Group_id
+	user_id := g.User_id
 
 	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
 	if err != nil {
