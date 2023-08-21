@@ -96,9 +96,10 @@ func (e *Event) UnGoingEvent(user_id uint64) string {
 
 func CheckNewEvent(user_id uint64) (es []*Event) {
 	rows, _ := database.Database.Query(`
-	SELECT e.*
+	SELECT e.*, g.title
 	FROM 'event' e
 	JOIN 'going_event' ge ON e.id = ge.event_id
+	JOIN 'group' g ON g.id = e.group_id
 	WHERE ge.user_id = ? AND ge.going IS NULL;
 	`, user_id)
 	for rows.Next() {
@@ -111,6 +112,7 @@ func CheckNewEvent(user_id uint64) (es []*Event) {
 			&ev.Date,
 			&ev.Created_at,
 			&ev.Update_at,
+			&ev.Group_name,
 		)
 		es = append(es, ev)
 	}
