@@ -6,7 +6,7 @@
     Page Register : Route http://localhost:3000/register 
 */
 
-import React, { useState, useEffect } from "react"
+import React, { useState, useEffect, useContext } from "react"
 import { Link, useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import Button from '../../Button/Button.jsx'
@@ -20,10 +20,12 @@ import useImageUpload from '../../../utils/hooks/ImageUpload/useImageUpload.js'
 import Cgu from '../../Cgu/Cgu.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import axios from "axios"
+import colors from '../../../utils/style/Colors.js'
+import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 
 // css
 const RegisterContainer = styled.div `
-    min-height: 88.5vh;
+    min-height: 88vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -31,6 +33,7 @@ const RegisterContainer = styled.div `
     margin: 1px;
     border: solid 1px;
     border-radius: 5px;
+    background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyleRegisterForm = styled.form `
     display: flex;
@@ -80,6 +83,7 @@ function isValidEmail(value) {
 
 // Composant
 function RegisterForm() {
+    const { theme } = useContext(ThemeContext)
     const navigate = useNavigate()  // variable permettant de rediriger vers la page /login si l'inscription réussie
     const [isPseudoValid, setIsPseudoValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité du nom d'utilisateur
     const [isEmailValid, setIsEmailValid] = useState(false) // Nouvelle variable d'état pour vérifier la validité de l'adresse email
@@ -242,7 +246,7 @@ function RegisterForm() {
     
     // Rendu du composant
     return (
-        <RegisterContainer>
+        <RegisterContainer theme={theme}>
             <StyleRegisterForm onSubmit={handleSubmit} >
                 <StyleLabInput>            
                     <InputText
@@ -414,7 +418,7 @@ function RegisterForm() {
                     />
                 </StyleLabInput>
                 <Cgu larg={70}/>
-                <StyleLabInput>
+                <StyleLabInput >
                     <Checkbox
                         id="cgu"
                         label="* Veuillez accepter les CGU"

@@ -5,11 +5,13 @@
 	Composant Cgu : Affiche la fenetre repliable des conditions générale d'utilisation du reseau social.
 */
 
-import React, {useState, useEffect} from 'react'
+import React, {useState, useEffect, useContext} from 'react'
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import Icone from '../Icone/Icone.jsx'
 import IcnDown from '../../assets/icn/icn-down.png'
+import colors from '../../utils/style/Colors.js'
+import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 
 const TitleContainer = styled.div`
   display: flex;
@@ -32,6 +34,7 @@ const CguContainer = styled.div`
   border: solid 1px;
   border-radius: 5px;
   overflow: hidden;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite})` : colors.backgroundDark)};
 `
 
 const CguText = styled.pre`
@@ -40,6 +43,7 @@ const CguText = styled.pre`
 `
 
 const Cgu = (props) => {
+  const { theme } = useContext(ThemeContext)
   const { larg } = props
   const [cguText, setCguText] = useState('')
   const [expanded, setExpanded] = useState(false)
@@ -58,6 +62,7 @@ const Cgu = (props) => {
 
   return (
     <CguContainer 
+      theme={theme}
       larg={larg} 
       isexpanded={expanded.toString()}
     >

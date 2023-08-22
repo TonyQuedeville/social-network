@@ -27,9 +27,9 @@ const StyleWindow = styled.div`
 	flex-direction: column;
 	position: absolute;
 	top: 2%;
-	left: 65%;
+	left: 50%;
 	//transform: translate(50%, -370%);
-	width: 30%;
+	width: 40%;
 	max-height: 80%;
 	padding: 20px;
 	box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -75,29 +75,12 @@ const StyleGroupButton = styled.div `
 const Notifications = ({onClose}) => {
 	// Contexte
   const { theme } = useContext(ThemeContext)
-	const [notifications, setNotifications] = useState([])
 	const { waitFollowers, waitGroupsAccept, invitGroups, events } = useContext(AuthContext) // Utilisateur connecté
-  console.log("waitFollowers:", waitFollowers);
-  console.log("waitGroupsAccept:", waitGroupsAccept);
-  console.log("invitGroups:", invitGroups);
-  console.log("events:", events);
+  // console.log("waitFollowers:", waitFollowers);
+  // console.log("waitGroupsAccept:", waitGroupsAccept);
+  // console.log("invitGroups:", invitGroups);
+  // console.log("events:", events);
 
-	const addNotifications = (newNotification) => {
-		const listNotifications = [...notifications, newNotification]
-		setNotifications(listNotifications)
-	}
-
-	// useEffect(() => {
-	// 	if (data && data.datas) {
-	// 		setEvents(data.datas);
-	// 	}
-	// }, [data]);
-	
-	const handleNotificationDelete = (notifId) => {
-		// Mise à jour de la liste des événements sans l'événement supprimé
-		const listNotifications = notifications.filter((notif) => notif.id !== notifId)
-		setNotifications(listNotifications)
-	}
 
 	const handleClose = () => {
 		onClose();
@@ -112,14 +95,11 @@ const Notifications = ({onClose}) => {
 			<StyleNotificationsContainer theme={theme}>
 				{ waitFollowers && (
 					<>
-					{waitFollowers.map((waitFollower, index) => ( // Utilisateurs qui demande à me suivre
+					{waitFollowers.map((waitFollower) => ( // Utilisateurs qui demande à me suivre
 						<Notification 
-							key={index} 
 							notif={waitFollower}
 							typeNotif="waitFollowers"
 							theme={theme}
-							addNotifications = {addNotifications}
-							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -127,13 +107,11 @@ const Notifications = ({onClose}) => {
 					
 				{ waitGroupsAccept && (
 					<>
-					{waitGroupsAccept.map((waitGroupAccept, index) => ( // Utilisateurs en attente d'acceptation des groupes dont je fait parti
+					{waitGroupsAccept.map((waitGroupAccept) => ( // Utilisateurs en attente d'acceptation des groupes dont je fait parti
 						<Notification 
-							key={index} 
 							notif={waitGroupAccept} 
 							typeNotif="waitGroupsAccept" 
 							theme={theme}
-							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -141,13 +119,11 @@ const Notifications = ({onClose}) => {
 
 				{ invitGroups && (
 					<>
-					{invitGroups.map((invitGroup, index) => ( // Utilisateurs invité dans les groupes
+					{invitGroups.map((invitGroup) => ( // Utilisateurs invité dans les groupes
 						<Notification 
-							key={index} 
 							notif={invitGroup}
 							typeNotif="invitGroups"  
 							theme={theme}
-							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>
@@ -155,13 +131,11 @@ const Notifications = ({onClose}) => {
 
 				{ events && (
 					<>
-					{events.map((event, index) => ( // Nouveaux évènements de groupe
+					{events.map((event) => ( // Nouveaux évènements de groupe
 						<Notification 
-							key={index} 
 							notif={event} 
 							typeNotif="events" 
 							theme={theme}
-							//onDelete = {handleNotificationDelete}
 						/>
 					))}
 					</>

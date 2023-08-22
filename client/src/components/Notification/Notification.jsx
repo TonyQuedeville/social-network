@@ -7,29 +7,34 @@
 
 import React, { useContext, useState } from 'react';
 import styled from 'styled-components'
-import { Link, useNavigate } from 'react-router-dom'
+import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
 import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
-import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button'
-import Popup from '../Popup/Popup.jsx'
+import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 // css
 const StyleNotif = styled.div`
 	width: 100%;
 	display: flex;
 	flex-direction: row;
-	justify-content: start;
+	justify-content: space-between;
+  align-items: center;
 	margin: 5px;
+`
+const StyleGroupButton = styled.div`
+  display: flex;
+	flex-direction: row;
+	justify-content: center;
 `
 
 // Composant
-const Notification = ({ notif, typeNotif, onDelete, theme }) => {
-  console.log("notif:", notif);
-  const { authId } = useContext(AuthContext)
-  const navigate = useNavigate() // variable permettant de rediriger vers la page /user/pseudo si le login réussie
+const Notification = ({ notif, typeNotif, theme }) => {
+  //console.log("notif:", typeNotif, notif);
 
+  const { authId } = useContext(AuthContext)
+  
   // waitFollowers
   const HandleWaitFollowersAccept = () => {
     const { data: dataWaitFollowers, isLoading: isLoading } = useQuery(
@@ -64,7 +69,6 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
 	})
 
   const handleWaitGroupAccept = async(e) => {
-    console.log("handleWaitGroupAccept !");
     const data = {
 			...waitGroupsData,
 			user_id: notif.user_id,
@@ -134,14 +138,16 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
       return (
         <StyleNotif theme={theme}>
           <>{notif.pseudo + " demande à vous suivre"}</>
-          <Button 
-            text="Accepter" 
-            onClick={HandleWaitFollowersAccept}
-          />
-          <Button 
-            text="Refuser" 
-            onClick={HandleWaitFollowersRefuse}
-          />
+          <StyleGroupButton>
+            <Button 
+              text="Accepter" 
+              onClick={HandleWaitFollowersAccept}
+            />
+            <Button 
+              text="Refuser" 
+              onClick={HandleWaitFollowersRefuse}
+            />
+          </StyleGroupButton>
         </StyleNotif>
       )
 
@@ -149,14 +155,16 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
       return (
         <StyleNotif theme={theme}>
           <>{notif.Pseudo + " demande à rejoindre le groupe " + notif.Group_title}</>
-          <Button 
-            text="Accepter" 
-            onClick={handleWaitGroupAccept}
-          />
-          <Button 
-            text="Refuser" 
-            onClick={handleWaitGroupRefuse}
-          />
+          <StyleGroupButton>
+            <Button 
+              text="Accepter" 
+              onClick={handleWaitGroupAccept}
+            />
+            <Button 
+              text="Refuser" 
+              onClick={handleWaitGroupRefuse}
+            />
+          </StyleGroupButton>
         </StyleNotif>
       )
       
@@ -164,24 +172,26 @@ const Notification = ({ notif, typeNotif, onDelete, theme }) => {
       return (
         <StyleNotif theme={theme}>
           <>{notif.pseudo + " vous invite à rejoindre le groupe " + notif.title}</>
-          <Button 
-            text="Accepter" 
-            onClick={handleInvitGroupAccept}
-          />
-          <Button 
-            text="Refuser" 
-            onClick={handleInvitGroupRefuse}
-          />
+          <StyleGroupButton>
+            <Button 
+              text="Accepter" 
+              onClick={handleInvitGroupAccept}
+            />
+            <Button 
+              text="Refuser" 
+              onClick={handleInvitGroupRefuse}
+            />
+          </StyleGroupButton>
         </StyleNotif>
       )
       
     case "events":
       return (
         <StyleNotif theme={theme}>
-          <>{"Evènement: " + notif.titre + ", description :" + notif.description}</>
           <Link to={`/group/${notif.group_id}`}>
-            {" Groupe: " + notif.group_name}
+            {" Groupe: " + notif.group_name + " "}
           </Link>
+          <>{"Evènement: " + notif.titre + " le " + FrenchFormatDateConvert(notif.date)}</>
         </StyleNotif>
       )
 

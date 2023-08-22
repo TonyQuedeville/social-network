@@ -34,9 +34,9 @@ const PageContainer = styled.div`
   height: 88.5vh;
   display: flex;
   flex-direction: row;
-  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite }, ${colors.backgroundLight })` : colors.backgroundDark)};
 `
-const GroupContainer = styled.div`
+const StyleGroupContainer = styled.div`
   width: 100%;
   min-height: 88vh;
   display: flex;
@@ -46,7 +46,7 @@ const GroupContainer = styled.div`
   margin: 1px;
   border: solid 1px;
   border-radius: 5px;
-
+  
   overflow: auto;
   overflow-x: hidden;
   scrollbar-width: none; /* Masque l'ascenseur Firefox */
@@ -65,6 +65,7 @@ const StyleGroupeList = styled.div`
   padding: 5px;
   border: solid 1px;
   border-radius: 5px;
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite})` : colors.backgroundDark)};
 `
 const StyleTitleGroupe = styled.div`
   font-weight : bold;
@@ -154,6 +155,7 @@ const Groupes = (props) => {
                 {data.datas.map((group, index) => (
                   <React.Fragment key={index}>
                     <StyleGroupeList 
+                      theme={theme}
                       key={`${group.title}-${index}`} 
                       id={`group-link-${group.id}`}
                       onClick={group.members.includes(authId) ? () => HandleGroupeClick(group.id) : null}
@@ -218,12 +220,12 @@ const Groupes = (props) => {
 
   return (
     <PageContainer larg={larg} theme={theme}>
-      <GroupContainer> 
+      <StyleGroupContainer> 
         { authPseudo && (
           <NewGroupe/>
         )}  
         <GroupsList/>
-      </GroupContainer>
+      </StyleGroupContainer>
 
       { fetchError && notification && (
         <Popup texte={notification} type='error' />

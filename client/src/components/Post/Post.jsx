@@ -32,7 +32,7 @@ const PostContainer = styled.div`
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
-	background: ${props => (props.theme === 'light' ? colors.backgroundWhite : colors.backgroundDarkSoft)};
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite }, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyleTitlePublication = styled.div`
 	font-weight : bold;
@@ -149,7 +149,7 @@ const Post = ({ post, theme, confidencial }) => {
 
   return (
     <PostContainer  theme={theme}>
-      <StyleInfo>
+      <StyleInfo theme={theme}>
         <StyleItalic>
           <Style33>{post.pseudo}</Style33>
           <Style33>{FrenchFormatDateConvert(post.create_date)}</Style33>

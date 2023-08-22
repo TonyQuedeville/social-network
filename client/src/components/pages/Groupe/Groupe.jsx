@@ -63,7 +63,7 @@ const StylePostsContainer = styled.div`
   display: flex;
   flex-direction: column;
   align-items: center;
-  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite})` : colors.backgroundDark)};
 `
 
 // Composant

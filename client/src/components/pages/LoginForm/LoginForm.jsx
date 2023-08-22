@@ -15,10 +15,12 @@ import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
 import axios from "axios"
 import Cookies from 'js-cookie' // npm install js-cookie
+import colors from '../../../utils/style/Colors.js'
+import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 
 // css
 const StyleLoginContainer = styled.div `
-    min-height: 88.5vh;
+    min-height: 88vh;
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -26,6 +28,7 @@ const StyleLoginContainer = styled.div `
     margin: 1px;
     border: solid 1px;
     border-radius: 5px;
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight})` : colors.backgroundDark)};
 `
 const StyleLoginForm = styled.form `
     display: flex;
@@ -57,23 +60,9 @@ function isValidEmail(value) {
     }
 }
 
-/*
-// Validation de l'adresse email ou du nom d'utilisateur
-function isValidPseudo(value) {
-    const useridRegex = /^[a-zA-Z0-9_-]{4,}$/
-
-    if (useridRegex.test(value)) {
-        //console.log("Using userid regex to validate: " + value);
-        return true;
-    } else {
-        return false;
-    }
-}
-//*/
-
-
 // Composant
 function LoginForm() {
+	const { theme } = useContext(ThemeContext)
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -161,7 +150,7 @@ function LoginForm() {
     }
 
     return (
-        <StyleLoginContainer>
+        <StyleLoginContainer theme={theme}>
             <StyleLoginForm onSubmit={handleSubmit} >
                 <StyleLabInput>
                     <InputText

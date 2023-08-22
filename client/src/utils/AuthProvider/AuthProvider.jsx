@@ -60,7 +60,7 @@ export const AuthProvider = ({ children }) => {
 
     const handleLogout = () => {
         Cookies.remove('session')
-        updateUserData({})
+        updateUserData({},{})
         setIsAuthenticated(false)
     }
 
