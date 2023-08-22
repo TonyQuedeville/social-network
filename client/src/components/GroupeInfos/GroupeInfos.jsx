@@ -12,6 +12,8 @@ import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchF
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 //import Icone from '../Icone/Icone.jsx'
 //import IcnNotification from '../../assets/icn/icn-notification.png'
+import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
+import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
 import Popup from '../Popup/Popup.jsx'
 import EventWindow from '../EventWindow/EventWindow.jsx'
@@ -27,6 +29,7 @@ const StyleGroupContainer = styled.div`
 	padding: 5px;
 	border: solid 1px;
 	border-radius: 5px;
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite })` : colors.backgroundDark)};
 `
 const StyleTitleGroupe = styled.div`
 	font-weight : bold;
@@ -43,6 +46,7 @@ const StyleBanner = styled.div`
 	justify-content: space-around;
 	border: solid 1px;
 	border-radius: 5px;
+	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundWhite}, ${colors.backgroundLight  })` : colors.backgroundDark)};
 `
 const StyleInfo = styled.div`
 	width: 30%;
@@ -66,6 +70,7 @@ const StyleBold = styled.p`
 
 // Composant
 const GroupeInfos = (props) => {
+	const { theme } = useContext(ThemeContext)
 	const { authId } = useContext(AuthContext)
 	const {id, title, pseudo, description, image, members, createDate } = props
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -92,12 +97,12 @@ const GroupeInfos = (props) => {
 	}
 	
 	return (
-		<StyleGroupContainer>
+		<StyleGroupContainer theme={theme}>
 			<StyleTitleGroupe>
 				{title}
 			</StyleTitleGroupe>
 
-			<StyleBanner>
+			<StyleBanner theme={theme}>
 				{image ? (
 					<DisplayImage
 						id={"groupImage-" + id}

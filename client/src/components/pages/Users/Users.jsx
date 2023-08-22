@@ -50,6 +50,7 @@ const StyledLink = styled.div`
     cursor: pointer;    
     box-shadow: 3px 3px 10px 1px rgba(0, 0, 0, 0.5);
   }
+  background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundWhite })` : colors.backgroundDark)};
 `
 
 const Users = () => {
@@ -131,7 +132,8 @@ const Users = () => {
           {dataUsers && (
             dataUsers.datas.map((user, index) => (
               authPseudo !== user.pseudo ? 
-                <StyledLink                 
+                <StyledLink     
+                  theme={theme}            
                   key={`${user.pseudo}-${index}`} 
                   id={`user-link-${user.pseudo}`}
                   onClick={() => handleUserClick(user.id)}
