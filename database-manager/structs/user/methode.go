@@ -13,6 +13,13 @@ import (
 
 /* GETER >*/
 
+func GetImageAndPseudoUserId(User_id uint64) (image, pseudo string) {
+	err := database.Database.QueryRow(`SELECT user.image, user.pseudo FROM user WHERE user.id = ?`, User_id).
+		Scan(&image, &pseudo)
+	fmt.Printf("err: %v\n", err)
+	return
+}
+
 func GetUserById(get_user_id uint64, user_id uint64) *User {
 	u := User{}
 	var have_acess bool
