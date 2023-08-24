@@ -7,29 +7,73 @@
     et retournent un nouvel état modifié.
 */
 
-const initialState = {
-  groupId: '',
-  title: '',
-  createDate: '',
-  description: '',
-  image: '',
-  admin: '',
-  nbMembers: null, 
-  members: [],
-  wait_members: [],
-};
+import { createSlice } from '@reduxjs/toolkit';
+import Cookies from 'js-cookie';
 
-const groupReducer = (state = initialState, action) => {
-  switch (action.type) {
-    case 'UPDATE_GROUP_DATA':
+const initialValues = {
+  isAuthenticated: false,
+  isConnected: false,
+  email: '',
+  pseudo: '',
+  id: 0,
+  sexe: 'h',
+  lastname: '',
+  firstname: '',
+  born_date: '',
+  about: '',
+  image: '',
+  statusProfil: 'private',
+  follower: [],
+  waitFollowers: [],
+  followed: [],
+  groups_members: [],
+  wait_groups_members: [],
+  waitGroupsAccept: [],
+  invit_groups: [],
+  events: [],
+  }
+const userSlice = createSlice({
+  name: 'user',
+  initialState: initialValues,
+  reducers: {
+    updateUserData: (state, action) => {
       return {
         ...state,
         ...action.payload,
-      };
-    default:
-      return state;
-  }
-};
+      }
+    },
 
-export default groupReducer;
-  
+    setWaitFollowers: (state, action) => {
+      state.waitFollowers = action.payload
+    },
+
+    setWaitGroupsAccept: (state, action) => {
+      state.waitGroupsAccept = action.payload
+    },
+
+    setEvents: (state, action) => {
+      state.events = action.payload
+    },
+
+    setIsAuthenticated: (state, action) => {
+      state.isAuthenticated = action.payload
+    },
+
+    handleLogout:(state) => {
+      state.isAuthenticated = false
+      state.initialState = initialValues
+      Cookies.remove('session')
+    }
+  },
+})
+
+export const { 
+  updateUserData, 
+  setWaitFollowers, 
+  setWaitGroupsAccept, 
+  setEvents, 
+  setIsAuthenticated, 
+  handleLogout 
+} = userSlice.actions
+
+export default userSlice.reducer

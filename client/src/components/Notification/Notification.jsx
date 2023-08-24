@@ -5,12 +5,12 @@
 	Composant Notification : Affichage d'une notification
 */
 
-import React, { useContext, useState } from 'react';
+import React, { useState } from 'react';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
 import Button from '../Button/Button'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
@@ -33,11 +33,11 @@ const StyleGroupButton = styled.div`
 const Notification = ({ notif, typeNotif, theme }) => {
   //console.log("notif:", typeNotif, notif);
 
-  const { authId } = useContext(AuthContext)
+  const userId = useSelector(state => state.user.id)
   
   // waitFollowers
   const HandleWaitFollowersAccept = () => {
-    const { data: dataWaitFollowers, isLoading: isLoading } = useQuery(
+    const {} = useQuery(
       ['dataWaitFollowers', notif.id],
       () =>
         makeRequest.get(`/acceptfollower/${notif.id}`).then((res) => {
@@ -50,7 +50,7 @@ const Notification = ({ notif, typeNotif, theme }) => {
   }
 
   const HandleWaitFollowersRefuse = () => {
-    const { data: dataWaitFollowers, isLoading: isLoading } = useQuery(
+    const {} = useQuery(
       ['dataWaitFollowers', notif.id],
       () =>
         makeRequest.get(`/refusefollower/${notif.id}`).then((res) => {
@@ -104,7 +104,7 @@ const Notification = ({ notif, typeNotif, theme }) => {
   const handleInvitGroupAccept = async (e) => {
     const data = {
 			...waitGroupsData,
-			user_id: authId,
+			user_id: userId,
 		};
 
     try{
@@ -120,7 +120,7 @@ const Notification = ({ notif, typeNotif, theme }) => {
   const handleInvitGroupRefuse = async(e) => {
     const data = {
 			...waitGroupsData,
-			user_id: authId,
+			user_id: userId,
 		};
 
     try{

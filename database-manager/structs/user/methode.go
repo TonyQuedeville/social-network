@@ -57,6 +57,10 @@ func GetUserById(get_user_id uint64, user_id uint64) *User {
 		fmt.Println("err 2 getuserid by id:", err)
 	}
 
+	u.Groups_members = group.GetGroupsByUserId(u.Id)
+	u.Wait_groups_members = group.GetWaitGroupsByUserId(u.Id)
+	u.Invit_groups = group.GetInvitGroupsByUserId(u.Id)
+
 	return &u
 }
 

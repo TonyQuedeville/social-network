@@ -14,6 +14,7 @@ func InitServer() {
 	mux := http.NewServeMux()
 
 	// user
+	mux.Handle("/verifcookie", ApplyMiddleware(http.HandlerFunc(api.VerifCookie)))
 	mux.Handle("/user/register", ApplyMiddleware(http.HandlerFunc(api.UserRegister)))
 	mux.Handle("/user/login", ApplyMiddleware(http.HandlerFunc(api.UserLogin)))
 	mux.Handle("/users", ApplyMiddleware(http.HandlerFunc(api.GetUsers)))

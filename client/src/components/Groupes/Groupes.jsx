@@ -10,7 +10,7 @@ import React, {useState, useContext} from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useQuery } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
 import { Loader } from '../../utils/Atom.jsx'
 import Popup from '../Popup/Popup.jsx'
 //import PropTypes from 'prop-types'
@@ -27,7 +27,6 @@ import IcnNotification from '../../assets/icn/icn-notification.png'
 // import InputFileImage from '../InputFileImage/InputFileImage.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 import NewGroupe from '../NewGroupe/NewGroupe.jsx'
-import axios from "axios"
 
 // css
 const PageContainer = styled.div`
@@ -86,19 +85,17 @@ const Groupes = (props) => {
   const { theme } = useContext(ThemeContext)
 
   // AuthUser
-  const { authPseudo, authId, waitGroups } = useContext(AuthContext)
-  const waitGroupIds = extractIdsFromList(waitGroups)
-  // console.log("waitGroupIds:", waitGroupIds);
+  const user = useSelector(state => state.user)
+  const waitGroupIds = extractIdsFromList(user.wait_groups_members)
   
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 
   // Demander à adhérer au groupe
   const handleJoinGroupe = async (groupid) => {
-    console.log("Rejoindre le groupe :",groupid)
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/joingroup/${groupid}`)
+      await makeRequest.post(`/joingroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {
@@ -111,10 +108,9 @@ const Groupes = (props) => {
 
   // Quitter le groupe
   const handleQuitGroupe = async (groupid) => {
-    console.log("Quitter le groupe :", groupid)
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/quitgroup/${groupid}`)
+      await makeRequest.post(`/quitgroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {
@@ -139,7 +135,6 @@ const Groupes = (props) => {
           return res.data
         }), {cacheTime: 0} // Désactiver la mise en cache
     )
-    //console.log("dataGroups:", data)
     
     return (
       <>
@@ -158,7 +153,7 @@ const Groupes = (props) => {
                       theme={theme}
                       key={`${group.title}-${index}`} 
                       id={`group-link-${group.id}`}
-                      onClick={group.members.includes(authId) ? () => HandleGroupeClick(group.id) : null}
+                      onClick={group.members.includes(user.id) ? () => HandleGroupeClick(group.id) : null}
                       {...group}
                     >
 
@@ -178,7 +173,7 @@ const Groupes = (props) => {
                       />) : <></>}
                       
                       Nombre de membre: {group.nbmembers}
-                      { authId && !group.members.includes(authId) && !waitGroupIds.includes(group.id) ? (
+                      { user.id && !group.members.includes(user.id) && !waitGroupIds.includes(group.id) ? (
                         <Button 
                           text="Rejoindre le groupe" 
                           disabled={false} 
@@ -196,7 +191,7 @@ const Groupes = (props) => {
                           </StyleGroupButton>
                           ) : 
                           <>
-                            { authId &&
+                            { user.id &&
                               <Button 
                                 text="Quitter le groupe" 
                                 disabled={false} 
@@ -221,7 +216,7 @@ const Groupes = (props) => {
   return (
     <PageContainer larg={larg} theme={theme}>
       <StyleGroupContainer> 
-        { authPseudo && (
+        { user.pseudo && (
           <NewGroupe/>
         )}  
         <GroupsList/>

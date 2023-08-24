@@ -6,12 +6,10 @@
 */
 
 import React, { useState, useContext } from 'react'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
 import styled from 'styled-components'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
-//import Icone from '../Icone/Icone.jsx'
-//import IcnNotification from '../../assets/icn/icn-notification.png'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
@@ -71,7 +69,7 @@ const StyleBold = styled.p`
 // Composant
 const GroupeInfos = (props) => {
 	const { theme } = useContext(ThemeContext)
-	const { authId } = useContext(AuthContext)
+	const userId = useSelector(state => state.user.id)
 	const {id, title, pseudo, description, image, members, createDate } = props
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
@@ -122,9 +120,9 @@ const GroupeInfos = (props) => {
 			</StyleBanner>
 
 			<>
-				{ members.includes(authId) && (
+				{ members.includes(userId) && (
 					<StyleRow>
-						{ authId && (
+						{ userId && (
 							<>
 								<Button 
 									text="Quitter le groupe" 

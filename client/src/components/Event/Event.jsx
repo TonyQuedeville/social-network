@@ -6,8 +6,6 @@
 */
 
 import React, {useState} from 'react'
-//import axios from "axios"
-import { useQuery } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'

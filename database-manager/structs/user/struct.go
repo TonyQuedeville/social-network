@@ -25,4 +25,5 @@ type User struct {
 	Invit_groups        []*group.Group `json:"invit_groups"`
 	Created_at          time.Time      `json:"created_date,omitempty"`
 	Updated_at          time.Time      `json:"updated_date,omitempty"`
+	IsConnected			bool		   `json:"isConnected"`
 }

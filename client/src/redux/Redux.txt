@@ -1,0 +1,28 @@
+Base de Redux :
+
+1. Store : Le store est l'objet central qui contient l'état de toute l'application. C'est un peu comme une 
+base de données globale pour votre application.
+
+2. Actions : Les actions sont des objets qui décrivent ce qui s'est passé dans l'application. Par exemple, 
+une action peut être "l'utilisateur a cliqué sur le bouton", "les données ont été chargées", etc.
+
+3. Reducers : Les reducers sont des fonctions pures qui prennent l'état actuel et une action, puis retournent 
+un nouvel état en fonction de cette action. Les reducers déterminent comment l'état de l'application change 
+en réponse à une action.
+
+4. Actions Creators : Ce sont des fonctions qui créent des actions. Ils encapsulent la logique de création 
+d'une action.
+
+5. Dispatch : C'est une fonction fournie par Redux qui permet d'envoyer une action au store. Lorsqu'une 
+action est envoyée, Redux la transmet aux reducers pour mettre à jour l'état.
+
+6. Connect (ou useDispatch et useSelector avec Redux Toolkit) : Ces fonctions permettent aux composants de 
+réagir aux changements de l'état dans le store. useDispatch permet de déclencher des actions, et useSelector 
+permet de sélectionner des parties spécifiques de l'état.
+
+
+
+
+
+
+

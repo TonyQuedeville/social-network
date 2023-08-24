@@ -6,7 +6,6 @@
 */
 
 import React, { useContext, useEffect, useState } from 'react'
-//import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'

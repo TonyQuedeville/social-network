@@ -6,7 +6,7 @@
 */
 
 import React, { useContext, useState, useEffect } from 'react';
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx';
+import { useSelector } from "react-redux"
 import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
@@ -14,6 +14,7 @@ import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
+import ShowConnected from '../ShowConnected/ShowConnected.jsx'
 
 // css
 const StyleProfilCard = styled.div`
@@ -31,7 +32,7 @@ const StyleLabelUser = styled.div`
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-around;
+  justify-content: center;
 `
 
 const StyleLabInput = styled.div `
@@ -74,15 +75,12 @@ const Profile = (props) => {
           image, 
           lastname, 
           firstname, 
-          bornDate
+          bornDate,
+          isAuthenticated,
         } = props
 
   const { theme } = useContext(ThemeContext)
-  const { authPseudo, followed } = useContext(AuthContext)
-  //console.log("authPseudo: ", authPseudo, "pseudo:", pseudo)
-  //if (follower.includes(authId)) {
-  //  console.log("follower:", follower)
-  //}
+  const user = useSelector(state => state.user)
   
   //console.log("status: ", status);
   const [statusProfil, setStatusProfil] = useState(status)
@@ -116,7 +114,11 @@ const Profile = (props) => {
               id={`user-photo-${pseudo}`} 
               alt="photoProfile" />
         }
-        { authPseudo === pseudo ? 
+        <ShowConnected
+          id={`user-connect-${pseudo}`}
+          title={isAuthenticated}
+        />
+        { user.pseudo === pseudo && user.isAuthenticated ? 
           <StyleLabInput>
             <p>Status profil</p>
             <RadioBouton
@@ -140,7 +142,7 @@ const Profile = (props) => {
         }
       </StyleLabelUser>
 
-      { statusProfil === "public" || authPseudo === pseudo || (followed && followed.includes(id)) ?
+      { statusProfil === "public" || user.pseudo === pseudo || (user.followed && user.followed.includes(id)) ?
         <>
           <InfoUser>
             { firstname && (
