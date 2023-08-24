@@ -56,9 +56,9 @@ func PostsByUserId(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
+	untel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
 
-	tabPost, err := post.GetPostsByUserId(user_id, intel_id)
+	tabPost, err := post.GetPostsByUserId(user_id, untel_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
@@ -68,14 +68,14 @@ func PostsByUserId(w http.ResponseWriter, r *http.Request) {
 	filteredPosts := []*post.Post{}
 
 	for _, p := range tabPost {
-		if p.Status == "public" || user_id == intel_id {
+		if p.Status == "public" || user_id == untel_id {
 			// Si le post est public, l'ajouter directement à la liste filtrée
 			filteredPosts = append(filteredPosts, p)
 		} else if p.Status == "private-list" {
 			privateList, err := post.GetPostPrivateListByPostId(p.Id) // Récupérer la liste privée du post
 			if err == nil {
 				for _, u := range privateList {
-					if u.User_id == intel_id {
+					if u.User_id == untel_id {
 						// Si l'utilisateur connecté est dans la liste privée, ajouter le post à la liste filtrée
 						filteredPosts = append(filteredPosts, p)
 						break // Sortir de la boucle dès qu'on a trouvé une correspondance
@@ -86,7 +86,7 @@ func PostsByUserId(w http.ResponseWriter, r *http.Request) {
 			followers, err := user.GetFollowerByUserId(user_id) // Récupérer les followers de l'auteur du post
 			if err == nil {
 				for _, folowerId := range followers {
-					if folowerId == intel_id {
+					if folowerId == untel_id {
 						// Si l'utilisateur connecté est dans la liste privée, ajouter le post à la liste filtrée
 						filteredPosts = append(filteredPosts, p)
 						break // Sortir de la boucle dès qu'on a trouvé une correspondance

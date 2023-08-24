@@ -7,11 +7,10 @@
 */
 
 import React, { useContext, useState } from 'react'
+import { useSelector } from "react-redux"
 import { useParams } from 'react-router-dom'
-import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx'
 import { Loader } from '../../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query' //'react-query'
-//import axios from "axios"
 import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../../utils/style/Colors.js'
@@ -55,19 +54,18 @@ const ProfilContainer = styled.div`
 const User = () => {
     const { theme } = useContext(ThemeContext)
 
-    // AuthUser
-    const { authId, authPseudo } = useContext(AuthContext)
-
     // User
     const { userid } = useParams()
-    //console.log("userid:", userid, typeof(userid));
+
+    // AuthUser
+    const userId = useSelector(state => state.user.id)
 
     let confidencial = false
-    if (authPseudo === userid) {confidencial = true}
+    if (userId === userid) {confidencial = true}
 
     const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
-            makeRequest.get(`/user/${userid}`).then((res) => {
+            makeRequest.get(`/user/${userid }`).then((res) => {
                 //console.log("res.data:", res.data)
                 return res.data
             })
@@ -97,7 +95,7 @@ const User = () => {
     // Posts
     const Posts = () => {    
         const { data: dataPosts, isLoading: isLoadingPosts, error: errorPosts } = useQuery(['dataPosts'], () =>
-            makeRequest.get(`/userposts/${userid}`).then((res) => {
+            makeRequest.get(`/userposts/${userid }`).then((res) => {
                 return res.data
             })
         )
@@ -144,9 +142,9 @@ const User = () => {
                     <UserInfos />
                 </div>
 
-                { authId.toString() === userid ? (
+                { userId.toString() === userid ? (
                     <NewPost
-                        userId={authId}
+                        userId={userId}
                         updatePosts={updatePosts} 
                     />
                 ) : (<></>)}

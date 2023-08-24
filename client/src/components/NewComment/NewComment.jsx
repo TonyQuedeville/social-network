@@ -7,7 +7,7 @@
 
 import React, { useState, useContext } from 'react'
 import axios from "axios"
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -45,7 +45,7 @@ const NewComment = ({ postId, updateComments }) => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
-    const { authId, authPseudo } = useContext(AuthContext)
+    const user = useSelector(state => state.user)
 	
 	// New Post
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -57,8 +57,8 @@ const NewComment = ({ postId, updateComments }) => {
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
 		post_id: postId,
-        user_id: authId,
-		pseudo: authPseudo,
+        user_id: user.id,
+		pseudo: user.pseudo,
 		content: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
     })
@@ -139,7 +139,7 @@ const NewComment = ({ postId, updateComments }) => {
 	const CancelNewComment = () => {
 		setFormData({
             ...formData,
-            user_id: authId,
+            user_id: user.id,
 			content: '',
 			image: '', 
             })

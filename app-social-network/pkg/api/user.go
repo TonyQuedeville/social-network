@@ -41,6 +41,34 @@ func UserRegister(w http.ResponseWriter, r *http.Request) {
 	Ok(w, u)
 }
 
+func VerifCookie(w http.ResponseWriter, r *http.Request) {
+	// only get
+	if !IsGet(w, r) {
+		return
+	}
+
+	user_id := GetIdUser(r)
+
+	u := user.GetUserById(user_id, user_id)
+	askFollowers := user.GetTempFolower(user_id)
+	waitGroups := user.GetWaitUsersInGroupsByUserId(user_id)
+	events := event.CheckNewEvent(user_id)
+
+	rep := struct {
+		User         user.User      `json:"user"`
+		AskFollowers []*user.User   `json:"waitFollowers"`
+		WaitGroups   []interface{}  `json:"waitGroupsAccept"`
+		Events       []*event.Event `json:"events"`
+	}{
+		User:         *u,
+		AskFollowers: askFollowers,
+		WaitGroups:   waitGroups,
+		Events:       events,
+	}
+
+	Ok(w, rep)
+}
+
 func UserLogin(w http.ResponseWriter, r *http.Request) {
 	// only post
 	if !IsPost(w, r) {
@@ -69,23 +97,20 @@ func UserLogin(w http.ResponseWriter, r *http.Request) {
 
 	askFollowers := user.GetTempFolower(u.Id)
 	waitGroups := user.GetWaitUsersInGroupsByUserId(u.Id)
-	// invitGroups := group.GetInvitGroupsByUserId(u.Id)
 	events := event.CheckNewEvent(u.Id)
 
 	rep := struct {
-		Uuid         string        `json:"uuid"`
-		User         user.User     `json:"user"`
-		AskFollowers []*user.User  `json:"wait_followers"`
-		WaitGroups   []interface{} `json:"wait_groups_accept"`
-		// InvitGroups  []*group.Group `json:"invit_groups"`
-		Events []*event.Event `json:"events"`
+		Uuid         string         `json:"uuid"`
+		User         user.User      `json:"user"`
+		AskFollowers []*user.User   `json:"waitFollowers"`
+		WaitGroups   []interface{}  `json:"waitGroupsAccept"`
+		Events       []*event.Event `json:"events"`
 	}{
 		Uuid:         uuid,
 		User:         *u,
 		AskFollowers: askFollowers,
 		WaitGroups:   waitGroups,
-		// InvitGroups:  invitGroups,
-		Events: events,
+		Events:       events,
 	}
 
 	// fmt.Println("AskFollowers:", rep.AskFollowers)

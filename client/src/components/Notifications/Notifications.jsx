@@ -5,19 +5,13 @@
 	Composant Notifications : Fenêtre des notifications
 */
 
-import React, { useContext, useEffect, useState } from 'react'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import React, { useContext } from 'react'
+import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
-import { useQuery } from '@tanstack/react-query' //'react-query'
-import { makeRequest } from '../../utils/Axios/Axios.js'
-import { Loader } from '../../utils/Atom.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
 import Notification from '../Notification/Notification.jsx'
-import Popup from '../Popup/Popup.jsx'
-import NewEvent from '../NewEvent/NewEvent.jsx'
-import Event from '../Event/Event.jsx'
 
 // css
 const StyleWindow = styled.div`
@@ -74,13 +68,8 @@ const StyleGroupButton = styled.div `
 // Composant
 const Notifications = ({onClose}) => {
 	// Contexte
-  const { theme } = useContext(ThemeContext)
-	const { waitFollowers, waitGroupsAccept, invitGroups, events } = useContext(AuthContext) // Utilisateur connecté
-  // console.log("waitFollowers:", waitFollowers);
-  // console.log("waitGroupsAccept:", waitGroupsAccept);
-  // console.log("invitGroups:", invitGroups);
-  // console.log("events:", events);
-
+	const { theme } = useContext(ThemeContext)
+	const user = useSelector(state => state.user)
 
 	const handleClose = () => {
 		onClose();
@@ -93,10 +82,11 @@ const Notifications = ({onClose}) => {
 			</StyleTitleGroupe>
 
 			<StyleNotificationsContainer theme={theme}>
-				{ waitFollowers && (
+				{ user.waitFollowers && (
 					<>
-					{waitFollowers.map((waitFollower) => ( // Utilisateurs qui demande à me suivre
-						<Notification 
+					{user.waitFollowers.map((waitFollower, index) => ( // Utilisateurs qui demande à me suivre
+						<Notification
+							key={index} 
 							notif={waitFollower}
 							typeNotif="waitFollowers"
 							theme={theme}
@@ -105,10 +95,11 @@ const Notifications = ({onClose}) => {
 					</>
 				)}
 					
-				{ waitGroupsAccept && (
+				{ user.waitGroupsAccept && (
 					<>
-					{waitGroupsAccept.map((waitGroupAccept) => ( // Utilisateurs en attente d'acceptation des groupes dont je fait parti
+					{user.waitGroupsAccept.map((waitGroupAccept, index) => ( // Utilisateurs en attente d'acceptation des groupes dont je fait parti
 						<Notification 
+							key={index} 
 							notif={waitGroupAccept} 
 							typeNotif="waitGroupsAccept" 
 							theme={theme}
@@ -117,10 +108,11 @@ const Notifications = ({onClose}) => {
 					</>
 				)}
 
-				{ invitGroups && (
+				{ user.invitGroups && (
 					<>
-					{invitGroups.map((invitGroup) => ( // Utilisateurs invité dans les groupes
+					{user.invitGroups.map((invitGroup, index) => ( // Utilisateurs invité dans les groupes
 						<Notification 
+							key={index} 
 							notif={invitGroup}
 							typeNotif="invitGroups"  
 							theme={theme}
@@ -129,10 +121,11 @@ const Notifications = ({onClose}) => {
 					</>
 				)}
 
-				{ events && (
+				{ user.events && (
 					<>
-					{events.map((event) => ( // Nouveaux évènements de groupe
+					{user.events.map((event, index) => ( // Nouveaux évènements de groupe
 						<Notification 
+							key={index} 
 							notif={event} 
 							typeNotif="events" 
 							theme={theme}
@@ -140,8 +133,7 @@ const Notifications = ({onClose}) => {
 					))}
 					</>
 				)}
-
-      </StyleNotificationsContainer>
+			</StyleNotificationsContainer>
 
 			<StyleGroupButton>
 				<Button 
@@ -150,7 +142,7 @@ const Notifications = ({onClose}) => {
 				/>
 			</StyleGroupButton>
 		</StyleWindow>
-  )
+	)
 }
 
 export default Notifications

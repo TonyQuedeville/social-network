@@ -6,15 +6,11 @@
 */
 
 import React, { useState, useContext } from 'react'
-//import { useParams } from 'react-router-dom'
-//import { Loader } from '../../../utils/Atom.jsx'
-//import { useQuery } from '@tanstack/react-query' //'react-query'
-import axios from "axios"
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
+import { makeRequest } from '../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
-
 import InputText from '../InputText/InputText.jsx'
 import TextArea from '../TextArea/TextArea.jsx'
 import Button from '../Button/Button.jsx'
@@ -56,7 +52,7 @@ const NewGroupe = () => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
-	const { authPseudo, authId } = useContext(AuthContext)
+	const user = useSelector(state => state.user)
 
 	// Image
 	const [groupeImage, setGroupeImage] = useState(null)
@@ -69,8 +65,8 @@ const NewGroupe = () => {
 
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
-		user_id: authId,
-		pseudo: authPseudo,
+		user_id: user.id,
+		pseudo: user.pseudo,
 		title: '',
 		description: '',
 		image: '', // Nom de fichier unique de l'image stockée sur server app-image-storage
@@ -128,7 +124,7 @@ const NewGroupe = () => {
 		console.log("data:", data);
 		// Requete d'enregistrement vers app-social-network
 		try{
-			await axios.post(`http://${window.location.hostname}:8080/newgroup`, JSON.stringify(data))
+			await makeRequest.post(`/newgroup`, JSON.stringify(data))
 			setFetchError(false)
 			CancelNewGroupe()
 		}
@@ -138,13 +134,13 @@ const NewGroupe = () => {
 		}
 		finally {
 		}
-  }
+	}
 
-  const CancelNewGroupe = () => {
+	const CancelNewGroupe = () => {
 		setFormData({
 			...formData,
-			user_id: authId,
-			pseudo: authPseudo,
+			user_id: user.id,
+			pseudo: user.pseudo,
 			title: '',
 			description: '',
 			image: '', 
@@ -153,12 +149,12 @@ const NewGroupe = () => {
 		setGroupeImage('')
 		setSelectedImage(null); // Efface l'image sélectionnée
 		setShowInputFile(false); // Cache l'élément pour sélectionner l'image si nécessaire
-  }
+	}
 
-  // Image post
-  const loadPhotoPost = () => {
-    setShowInputFile(true)
-  }
+  	// Image post
+	const loadPhotoPost = () => {
+		setShowInputFile(true)
+	}
 
 	return (
     <NewGroupeContainer theme={theme}>
@@ -231,7 +227,7 @@ const NewGroupe = () => {
 				)}
 			</form>
 		</NewGroupeContainer>
-  )
+	)
 }
 
 export default NewGroupe

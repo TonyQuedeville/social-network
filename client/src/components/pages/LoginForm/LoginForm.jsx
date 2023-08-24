@@ -7,16 +7,17 @@
 */
 
 import React, { useState, useEffect, useContext } from "react"
-import { AuthContext } from '../../../utils/AuthProvider/AuthProvider'
-import { Link, useNavigate } from 'react-router-dom'
+import { useDispatch } from 'react-redux'
+import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated } from '../../../redux/reducers'
+import { useNavigate } from 'react-router-dom'
+import { makeRequest } from '../../../utils/Axios/Axios.js'
+import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+import colors from '../../../utils/style/Colors.js'
 import Popup from '../../Popup/Popup.jsx'
 import styled from 'styled-components'
 import Button from '../../Button/Button'
 import InputText from '../../InputText/InputText.jsx'
-import axios from "axios"
 import Cookies from 'js-cookie' // npm install js-cookie
-import colors from '../../../utils/style/Colors.js'
-import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
 
 // css
 const StyleLoginContainer = styled.div `
@@ -63,6 +64,8 @@ function isValidEmail(value) {
 // Composant
 function LoginForm() {
 	const { theme } = useContext(ThemeContext)
+    //const { updateUserData } = useContext(AuthContext) // Utilisateur connecté
+    
     const [formData, setFormData] = useState({
         email: '',
         password: '',
@@ -73,7 +76,6 @@ function LoginForm() {
     const [isDisabled, setIsDisabled] = useState(true) // Ajout de la variable d'état pour la désactivation du bouton
     const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
     const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
-    const { updateUserData, handleLogin } = useContext(AuthContext) // Utilisateur connecté
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
     // Quand toutes les conditions sont ok, le bouton devient cliquable.
@@ -108,12 +110,13 @@ function LoginForm() {
     }
 
     // Connection de l'utilisateur
+    const dispatch = useDispatch();
     const handleSubmit = async (event) => {
         event.preventDefault()
 
         if (isEmailValid && isPasswordValid) {            
             try{
-                const response = await axios.post(`http://${window.location.hostname}:8080/user/login`, JSON.stringify(formData))
+                const response = await makeRequest.post(`/user/login`, JSON.stringify(formData))
                 const responseData = response.data
 
                 // Cookie
@@ -121,10 +124,13 @@ function LoginForm() {
                 Cookies.set('session', responseData.datas.uuid, { expires: 1, path: '/' }) // définir le cookie 
 
                 // Données AuthUser
-                console.log("userData:", responseData.datas)
-                updateUserData(responseData.datas, responseData.datas.user)
-                handleLogin()
-                
+                //console.log("userData:", responseData.datas)
+                dispatch(updateUserData(responseData.datas.user))
+                dispatch(setWaitFollowers(responseData.datas.waitFollowers))
+                dispatch(setWaitGroupsAccept(responseData.datas.waitGroupsAccept))
+                dispatch(setEvents(responseData.datas.events))
+                dispatch(setIsAuthenticated(true))
+
                 navigate(`/user/${responseData.datas.user.id}`)
             }
             catch (err) {
@@ -139,8 +145,6 @@ function LoginForm() {
 
     // Annuler
     const handleCancel = () => {
-        //setIsLoggedIn(false);
-        //updateUserData()
         setFormData({
             email: '',
             password: ''
@@ -158,7 +162,7 @@ function LoginForm() {
                         name="email"
                         label="* Email:"
                         title="Adresse mail uniquement"
-                        //value={email}
+                        value={formData.email}
                         onChange={handleChange}
                         required
                     />
@@ -171,7 +175,7 @@ function LoginForm() {
                         label="* Mot de passe"
                         placeholder="****"
                         title="4 caractères minimum"
-                        //value={password}
+                        value={formData.password}
                         onChange={handleChange}
                         required
                     />
@@ -179,9 +183,7 @@ function LoginForm() {
 
                 <StyleGroupButton>
                     <Button type="submit" text="Se connecter" disabled={isDisabled} />
-                    <Link to="/login">
-                        <Button onClick={handleCancel} text="Annuler" disabled={false} />
-                    </Link>
+                    <Button onClick={handleCancel} text="Annuler" disabled={false} />
                 </StyleGroupButton>
             </StyleLoginForm>
 

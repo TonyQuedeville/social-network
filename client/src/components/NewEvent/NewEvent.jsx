@@ -6,15 +6,13 @@
 */
 
 import React, { useState, useContext } from 'react'
-import axios from "axios"
-//import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { makeRequest } from '../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import InputText from '../InputText/InputText.jsx'
 import TextArea from '../TextArea/TextArea.jsx'
 import Button from '../Button/Button.jsx'
-//import Icone from '../Icone/Icone.jsx'
 import Popup from '../Popup/Popup.jsx'
 
 // css
@@ -86,7 +84,7 @@ const NewEvent = ({ groupId, addEvents }) => {
 
         // Requete d'enregistrement vers app-social-network
         try{
-            const response = await axios.post(`http://${window.location.hostname}:8080/addevent`, JSON.stringify(data))
+            const response = await makeRequest.post(`/addevent`, JSON.stringify(data))
             setFetchError(false)
 			CancelNewEvent()
 			addEvents(response.data);

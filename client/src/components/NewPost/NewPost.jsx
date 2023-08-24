@@ -5,12 +5,12 @@
 	Composant NewPost : Affiche une fenetre d'édition d'un nouveau post
 */
 
-import React, { useState, useContext, useEffect } from 'react'
-import { useParams } from 'react-router-dom'
+import React, { useState, useContext } from 'react'
+//import { useParams } from 'react-router-dom'
 //import { Loader } from '../../../utils/Atom.jsx'
 //import { useQuery } from '@tanstack/react-query' //'react-query'
 import axios from "axios"
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
@@ -59,7 +59,7 @@ const NewPost = ( props, updatePosts ) => {
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
-    const { authId, authPseudo, follower } = useContext(AuthContext)
+	const user = useSelector(state => state.user)
 	
 	// New Post
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -72,8 +72,8 @@ const NewPost = ( props, updatePosts ) => {
 	// Champs du formulaire
 	const [formData, setFormData] = useState({
         group_id: props.group ? Number(props.group) : 0,
-        user_id: authId,
-		pseudo: authPseudo,
+        user_id: user.id,
+		pseudo: user.pseudo,
 		status: props.group ? 'private-list' : 'public',
 		title: '',
 		content: '',
@@ -159,8 +159,8 @@ const NewPost = ( props, updatePosts ) => {
 		setFormData({
             ...formData,
             group_id: props.group ? Number(props.group) : '',
-			user_id: authId,
-			pseudo: authPseudo,
+			user_id: user.id,
+			pseudo: user.pseudo,
 			status: props.group ? 'private-list' : 'public',
 			title: '',
 			content: '',
@@ -226,7 +226,7 @@ const NewPost = ( props, updatePosts ) => {
 						onClick={loadPhotoPost}
 					/>
 
-					{ Number(props.userId) === authId && (
+					{ Number(props.userId) === user.id && (
 						<>
 							<RadioBouton
 								id="newPostStatusPublic"
@@ -246,7 +246,7 @@ const NewPost = ( props, updatePosts ) => {
 								onChange={handleChange}
 								alignment="vertical"
 							/>
-							{follower &&
+							{user.follower &&
 								<RadioBouton
 									id="newPostStatusPrivateList"
 									name="status"
@@ -280,7 +280,7 @@ const NewPost = ( props, updatePosts ) => {
 			{showFollowersSelector && (
 				<FollowersSelector
 					private_list={formData.private_list}
-					follower={follower}
+					follower={user.follower}
 					onChange={(updatedFollowers) => {
 						setFormData((prevFormData) => ({
 							...prevFormData,

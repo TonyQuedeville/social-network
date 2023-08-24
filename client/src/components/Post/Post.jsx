@@ -5,12 +5,11 @@
 	Composant Post : Affiche un posts et appel les commentaires qui lui sont associés
 */
 
-import React, {useState, useContext} from 'react'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
+import React, {useState} from 'react'
+import { useSelector } from "react-redux"
 import { Loader } from '../../utils/Atom.jsx'
 import { useQuery } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
-//import Popup from '../Popup/Popup.jsx'
 import DisplayImage from '../DisplayImage/DisplayImage.jsx'
 import NewComment from '../NewComment/NewComment.jsx'
 import Comment from '../Comment/Comment.jsx'
@@ -19,7 +18,6 @@ import colors from '../../utils/style/Colors.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
-
 
 // css
 const PostContainer = styled.div`
@@ -46,7 +44,7 @@ const StylePostContent = styled.div`
 	flex-direction: column;
 	align-items: center;
 	justify-content: start;
-	margin: 1px;
+	margin: 1px; 
 	padding: 5px;
 `
 const StyleInfo = styled.div`
@@ -81,7 +79,7 @@ const Style33 = styled.div`
 // Composant
 const Post = ({ post, theme, confidencial }) => {
   // AuthUser
-  const { authId, follower } = useContext(AuthContext)
+  const user = useSelector(state => state.user)
   const [privateList, setPrivateList] = useState([])
   const [PostConfidencial, setPostConfidencial] = useState(post.status)
   const [showFollowersSelector, setShowFollowersSelector] = useState(false)
@@ -204,14 +202,14 @@ const Post = ({ post, theme, confidencial }) => {
       {showFollowersSelector && (
 				<FollowersSelector
           private_list={privateList}
-          follower={follower}
+          follower={user.follower}
           onChange={handleSelectedPrivatelistChange}
           onClose={handleFollowersSelectorClose}
           theme={theme}
       />
 			)}
 
-        { authId && 
+        { user.id && 
           <NewComment 
             postId={post.id} 
             updateComments={updateComments} 

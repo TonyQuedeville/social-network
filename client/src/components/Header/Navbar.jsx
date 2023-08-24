@@ -7,8 +7,10 @@
 
 import React, { useContext, useState } from 'react'
 import { Link } from 'react-router-dom'
-import styled from 'styled-components'
+import { useSelector, useDispatch } from "react-redux"
+import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../utils/style/Colors.js'
+import styled from 'styled-components'
 import Button from '../Button/Button.jsx'
 import Notifications from '../Notifications/Notifications.jsx'
 import Icone from '../Icone/Icone.jsx'
@@ -17,10 +19,7 @@ import IcnUsers from '../../assets/icn/icn-group.png'
 import IcnGroupe from '../../assets/icn/icn-group-discut.png'
 import IcnTchat from '../../assets/icn/icn-tchat.jpg'
 import IcnNotif from '../../assets/icn/icn-notification.png'
-//import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
-//import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
-import { AuthContext } from '../../utils/AuthProvider/AuthProvider.jsx'
-import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
+import { handleLogout } from '../../redux/reducers.js'
 
 const StyledNav = styled.nav `
     margin: 1px;
@@ -42,12 +41,15 @@ const StyledGroupIcn = styled.div `
 
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
-    const { authId, photoProfile, isAuthenticated, handleLogout } = useContext(AuthContext)
+    const user = useSelector(state => state.user)
+    //console.log("user:",user);
+    const dispatch = useDispatch();
     const [showNotificationsWindow, setShowNotificationsWindow] = useState(false) // fenetre des notifications
 
     const handleNotifications = () => {
 		setShowNotificationsWindow(true)
 	}
+    // console.log("test:",isAuthenticated);
 
     return (
         <StyledNav theme={theme}>
@@ -83,16 +85,16 @@ const Navbar = () => {
             </StyledGroupIcn>
 
             <StyledGroupIcn>
-                {isAuthenticated ? (
+                {user.isAuthenticated ? (
                     <>
                         <Link to="/">
-                            <Button text="Se déconnecter" onClick={handleLogout} disabled={false} />
+                            <Button text="Se déconnecter" onClick={() => {dispatch(handleLogout())}} disabled={false} />
                         </Link>
-                        <Link to={`/user/${authId}`}>
+                        <Link to={`/user/${user.id}`}>
                             <Icone 
                                 alt="Mon profile" 
-                                disabled={!isAuthenticated} 
-                                image={`http://${window.location.hostname}:4000/download/${photoProfile}`}
+                                disabled={!user.isAuthenticated} 
+                                image={`http://${window.location.hostname}:4000/download/${user.image}`}
                             />
                         </Link>
                         <Icone 

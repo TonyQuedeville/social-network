@@ -7,9 +7,16 @@
 */
 
 // redux/store.js
-import { createStore } from 'redux';
-import rootReducer from './reducers'; // Importez votre rootReducer ici
+// yarn add @reduxjs/toolkit
+import { configureStore } from '@reduxjs/toolkit';
+import userReducer from './reducers';
 
-const store = createStore(rootReducer); // Créez le store en utilisant le rootReducer et l'état initial
+// Créez le store en utilisant le rootReducer et l'état initial 
+const store = configureStore({
+	reducer: {
+	  user: userReducer, // La clé 'user' correspond à la clé que utilisée dans les composants
+	},
+});
 
-export default store; // Exportez le store par défaut
+
+export default store; 

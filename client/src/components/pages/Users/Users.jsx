@@ -7,7 +7,7 @@
 */
 
 import React, { useContext, useState } from 'react'
-import { AuthContext } from '../../../utils/AuthProvider/AuthProvider.jsx';
+import { useSelector } from "react-redux"
 import { useNavigate } from 'react-router-dom'
 import styled from 'styled-components'
 import { Loader } from '../../../utils/Atom.jsx'
@@ -56,9 +56,9 @@ const StyledLink = styled.div`
 const Users = () => {
   const { theme } = useContext(ThemeContext)
 
-  const { authPseudo, followed } = useContext(AuthContext)
+  const user = useSelector(state => state.user)
   //const followerId = (follower||[]).map(follow => follow.id) 
-  const followedId = (followed||[]).map(follow => follow.id) 
+  const followedId = (user.followed||[]).map(follow => follow.id) 
   //console.log("authPseudo:", authPseudo, "followerId:", followerId, "followedId:", followedId);
 
   const navigate = useNavigate()
@@ -130,32 +130,32 @@ const Users = () => {
             <Popup texte="Le chargement de la liste des utilisateurs est erroné !" type='error' />
           )}
           {dataUsers && (
-            dataUsers.datas.map((user, index) => (
-              authPseudo !== user.pseudo ? 
+            dataUsers.datas.map((u, index) => (
+              user.pseudo !== u.pseudo || !user.isAuthenticated ? 
                 <StyledLink     
                   theme={theme}            
-                  key={`${user.pseudo}-${index}`} 
-                  id={`user-link-${user.pseudo}`}
-                  onClick={() => handleUserClick(user.id)}
+                  key={`${u.pseudo}-${index}`} 
+                  id={`user-link-${u.pseudo}`}
+                  onClick={() => handleUserClick(u.id)}
                 >
                   <>
                     <Profile 
-                      {...user} 
+                      {...u} 
                     />
-                    { authPseudo && 
+                    { u.pseudo && 
                       <>
-                        { followed && followedId.includes(user.id) ?
+                        { u.followed && followedId.includes(u.id) ?
                             <Icone 
                               alt="Ne plus suivre"
                               image={IcnSupFriend}
                               disabled={false}
-                              onClick={() => handleSupFollowerClick(user.id)}
+                              onClick={() => handleSupFollowerClick(u.id)}
                             />
                           : <Icone 
                               alt="Suivre"
                               image={IcnAddFriend}
                               disabled={false}
-                              onClick={() => handleAddFollowerClick(user.id)}
+                              onClick={() => handleAddFollowerClick(u.id)}
                               
                             />
                         }
