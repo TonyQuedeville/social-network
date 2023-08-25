@@ -11,6 +11,8 @@ import { useDispatch } from "react-redux"
 import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated } from './redux/reducers'
 import { GroupProvider } from './utils/GroupProvider/GroupProvider'
 import { ThemeProvider } from './utils/ThemeProvider/ThemeProvider'
+import { makeRequest } from './utils/Axios/Axios.js'
+import { io } from "socket.io-client" // npm install socket.io-client
 import Header from './components/Header/Navbar'
 import Footer from './components/Footer/Footer'
 import GlobalStyle from './utils/style/GlobalStyle'
@@ -23,7 +25,6 @@ import Groupe from './components/pages/Groupe/Groupe.jsx'
 import Tchat from './components/Tchat/Tchat.jsx'
 import User from './components/pages/User/User.jsx'
 import Error from './components/Error/Error'
-import { makeRequest } from './utils/Axios/Axios.js'
 import Cookies from 'js-cookie' // npm install js-cookie
 
 function App() {
@@ -46,20 +47,40 @@ function App() {
     if (Cookies.get('session')) {
       Verifcookie();
     }
-  }, [dispatch]);
 
-    return (
-      <Router>
-        <GroupProvider>
-          <ThemeProvider>
-            <Header />
-            <GlobalStyle />
-            <AppContent />
-            <Footer />
-          </ThemeProvider>
-        </GroupProvider>
-      </Router>
-    )
+    // Tchat
+    // const socket = io('http://localhost:8081')
+    // console.log("tentative de connexion au server tchat !")
+
+    // socket.on("connect", () => {
+    //   console.log("Connexion Socket.io établie !")
+    // });
+
+    // socket.on("connect_error", (error) => {
+    //   console.error("Erreur de connexion Socket.io :", error)
+    // });
+
+    // socket.on("message", (data) => {
+    //   console.log("Message reçu du serveur :", data)
+    // });
+
+    // // Émettre un message vers le serveur
+    // socket.emit("chatMessage", "Hello, server!")
+
+  }, [dispatch])
+
+  return (
+    <Router>
+      <GroupProvider>
+        <ThemeProvider>
+          <Header />
+          <GlobalStyle />
+          <AppContent />
+          <Footer />
+        </ThemeProvider>
+      </GroupProvider>
+    </Router>
+  )
 }
 
 function AppContent() {  

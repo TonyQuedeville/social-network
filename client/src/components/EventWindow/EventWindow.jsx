@@ -95,12 +95,12 @@ const EventWindow = ({groupId, onClose}) => {
 		}, [data]);
 		
     const handleEventDelete = (eventId) => {
-			// Mise à jour de la liste des événements sans l'événement supprimé
-			const listEvents = events.filter((event) => event.id !== eventId)
-			setEvents(listEvents)
+		// Mise à jour de la liste des événements sans l'événement supprimé
+		const listEvents = events.filter((event) => event.id !== eventId)
+		setEvents(listEvents)
     }
 
-		return (
+	return (
       <>
         {isLoading ? (
           <Loader id="loader" />
@@ -113,11 +113,11 @@ const EventWindow = ({groupId, onClose}) => {
             <>
               {events.map((event, index) => (
                 <Event 
-									key={index} 
-									event={event} 
-									theme={theme}
-									onDelete={handleEventDelete}
-								/>
+					key={index} 
+					event={event} 
+					theme={theme}
+					onDelete={handleEventDelete}
+				/>
               ))}
             </>
           )}
@@ -144,7 +144,7 @@ const EventWindow = ({groupId, onClose}) => {
 
 			<StyleEventsContainer theme={theme}>
         <Events />
-      </StyleEventsContainer>
+    </StyleEventsContainer>
 
 			<StyleGroupButton>
 				<Button 
@@ -153,7 +153,7 @@ const EventWindow = ({groupId, onClose}) => {
 				/>
 			</StyleGroupButton>
 		</StyleWindow>
-  )
+	)
 }
 
 export default EventWindow

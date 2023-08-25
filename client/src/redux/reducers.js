@@ -31,7 +31,7 @@ const initialValues = {
   waitGroupsAccept: [],
   invit_groups: [],
   events: [],
-  }
+}
 const userSlice = createSlice({
   name: 'user',
   initialState: initialValues,

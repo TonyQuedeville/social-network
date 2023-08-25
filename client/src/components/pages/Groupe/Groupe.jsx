@@ -19,9 +19,17 @@ import Popup from '../../Popup/Popup.jsx'
 import GroupeInfos from '../../GroupeInfos/GroupeInfos.jsx'
 import NewPost from '../../NewPost/NewPost.jsx'
 import Post from '../../Post/Post.jsx'
+import Tchat from '../../Tchat/Tchat.jsx'
 
 // css
 const PageContainer = styled.div`
+    width: 100%;
+    height: 88.5vh;
+    display: flex;
+    flex-direction: row;
+`
+const StyleGroupContainer = styled.div`
+  width: 100%;
   height: 87vh;
 	margin: 1px;
 	padding: 5px;
@@ -116,9 +124,9 @@ const Groupe = () => {
   } 
   
   return (
-    <PageContainer theme={theme}>
+    <PageContainer >
       { groupData && (
-        <>
+        <StyleGroupContainer theme={theme}>
           {/* Infos Groupe */}
           <GroupeInfos {...groupData} />
 
@@ -138,8 +146,10 @@ const Groupe = () => {
               </StylePostsContainer>
             </>
           )}
-        </>
+        </StyleGroupContainer>
       )}
+
+      <Tchat type="group" larg={30}/>
     </PageContainer>
   )
 }

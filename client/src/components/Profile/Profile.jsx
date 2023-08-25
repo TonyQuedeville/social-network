@@ -76,7 +76,7 @@ const Profile = (props) => {
           lastname, 
           firstname, 
           bornDate,
-          isAuthenticated,
+          isConnected,
         } = props
 
   const { theme } = useContext(ThemeContext)
@@ -116,7 +116,7 @@ const Profile = (props) => {
         }
         <ShowConnected
           id={`user-connect-${pseudo}`}
-          title={isAuthenticated}
+          isConnected={isConnected}
         />
         { user.pseudo === pseudo && user.isAuthenticated ? 
           <StyleLabInput>
