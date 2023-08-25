@@ -156,7 +156,7 @@ const User = () => {
                 
             </ProfilContainer>
 
-            <Tchat larg={25}/>
+            <Tchat type="private" larg={30}/>
         </PageContainer>
     )
 }

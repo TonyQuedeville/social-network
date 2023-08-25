@@ -29,7 +29,6 @@ const StyleTitle = styled.div `
 
 const ShowConnected = (props) => {
     const { isConnected, size } = props
-    console.log("isConnected:", isConnected);
     const title = isConnected ? 'connecté' : 'non connecté'
 
     return (

@@ -52,7 +52,7 @@ type Message struct {
 	Id         uint64    `json:"id"`
 	Conv_id    uint64    `json:"conv_id"`
 	User_id    uint64    `json:"user_id"`
-	User_name  string    `json:"user_name"`
+	User_name  string    `json:"pseudo"`
 	User_image string    `json:"user_image"`
 	Content    string    `json:"content"`
 	Date       time.Time `json:"date"`

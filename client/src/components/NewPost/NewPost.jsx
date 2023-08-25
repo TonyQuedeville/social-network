@@ -6,15 +6,11 @@
 */
 
 import React, { useState, useContext } from 'react'
-//import { useParams } from 'react-router-dom'
-//import { Loader } from '../../../utils/Atom.jsx'
-//import { useQuery } from '@tanstack/react-query' //'react-query'
-import axios from "axios"
+import { makeRequest } from '../../utils/Axios/Axios.js'
 import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
-
 import InputText from '../InputText/InputText.jsx'
 import TextArea from '../TextArea/TextArea.jsx'
 import Button from '../Button/Button.jsx'
@@ -136,7 +132,7 @@ const NewPost = ( props, updatePosts ) => {
 
         // Requete d'enregistrement vers app-social-network
         try{
-            const response = await axios.post(`http://${window.location.hostname}:8080/newpost`, JSON.stringify(data))
+            const response = await makeRequest.post(`/newpost`, JSON.stringify(data))
             setFetchError(false)
 			CancelNewPost()
 			updatePosts=(response.data)

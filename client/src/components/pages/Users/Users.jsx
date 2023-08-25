@@ -9,18 +9,18 @@
 import React, { useContext, useState } from 'react'
 import { useSelector } from "react-redux"
 import { useNavigate } from 'react-router-dom'
-import styled from 'styled-components'
+import { makeRequest } from '../../../utils/Axios/Axios.js'
+import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
 import { Loader } from '../../../utils/Atom.jsx'
-import Popup from '../../Popup/Popup.jsx'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+import styled from 'styled-components'
 import colors from '../../../utils/style/Colors.js'
+import Popup from '../../Popup/Popup.jsx'
 import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
 import IcnSupFriend from '../../../assets/icn/icn-supfriend.jpg'
-import { QueryClient, QueryClientProvider, useQuery } from '@tanstack/react-query' // https://tanstack.com/query/latest/docs/react/overview
-import { makeRequest } from '../../../utils/Axios/Axios.js'
-//import axios from "axios"
+import IcnTchat from '../../../assets/icn/icn-tchat.webp'
 
 const queryClient = new QueryClient()
 
@@ -57,9 +57,7 @@ const Users = () => {
   const { theme } = useContext(ThemeContext)
 
   const user = useSelector(state => state.user)
-  //const followerId = (follower||[]).map(follow => follow.id) 
   const followedId = (user.followed||[]).map(follow => follow.id) 
-  //console.log("authPseudo:", authPseudo, "followerId:", followerId, "followedId:", followedId);
 
   const navigate = useNavigate()
   const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
@@ -92,9 +90,30 @@ const Users = () => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
       try{
-        const response = await makeRequest.post(`/supfollower/${userid}`)
-        const responseData = response.data
-        console.log("supfollower:", responseData.datas)
+        await makeRequest.post(`/supfollower/${userid}`)
+        setFetchError(false)
+      }
+      catch (err) {
+          setNotification(err.message + " : " + err.response.data.error)
+          setFetchError(true)
+      }
+      finally {
+      }
+    }
+    catch (err) {
+        setNotification(err.message + " : " + err.response.data.error)
+        setFetchError(true)
+    }
+    finally {
+    }
+  }
+  
+  // création de conversation avec l'utilisateur
+  const handleConversationClick = async (userid) => {
+    // Requete de demande d'ajout follower vers app-social-network
+    try{
+      try{
+        //await makeRequest.post(`/newconversation/${userid}`)
         setFetchError(false)
       }
       catch (err) {
@@ -118,7 +137,7 @@ const Users = () => {
         return res.data
       })
     )
-    //console.log("dataUsers:", dataUsers);
+    console.log("dataUsers:", dataUsers);
     
     return (
       <>
@@ -144,20 +163,28 @@ const Users = () => {
                     />
                     { u.pseudo && 
                       <>
-                        { u.followed && followedId.includes(u.id) ?
+                        { user.followed && followedId.includes(u.id) ?
+                          <>
                             <Icone 
                               alt="Ne plus suivre"
                               image={IcnSupFriend}
                               disabled={false}
                               onClick={() => handleSupFollowerClick(u.id)}
                             />
-                          : <Icone 
-                              alt="Suivre"
-                              image={IcnAddFriend}
+                            <Icone 
+                              alt="message"
+                              image={IcnTchat}
                               disabled={false}
-                              onClick={() => handleAddFollowerClick(u.id)}
-                              
+                              onClick={() => handleConversationClick(u.id)}
                             />
+                          </>
+                        : 
+                          <Icone 
+                            alt="Suivre"
+                            image={IcnAddFriend}
+                            disabled={false}
+                            onClick={() => handleAddFollowerClick(u.id)}
+                          />
                         }
                       </>
                     }
