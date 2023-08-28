@@ -62,8 +62,52 @@ const Tchat = (props) => {
 	// AuthUser
 	const user = useSelector(state => state.user)
 
+<<<<<<< HEAD
 	// Utilisateurs connectés
 	const [userListConnect, setUserListConnect] = useState([])
+=======
+	// Champs Conversations
+	const [conversationsData, setConversationsData] = useState(undefined)
+	const socket = io('http://localhost:3001');
+	
+	useEffect(() => {
+		console.log("tentative de connexion au server tchat !")
+		
+		socket.on("connect", () => {
+			console.log("Connexion au tchat établie !")
+			if(user.isAuthenticated) setConnected(socket.connected)
+		});
+
+		socket.on("disconnect", () => {
+			console.log("déconnexion au tchat !")
+			if(user.isAuthenticated) setConnected(socket.connected)
+		});
+
+		socket.on("connect_error", (error) => {
+			console.error("Erreur de connexion Socket.io :", error)
+		});
+
+		socket.on("message", (data) => {
+			console.log("Message reçu du serveur tchat:", data)
+		});
+
+		// Émettre un message vers le serveur
+		socket.emit("chatMessage", "Hello, server!")
+	}, [])
+
+
+	useEffect(() => {
+		if (type === "private") {
+			console.log(("private"));
+			// await requete prive
+			// setConversationsData(res.data)
+		} else { 
+			console.log("group");
+			// await requete group
+			// setDataMessages(res.data)
+		}
+	}, [type])
+>>>>>>> 25aae91 (app-tchat)
 
 	// Champs Messages
 	const [dataMessages, setDataMessages] = useState([])
