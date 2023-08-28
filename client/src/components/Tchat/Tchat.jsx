@@ -98,10 +98,15 @@ const Tchat = (props) => {
 <<<<<<< HEAD
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> 09e5ed5 (app-tchat)
 =======
 >>>>>>> 552cd9c (app-tchat)
+=======
+=======
+>>>>>>> 949a61b (app-tchat)
+>>>>>>> 403c886 (app-tchat)
 	const socket = io('http://localhost:3001');
 	
 	useEffect(() => {
@@ -131,6 +136,7 @@ const Tchat = (props) => {
 
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 >>>>>>> ec54656 (app-tchat)
 =======
@@ -139,6 +145,12 @@ const Tchat = (props) => {
 =======
 >>>>>>> cb65160 (app-tchat)
 >>>>>>> 552cd9c (app-tchat)
+=======
+=======
+>>>>>>> cb65160 (app-tchat)
+=======
+>>>>>>> 949a61b (app-tchat)
+>>>>>>> 403c886 (app-tchat)
 
 	useEffect(() => {
 		if (type === "private") {
