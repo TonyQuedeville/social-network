@@ -49,6 +49,7 @@ func GetUserById(get_user_id uint64, user_id uint64) *User {
 		&u.Status,
 		&u.Created_at,
 		&u.Updated_at,
+		&u.IsConnected,
 		&have_acess,
 	)
 	u.Password = ""
@@ -91,6 +92,7 @@ func GetUserByMail(email string) (*User, error) {
 		&u.Status,
 		&u.Created_at,
 		&u.Updated_at,
+		&u.IsConnected,
 	)
 	u.Password = ""
 	if err != nil {
@@ -145,7 +147,8 @@ func GetUsers(user_id uint64) []*User {
 		%v,
 		%v,
 		%v,
-		%v
+		%v,
+		u.isConnected
 	FROM user u
 	LEFT JOIN follower f ON f.user_id = u.id AND f.follow_id = %v;
 	`, fmt.Sprintf(c, user_id, "about", "about"), fmt.Sprintf(c, user_id, "sexe", "sexe"), fmt.Sprintf(c, user_id, "first_name", "first_name"), fmt.Sprintf(c, user_id, "last_name", "last_name"), fmt.Sprintf(c, user_id, "date_of_birth", "date_of_birth"), user_id))
@@ -155,7 +158,7 @@ func GetUsers(user_id uint64) []*User {
 	result := []*User{}
 	for rows.Next() {
 		u := &User{}
-		rows.Scan(&u.Id, &u.Pseudo, &u.Image, &u.Status, &u.About, &u.Sexe, &u.First_name, &u.Last_name, &u.Born_date)
+		rows.Scan(&u.Id, &u.Pseudo, &u.Image, &u.Status, &u.About, &u.Sexe, &u.First_name, &u.Last_name, &u.Born_date, &u.IsConnected)
 		// fmt.Printf("u: %v\n", u)
 		result = append(result, u)
 	}

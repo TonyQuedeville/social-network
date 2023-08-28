@@ -8,7 +8,7 @@
 
 import React, { useState, useEffect, useContext } from "react"
 import { useDispatch } from 'react-redux'
-import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated } from '../../../redux/reducers'
+import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated, setIsConnected } from '../../../redux/reducers'
 import { useNavigate } from 'react-router-dom'
 import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
@@ -79,6 +79,7 @@ function LoginForm() {
 
     // Mettre à jour l'état isDisabled à chaque fois que l'état de isEmailValid ou isPasswordValid change
     // Quand toutes les conditions sont ok, le bouton devient cliquable.
+    
     useEffect(() => {
         setIsDisabled(!(isEmailValid && isPasswordValid))
     }, [isEmailValid, isPasswordValid])

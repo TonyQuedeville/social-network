@@ -137,7 +137,7 @@ const Users = () => {
         return res.data
       })
     )
-    console.log("dataUsers:", dataUsers);
+    //console.log("dataUsers:", dataUsers);
     
     return (
       <>

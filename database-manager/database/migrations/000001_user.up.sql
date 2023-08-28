@@ -14,7 +14,8 @@ CREATE TABLE IF NOT EXISTS user (
     about TEXT,
     status TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
-    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+    isConnected INTEGER DEFAULT 0
 );
 
 -- Create the trigger "set_nickname_default"
