@@ -95,6 +95,7 @@ const Tchat = (props) => {
 		socket.emit("chatMessage", "Hello, server!")
 	}, [])
 
+<<<<<<< HEAD
 	const socket = io('http://localhost:3001');
 	
 	useEffect(() => {
@@ -122,6 +123,8 @@ const Tchat = (props) => {
 		socket.emit("chatMessage", "Hello, server!")
 	}, [])
 
+=======
+>>>>>>> ec54656 (app-tchat)
 
 	useEffect(() => {
 		if (type === "private") {
