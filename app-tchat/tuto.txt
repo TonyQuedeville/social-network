@@ -1,0 +1,11 @@
+création de l'application tchat:
+
+1 - mkdir app-tchat
+    cd app-tchat
+    npm init -y
+
+2 - npm install socket.io
+
+3 - Créer un fichier server.js
+
+4 - Lancer le server: node server.js

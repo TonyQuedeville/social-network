@@ -32,6 +32,7 @@ const initialValues = {
   invit_groups: [],
   events: [],
 }
+
 const userSlice = createSlice({
   name: 'user',
   initialState: initialValues,
@@ -59,10 +60,10 @@ const userSlice = createSlice({
       state.isAuthenticated = action.payload
     },
 
-    handleLogout:(state) => {
-      state.isAuthenticated = false
-      state.initialState = initialValues
+
+    handleLogout:() => {
       Cookies.remove('session')
+      return initialValues;
     }
   },
 })
@@ -72,7 +73,7 @@ export const {
   setWaitFollowers, 
   setWaitGroupsAccept, 
   setEvents, 
-  setIsAuthenticated, 
+  setIsAuthenticated,
   handleLogout 
 } = userSlice.actions
 

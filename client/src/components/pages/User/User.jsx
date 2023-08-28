@@ -30,7 +30,7 @@ const PageContainer = styled.div`
     flex-direction: row;
 `
 const ProfilContainer = styled.div`
-    width: 50%;
+    width: ${props => (props.larg + '%')};
     height: 88vh;
     display: flex;
     flex-direction: column;
@@ -61,7 +61,7 @@ const User = () => {
     const userId = useSelector(state => state.user.id)
 
     let confidencial = false
-    if (userId === userid) {confidencial = true}
+    if (userId === Number(userid)) {confidencial = true}
 
     const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
@@ -136,7 +136,7 @@ const User = () => {
             {/* Groupes */}
             <Groupes larg={25}/>
 
-            <ProfilContainer theme={theme}>
+            <ProfilContainer theme={theme} larg={(confidencial ? 50 : 80)}>
                 {/* Infos user */}
                 <div>
                     <UserInfos />
@@ -156,7 +156,9 @@ const User = () => {
                 
             </ProfilContainer>
 
-            <Tchat type="private" larg={30}/>
+            { confidencial && (
+                <Tchat type="private" larg={30}/>
+            )}
         </PageContainer>
     )
 }

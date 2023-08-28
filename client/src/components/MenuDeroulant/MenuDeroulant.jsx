@@ -10,6 +10,7 @@ import PropTypes from 'prop-types'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 
+// css
 const CommonButtonStyle = styled.select `
     width:97%;
     padding: 10px;
@@ -32,7 +33,7 @@ const CommonButtonStyle = styled.select `
     outline: 0;
 `
 
-
+// Composant
 function MenuDeroulant(props) {
     const { onChange, disabled, id, name, theme, options } = props
 
@@ -46,7 +47,7 @@ function MenuDeroulant(props) {
         >
         {options.map((option, index) => (
             <option key={index} value={option.id}>
-                {option.name}
+                {option.isConnected ? "🟢": "🔴"} {option.name} 
             </option>
         ))}
         </CommonButtonStyle>

@@ -42,14 +42,16 @@ const StyledGroupIcn = styled.div `
 const Navbar = () => {
     const { theme } = useContext(ThemeContext)
     const user = useSelector(state => state.user)
-    //console.log("user:",user);
     const dispatch = useDispatch();
     const [showNotificationsWindow, setShowNotificationsWindow] = useState(false) // fenetre des notifications
 
     const handleNotifications = () => {
 		setShowNotificationsWindow(true)
 	}
-    // console.log("test:",isAuthenticated);
+    const handleLogoutClick = () => {
+		dispatch(handleLogout())
+        //console.log("user:",user);
+	}
 
     return (
         <StyledNav theme={theme}>
@@ -87,8 +89,8 @@ const Navbar = () => {
             <StyledGroupIcn>
                 {user.isAuthenticated ? (
                     <>
-                        <Link to="/">
-                            <Button text="Se déconnecter" onClick={() => {dispatch(handleLogout())}} disabled={false} />
+                        <Link to="/login">
+                            <Button text="Se déconnecter" onClick={() => {handleLogoutClick()}} disabled={false} />
                         </Link>
                         <Link to={`/user/${user.id}`}>
                             <Icone 

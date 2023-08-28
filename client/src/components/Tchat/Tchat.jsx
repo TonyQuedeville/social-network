@@ -15,6 +15,7 @@ import styled from 'styled-components'
 import DisplayMessage from '../DisplayMessage/DisplayMessage.jsx'
 import SendMessage from '../SendMessage/SendMessage.jsx'
 import MenuDeroulant from '../MenuDeroulant/MenuDeroulant.jsx'
+import { io } from "socket.io-client" // npm install socket.io-client
 
 const TchatContainer = styled.div`
 	width: ${props => props.larg}%;
@@ -77,11 +78,13 @@ const Tchat = (props) => {
 
 	// Champs Messages
 	const [dataMessages, setDataMessages] = useState(undefined)
+	const [ connected, setConnected ] = useState(false)
 
     // Mise à jour de la liste de conversations à chaque changement de selection de conversation
     const handleChargeConversations = (e) => {
 		if (e && e.target && e.target.name) {
 			var value = e.target.value
+			console.log("send message:", value);
 
 			// await requete conversation privée
 			// setDataMessages(res.data)
@@ -93,45 +96,71 @@ const Tchat = (props) => {
         }
     }
 
-	
+	//console.log("conversationsData:", conversationsData)
 
-	console.log("conversationsData:", conversationsData)
+	// Connexion Tchat
+    const socket = io('http://localhost:3002');
+    console.log("tentative de connexion au server tchat !")
+    
+    socket.on("connect", () => {
+		console.log("Connexion au tchat établie !")
+		if(user.isAuthenticated) setConnected(socket.connected)
+    });
+
+	socket.on("disconnect", () => {
+		console.log("déconnexion au tchat !")
+		if(user.isAuthenticated) setConnected(socket.connected)
+    });
+
+    socket.on("connect_error", (error) => {
+		console.error("Erreur de connexion Socket.io :", error)
+    });
+
+    socket.on("message", (data) => {
+		console.log("Message reçu du serveur tchat:", data)
+    });
+
+    // Émettre un message vers le serveur
+    socket.emit("chatMessage", "Hello, server!")
+
 
 	return (
 		<TchatContainer theme={theme} larg={larg}>
-			<StyleConvList theme={theme}>
-				Conversation 
-				{type === "private" && (
-					<MenuDeroulant
-						name="id" 
-						disabled={false} 
-						onChange={(e) => {
-							handleChargeConversations(e)}}
-						theme={theme}
-						options={[
-							{id: 1, type: 'private', name: "Tata"}, 
-							{id: 2, type: 'private', name: "Tutu"}, 
-							{id: 3, type: 'private', name: "Alannnn"},
-							{id: 4, type: 'group', name: "Test"},
-							{id: 5, type: 'group', name: "Patisserie"},
-						]}
-					/>
-				)}
-			</StyleConvList>
-			<MessagesContainer>
-				{/* {dataMessages.datas.map((dataMessage, index) => (
-				))} */}
-				<StyleMessages align={'Toto' === user.pseudo}>
-					<DisplayMessage
-						convId={convId}
-						pseudo={'Toto' === user.pseudo ? 'moi' : 'pseudo'}
-						message={"Message de test en attendant d'avoir le server"}
-						dateheure={'25-08-2023 10:44:00'}
-					/>
-				</StyleMessages>
+			{connected && (
+				<>
+					<StyleConvList theme={theme}>
+						Conversation 
+						{type === "private" && (
+							<MenuDeroulant
+								name="id" 
+								disabled={false} 
+								onChange={(e) => {
+									handleChargeConversations(e)}}
+								theme={theme}
+								options={[
+									{id: 1, type: 'private', isConnected: true, name: "Tata"}, 
+									{id: 2, type: 'private', isConnected: true, name: "Tutu"}, 
+									{id: 3, type: 'private', isConnected: false, name: "Alannnn"},
+								]}
+							/>
+						)}
+					</StyleConvList>
+					<MessagesContainer>
+						{/* {dataMessages.datas.map((dataMessage, index) => (
+						))} */}
+						<StyleMessages align={'Toto' === user.pseudo}>
+							<DisplayMessage
+								convId={convId}
+								pseudo={'Toto' === user.pseudo ? 'moi' : 'pseudo'}
+								message={"Message de test en attendant d'avoir le server"}
+								dateheure={'25-08-2023 10:44:00'}
+							/>
+						</StyleMessages>
 
-				<SendMessage convId={convId}/>
-			</MessagesContainer>
+						<SendMessage convId={convId}/>
+					</MessagesContainer>
+				</>
+			)}
 		</TchatContainer>
 	)
 }
