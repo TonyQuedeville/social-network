@@ -126,7 +126,32 @@ const Tchat = (props) => {
 	//console.log("conversationsData:", conversationsData)
 
 	// Connexion Tchat
+
+=======
+    const socket = io('http://localhost:3002');
+    console.log("tentative de connexion au server tchat !")
     
+    socket.on("connect", () => {
+		console.log("Connexion au tchat établie !")
+		if(user.isAuthenticated) setConnected(socket.connected)
+    });
+
+	socket.on("disconnect", () => {
+		console.log("déconnexion au tchat !")
+		if(user.isAuthenticated) setConnected(socket.connected)
+    });
+
+    socket.on("connect_error", (error) => {
+		console.error("Erreur de connexion Socket.io :", error)
+    });
+
+    socket.on("message", (data) => {
+		console.log("Message reçu du serveur tchat:", data)
+    });
+
+    // Émettre un message vers le serveur
+    socket.emit("chatMessage", "Hello, server!")
+
 
 
 	return (
