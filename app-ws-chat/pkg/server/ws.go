@@ -23,6 +23,7 @@ func StartServer() {
 	server.OnConnect("/", func(s socketio.Conn) error {
 		sessionCk := func() string { // recupere le cookie "session"
 			cks := s.RemoteHeader().Values("Cookie")
+			fmt.Printf("s.RemoteHeader(): %v\n", s.RemoteHeader())
 			for _, rawck := range cks {
 				ck := strings.Split(rawck, "=")
 				if ck[0] == "session" {
@@ -32,13 +33,12 @@ func StartServer() {
 			return ""
 		}()
 		u_id := user.GetUserIdByUuid(sessionCk) // recupere id de l'user
-
 		if u_id == 0 {
 			return errors.New("auth failed")
 		}
 
 		s.SetContext("") // init socket ctx
-		fmt.Println("Client id connect: ", s.ID())
+		// fmt.Println("Client id connect: ", s.ID())
 
 		// lier l'id socket a l'id en database
 		database_users_id[u_id] = s.ID()
@@ -49,9 +49,7 @@ func StartServer() {
 		return nil
 	})
 
-	server.OnEvent("/", "message", func(s socketio.Conn, msg string) {
-		fmt.Printf("msg: %v\n", msg)
-	})
+	// server.OnEvent("/", "message", api.OnMessage)
 
 	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 		fmt.Println("Client id disconnect: ", s.ID(), "reason:", reason)
@@ -62,7 +60,7 @@ func StartServer() {
 	})
 
 	server.OnError("/", func(s socketio.Conn, e error) {
-		fmt.Println("WS error (socket.id:", s, "):", e)
+		// fmt.Println("WS error (socket.id:", s, "):", e)
 	})
 
 	go server.Serve()    // lance le serveur websocket
