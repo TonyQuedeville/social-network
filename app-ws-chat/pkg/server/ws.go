@@ -8,6 +8,8 @@ import (
 	"strings"
 
 	midleware "github.com/TonyQuedeville/social-network/app-social-network/pkg/server"
+	api "github.com/TonyQuedeville/social-network/app-ws-chat/pkg/api"
+	"github.com/TonyQuedeville/social-network/database-manager/structs/conv"
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 	socketio "github.com/googollee/go-socket.io"
 )
@@ -23,7 +25,6 @@ func StartServer() {
 	server.OnConnect("/", func(s socketio.Conn) error {
 		sessionCk := func() string { // recupere le cookie "session"
 			cks := s.RemoteHeader().Values("Cookie")
-			fmt.Printf("s.RemoteHeader(): %v\n", s.RemoteHeader())
 			for _, rawck := range cks {
 				ck := strings.Split(rawck, "=")
 				if ck[0] == "session" {
@@ -44,7 +45,11 @@ func StartServer() {
 		database_users_id[u_id] = s.ID()
 		socket_users_id[s.ID()] = u_id
 		// s.Emit("message", "world")
+
 		// Definir toute les route
+		server.OnEvent("/", "message", func(s socketio.Conn, m *conv.Message) {
+			api.OnMessage(s, m)
+		})
 
 		return nil
 	})
