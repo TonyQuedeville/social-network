@@ -6,9 +6,11 @@
 */
 
 import React from 'react'
+import { useSelector } from "react-redux"
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
+import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 
@@ -30,12 +32,6 @@ const StyleWindow = styled.div`
 	border-radius: 5px;
 	background: ${props => (props.theme === 'light' ? `linear-gradient(to right, ${colors.backgroundLight}, ${colors.backgroundLightSoft})` : colors.backgroundDark)};
 	box-shadow: 10px 5px 25px 0px black;
-`
-const StyleGroupButton = styled.div `
-	display: flex;
-	align-items: center;
-	justify-content: center;
-	flex-direction: row;
 `
 const StyleGroupOk = styled.div `
 	display: flex;
@@ -67,60 +63,36 @@ const StylePhotoProfile = styled.img`
 `
 
 // Composant
-function InvitFollowerWindow({ follower, private_list, onChange, onClose, theme }) {
+function InvitFollowerWindow({ groupId, onClose, theme }) {
+    // AuthUser
+    const user = useSelector(state => state.user)
+    const follower = user.follower
+
 	const handleFollowerChange = (followerId) => {
-		const updatedFollowers = [...private_list]
-		const followerIndex = updatedFollowers.findIndex((follower) => follower.id === followerId)
-	
-		if (followerIndex !== -1) {
-			updatedFollowers.splice(followerIndex, 1)
-		} else {
-			const selectedFollower = follower.find((follower) => follower.id === followerId)
-			if (selectedFollower) {
-				updatedFollowers.push(selectedFollower)
-			}
-		}
-	
-		onChange(updatedFollowers)
+        console.log("inviter followerId:", followerId, "groupId:", groupId);
+        // requete d'invitation (post)
 	}
 
-	const Validfollowers = () => {
-		//console.log("Validfollowers !");
+	const close = () => {
 		onClose();
-	}
-	const handleSelectAll = () => {
-		onChange([...follower])
-	}
-
-	const handleDeselectAll = () => {
-		onChange([])
 	}
 
 	return (
 		<StyleWindow theme={theme}>
-			<StyleGroupButton>
-				<Button 
-					text="tous" 
-					onClick={handleSelectAll}
-				/>
-				<Button 
-					text="aucun" 
-					onClick={handleDeselectAll}
-				/>
-			</StyleGroupButton>
 			<StyleFollowersList>
 				{/* Afficher la liste des followers avec cases à cocher */}
 				{follower.map((followerData) => (
 					<label key={followerData.id}>
 						<StyleLabel>
 						{followerData.pseudo}
-						<input
-							name="private_list"
-							type="checkbox"
-							value={followerData.id}
-							checked={private_list.some((follower) => follower.id === followerData.id)}
-							onChange={() => handleFollowerChange(followerData.id)}
-						/>
+                        <RadioBouton
+                            id="invitFollower"
+                            name="invitFollower"
+                            label="inviter"
+                            value={followerData.pseudo}
+                            onChange={() => handleFollowerChange(followerData.id)}
+                            alignment="vertical"
+                        />
 						{followerData.image ? 
 							<StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${followerData.image}`} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
 							: <StylePhotoProfile src={followerData.sexe === 'h' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
@@ -131,9 +103,8 @@ function InvitFollowerWindow({ follower, private_list, onChange, onClose, theme 
 			</StyleFollowersList>
 			<StyleGroupOk>
 				<Button 
-					text="Ok" 
-					format="rond"
-					onClick={Validfollowers}
+					text="fermer" 
+					onClick={close}
 				/>
 			</StyleGroupOk>
 		</StyleWindow>

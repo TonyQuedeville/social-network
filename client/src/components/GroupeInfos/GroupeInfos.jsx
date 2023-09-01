@@ -158,11 +158,13 @@ const GroupeInfos = (props) => {
 							<InvitFollowerWindow
 								groupId={id}
 								onClose={() => {setShowInvitWindow(false)}}
+								theme={theme}
 							/>
 						)}
 					</StyleRow>
 				)}
 			</>
+
 			{ fetchError && notification && (
 				<Popup texte={notification} type='error' />
 			)}
