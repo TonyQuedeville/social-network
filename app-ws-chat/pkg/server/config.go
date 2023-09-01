@@ -1,5 +1,5 @@
 package server
 
 const (
-	ADRESS = ":8081"
+	ADRESS = ":3002"
 )

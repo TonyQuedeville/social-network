@@ -283,6 +283,19 @@ func AddGroupMember(user_id, group_id uint64) error {
 	return nil
 }
 
+func InvitToGroup(user_id, group_id uint64) error {
+	err := AddGroupMember(user_id, group_id)
+	if err != nil {
+		return err
+	}
+	_, err = database.Database.Exec(`
+	UPDATE groupmembers
+	SET status = 'invit'
+	WHERE user_id = ? AND group_id = ? 
+	`, user_id, group_id)
+	return err
+}
+
 // Delete
 /* Supprime un membre du groupe de discution */
 func (g *Group) DeleteGroupMember(user_id uint64) error {

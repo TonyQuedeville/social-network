@@ -148,6 +148,47 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	Ok(w, "Votre de demande à rejoindre le groupe est en attente.")
 }
 
+/* Invit un utilisateur a un group si l'inviteur a le droit */
+func InvitGroup(w http.ResponseWriter, r *http.Request) {
+	// only post request
+	if !IsPost(w, r) {
+		return
+	}
+
+	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
+
+	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
+
+	g := &struct {
+		Group_id uint64 `json:"group_id"`
+		User_id  uint64 `json:"user_id"`
+	}{} // prepare un user
+	if err := json.Unmarshal(reqBody, &g); err != nil { // unwrap le corp dans user
+		BadRequest(w, err.Error())
+		return
+	}
+
+	follower := user.GetFollower(intel_id)
+	followed := user.GetFollowed(intel_id)
+
+	// l'id a inviter est il dans les abbonement oul es abboner de l'utilisateur qui invite
+	if !slices.ContainsFunc(followed, func(u *user.User) bool {
+		return u.Id == g.User_id
+	}) &&
+		!slices.ContainsFunc(follower, func(u *user.User) bool {
+			return u.Id == g.User_id
+		}) {
+		BadRequest(w, "La perssone que tu invit doit te suivre ou vous devez la suivre")
+	}
+
+	// invit au group
+	err := group.InvitToGroup(g.User_id, g.Group_id)
+	if err != nil {
+		BadRequest(w, err.Error())
+		return
+	}
+}
+
 /* Acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */
 func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 	// only post request
