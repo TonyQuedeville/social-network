@@ -295,7 +295,10 @@ func (u *User) Register() error {
 
 // login user and create session uuid in database
 func Login(password, email string) (*User, string, error) {
-	u, _ := GetUserByMail(email)
+	u, err := GetUserByMail(email)
+	if err != nil {
+		fmt.Printf("err: %v\n", err)
+	}
 	u.GetHashPass()
 	if len(u.Password) == 0 {
 		return u, "", errors.New("invalid mail")
