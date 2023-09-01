@@ -59,7 +59,8 @@ type Message struct {
 }
 
 const MESSAGE = `
-SELECT m.id, u.id, m.conv_id, u.pseudo, u.image, m.content, m.date
+SELECT m.id, u.id as 'user_id', m.conv_id, u.pseudo, u.image, m.content, m.date
 FROM 'message' as m
-JOIN 'user' as u ON u.id = m.user_id
+JOIN 'conv_member' as cm ON cm.conv_id = m.conv_id AND m.user_id = u.id
+JOIN 'user' as u ON u.id = cm.user_id
 `

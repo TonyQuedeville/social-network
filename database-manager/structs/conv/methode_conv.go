@@ -1,6 +1,8 @@
 package conv
 
 import (
+	"fmt"
+
 	"github.com/TonyQuedeville/social-network/database-manager/database"
 	"github.com/TonyQuedeville/social-network/database-manager/structs/user"
 )
@@ -47,6 +49,7 @@ func GetAllHeadConvByUserId(user_id uint64) (cs []*ConvHeader) {
 		WHERE cm.user_id = ?
 	`, user_id)
 	for rows.Next() {
+		fmt.Println("ROWX")
 		c := &ConvHeader{}
 		rows.Scan(&c.Id, &c.Name, &c.Image, &c.Type, &c.NbMessageNonLu)
 		c.LastMessage = GetLastMessage(c.Id)

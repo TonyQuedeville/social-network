@@ -22,7 +22,7 @@ func GetLastMessage(conv_id uint64) (m *Message) {
 	m = &Message{}
 	err := database.Database.QueryRow(MESSAGE+`
 	WHERE m.conv_id = ?
-	ORDER BY date(m.date) DESC
+	ORDER BY m.date DESC
 	LIMIT 1;
 	`, conv_id).
 		Scan(&m.Id, &m.User_id, &m.Conv_id, &m.User_name, &m.User_image, &m.Content, &m.Date)
@@ -36,7 +36,7 @@ func GetLastMessage(conv_id uint64) (m *Message) {
 func GetNewLastMessages(conv_id, user_id uint64) (ms []*Message) {
 	rows, _ := database.Database.Query(MESSAGE+`
 	WHERE m.conv_id = ?
-	ORDER BY date(m.date) DESC
+	ORDER BY m.date DESC
 	LIMIT (SELECT nb_no_read_msg FROM conv_member WHERE user_id = ?);
 	`, conv_id, user_id)
 	for rows.Next() {
@@ -52,7 +52,7 @@ func GetNewLastMessages(conv_id, user_id uint64) (ms []*Message) {
 func GetMessageConv(conv_id uint64, ofset, limit int64) (ms []*Message) {
 	rows, _ := database.Database.Query(MESSAGE+`
 	WHERE m.conv_id = ?
-	ORDER BY date(m.date) DESC
+	ORDER BY m.date DESC
 	LIMIT ? OFFSET ?;
 	`, conv_id, limit, ofset)
 	for rows.Next() {

@@ -6,6 +6,7 @@ import (
 	"log"
 	"net/http"
 	"strings"
+	"time"
 
 	midleware "github.com/TonyQuedeville/social-network/app-social-network/pkg/server"
 	api "github.com/TonyQuedeville/social-network/app-ws-chat/pkg/api"
@@ -17,6 +18,7 @@ import (
 var (
 	database_users_id = make(map[uint64]string)
 	socket_users_id   = make(map[string]uint64)
+	conn_users_id     = make(map[uint64]*socketio.Conn)
 )
 
 func StartServer() {
@@ -24,7 +26,10 @@ func StartServer() {
 
 	server.OnConnect("/", func(s socketio.Conn) error {
 		sessionCk := func() string { // recupere le cookie "session"
-			cks := s.RemoteHeader().Values("Cookie")
+			if len(s.RemoteHeader().Values("Cookie")) == 0 {
+				return ""
+			}
+			cks := strings.Split(s.RemoteHeader().Values("Cookie")[0], "; ")
 			for _, rawck := range cks {
 				ck := strings.Split(rawck, "=")
 				if ck[0] == "session" {
@@ -43,18 +48,31 @@ func StartServer() {
 
 		// lier l'id socket a l'id en database
 		database_users_id[u_id] = s.ID()
+		conn_users_id[u_id] = &s
 		socket_users_id[s.ID()] = u_id
-		// s.Emit("message", "world")
 
-		// Definir toute les route
-		server.OnEvent("/", "message", func(s socketio.Conn, m *conv.Message) {
-			api.OnMessage(s, m)
-		})
-
+		// envois la liste des conv a la connection
+		go func() {
+			if s != nil {
+				time.Sleep(1 * time.Second)
+				api.UpdateConvHead(s, u_id)
+				s.Emit("user_info", user.GetUserById(u_id, u_id))
+			}
+		}()
 		return nil
 	})
 
-	// server.OnEvent("/", "message", api.OnMessage)
+	// cree un nouveau message
+	server.OnEvent("/", "message", func(s socketio.Conn, c_id uint64, content string) {
+		u_id := socket_users_id[s.ID()]
+		api.OnMessage(s, u_id, c_id, content, conn_users_id)
+
+		m := conv.GetLastMessage(c_id)
+		server.BroadcastToRoom("/", fmt.Sprintf("conv_%v", c_id), "message", m)
+	})
+
+	// recupere tout les mesage d'une conv par son id
+	server.OnEvent("/", "join_conv", api.OnGetMessageConvById)
 
 	server.OnDisconnect("/", func(s socketio.Conn, reason string) {
 		fmt.Println("Client id disconnect: ", s.ID(), "reason:", reason)
