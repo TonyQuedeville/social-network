@@ -78,7 +78,7 @@ const Notifications = ({onClose}) => {
 	return (
     <StyleWindow theme={theme}>
 			<StyleTitleGroupe>
-        Notifications
+				Notifications
 			</StyleTitleGroupe>
 
 			<StyleNotificationsContainer theme={theme}>
@@ -133,6 +133,19 @@ const Notifications = ({onClose}) => {
 					))}
 					</>
 				)}
+
+				{/* { tchatEvents && (
+					<>
+					{tchatEvents.map((tchatEvent, index) => ( // Nouveaux évènements de tchat
+						<Notification 
+							key={index} 
+							notif={tchatEvent} 
+							typeNotif="tchatEvent" 
+							theme={theme}
+						/>
+					))}
+					</>
+				)} */}
 			</StyleNotificationsContainer>
 
 			<StyleGroupButton>

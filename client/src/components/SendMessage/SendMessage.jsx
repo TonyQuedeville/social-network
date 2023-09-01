@@ -5,7 +5,7 @@
 	Composant SendMessage : Affiche une fenetre d'édition et envoi du message tchat
 */
 
-import React, { useContext, useState } from 'react'
+import React, { useContext, useState, useEffect } from 'react'
 import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../utils/style/Colors.js'
@@ -15,6 +15,8 @@ import Icone from '../Icone/Icone.jsx'
 import Emoji from '../Emoji/Emoji.jsx'
 import IcnSendMessage from '../../assets/icn/icn-send-message.webp'
 import IcnEmoji from '../../assets/icn/icn-emoji.webp'
+import { socket } from '../../socket';
+import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 // css
 const StyleSendMessage = styled.div`
@@ -45,16 +47,32 @@ const SendMessage = (props) => {
 	const user = useSelector(state => state.user)
 
     // Champs du message
-	const [messageData, setMessageData] = useState({
-        conv_id: props.convId,
+    const [messageData, setMessageData] = useState({
+        destinataire: props.destinataire,
+        type: props.type,
         user_id: user.id,
-		message: '',
+        user_pseudo: user.pseudo,
+        message: '',
+        dateheure: ''
     })
-    
+
+    // Pour ré-initialiser le message à chaque fois qu'une conversation est sélectionnée
+    useEffect(() => {
+        setMessageData({
+            destinataire: props.destinataire,
+            type: props.type,
+            user_id: user.id,
+            user_pseudo: user.pseudo,
+            message: '',
+            dateheure: ''
+        })
+    }, [props, user])
+
 	// Mise à jour de messageData à chaque changement
     const handleChangeMessage = (e) => {
 		if (e && e.target && e.target.name) {
 			var value = e.target.value
+
             switch(e.target.name) {
                 default :
                     break
@@ -62,7 +80,8 @@ const SendMessage = (props) => {
 
             setMessageData(prev => ({
 				...prev,
-                [e.target.name]: value
+                [e.target.name]: value,
+                dateheure: FrenchFormatDateConvert()
             }))
         }
     }
@@ -82,14 +101,15 @@ const SendMessage = (props) => {
     }
 
 	const handleSendMessageClick = () => {
-        console.log("send message :", messageData.message)
-
         setMessageData({
             ...messageData,
-            conv_id: props.convId,
+            destinataire: props.destinataire,
+            type: props.type,
             user_id: user.id,
+            user_pseudo: user.pseudo,
             message: '',
         })
+        socket.emit('message', messageData, () => {})
 	}
 
     return (

@@ -20,7 +20,6 @@ import Profile from '../../Profile/Profile.jsx'
 import Icone from '../../Icone/Icone.jsx'
 import IcnAddFriend from '../../../assets/icn/icn-addfriend.png'
 import IcnSupFriend from '../../../assets/icn/icn-supfriend.jpg'
-import IcnTchat from '../../../assets/icn/icn-tchat.webp'
 
 const queryClient = new QueryClient()
 
@@ -72,7 +71,7 @@ const Users = () => {
   const handleAddFollowerClick = async (userid) => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
-      const response = await makeRequest.post(`/addfollower/${userid}`)
+      const response = await makeRequest.get(`/addfollower/${userid}`)
       const responseData = response.data
       console.log("addfollower:", responseData.datas)
       setFetchError(false)
@@ -90,30 +89,7 @@ const Users = () => {
     // Requete de demande d'ajout follower vers app-social-network
     try{
       try{
-        await makeRequest.post(`/supfollower/${userid}`)
-        setFetchError(false)
-      }
-      catch (err) {
-          setNotification(err.message + " : " + err.response.data.error)
-          setFetchError(true)
-      }
-      finally {
-      }
-    }
-    catch (err) {
-        setNotification(err.message + " : " + err.response.data.error)
-        setFetchError(true)
-    }
-    finally {
-    }
-  }
-  
-  // création de conversation avec l'utilisateur
-  const handleConversationClick = async (userid) => {
-    // Requete de demande d'ajout follower vers app-social-network
-    try{
-      try{
-        //await makeRequest.post(`/newconversation/${userid}`)
+        await makeRequest.get(`/supfollower/${userid}`)
         setFetchError(false)
       }
       catch (err) {
@@ -170,12 +146,6 @@ const Users = () => {
                               image={IcnSupFriend}
                               disabled={false}
                               onClick={() => handleSupFollowerClick(u.id)}
-                            />
-                            <Icone 
-                              alt="message"
-                              image={IcnTchat}
-                              disabled={false}
-                              onClick={() => handleConversationClick(u.id)}
                             />
                           </>
                         : 

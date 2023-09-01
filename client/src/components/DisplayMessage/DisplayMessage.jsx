@@ -9,7 +9,6 @@ import React, { useContext } from 'react'
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../utils/style/Colors.js'
 import styled from 'styled-components'
-import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 // css
 const StyleMessage = styled.div`
@@ -36,14 +35,14 @@ const StyleInfoMessage = styled.div`
 
 // Composant
 const DisplayMessage = (props) => {
-    const { pseudo, dateheure, message } = props
+	const { pseudo, message, dateheure } = props
     const { theme } = useContext(ThemeContext)
 
     return (
         <StyleMessage theme={theme}>
 			<StyleInfoMessage>
 				<div>{pseudo}</div>
-				<div>{FrenchFormatDateConvert(dateheure)}</div>
+				<div>{dateheure}</div>
 			</StyleInfoMessage>
 			<>
 				{ message }

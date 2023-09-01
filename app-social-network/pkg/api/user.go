@@ -190,11 +190,12 @@ func ManageFollower(w http.ResponseWriter, r *http.Request, flag string) {
 		return
 	}
 	var status string
+
 	switch flag {
 	case "accept":
-		status = user.AcceptFollower(user_id, path_id, true)
+		status = user.AcceptFollower(user_id, path_id)
 	case "refuse":
-		status = user.AcceptFollower(user_id, path_id, false)
+		status = user.RefuseFollower(user_id, path_id)
 	case "add":
 		status = user.AddFollower(path_id, user_id)
 	case "sup":

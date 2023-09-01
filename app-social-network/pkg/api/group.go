@@ -125,7 +125,7 @@ func PostsByGrouypId(w http.ResponseWriter, r *http.Request) {
 /* Demande d'adhésion au groupe par un utilisateur */
 func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	// only post request
-	if !IsPost(w, r) {
+	if !IsGet(w, r) {
 		return
 	}
 	intel_id := GetIdUser(r)          // (cookie) Utilisateur connecté
@@ -255,7 +255,7 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 /* Quitter le groupe */
 func QuitGroup(w http.ResponseWriter, r *http.Request) {
 	// only post request
-	if !IsPost(w, r) {
+	if !IsGet(w, r) {
 		return
 	}
 	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
