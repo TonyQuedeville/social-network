@@ -20,6 +20,8 @@ import IcnGroupe from '../../assets/icn/icn-group-discut.png'
 import IcnTchat from '../../assets/icn/icn-tchat.jpg'
 import IcnNotif from '../../assets/icn/icn-notification.png'
 import { handleLogout } from '../../redux/reducers.js'
+import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
+import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 
 const StyledNav = styled.nav `
     margin: 1px;
@@ -96,7 +98,10 @@ const Navbar = () => {
                             <Icone 
                                 alt="Mon profile" 
                                 disabled={!user.isAuthenticated} 
-                                image={`http://${window.location.hostname}:4000/download/${user.image}`}
+                                image={user.image ? 
+                                    `http://${window.location.hostname}:4000/download/${user.image}` 
+                                    : (user.sexe === 'f' ? DefaultPictureF : DefaultPictureH)
+                                }
                             />
                         </Link>
                         <Icone 

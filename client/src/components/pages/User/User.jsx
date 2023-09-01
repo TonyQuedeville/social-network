@@ -21,6 +21,8 @@ import Tchat from '../../Tchat/Tchat.jsx'
 import Popup from '../../Popup/Popup.jsx'
 import NewPost from '../../NewPost/NewPost.jsx'
 import Post from '../../Post/Post.jsx'
+import DefaultPictureH from '../../../assets/img/user-profile-avatar-h.png'
+import DefaultPictureF from '../../../assets/img/user-profile-avatar-f.png'
 
 // css
 const PageContainer = styled.div`
@@ -49,6 +51,21 @@ const ProfilContainer = styled.div`
         width: 0; /* Masque l'ascenseur Chrome, Safari et Opera */
     }
 `
+const StyleFollowers = styled.div `
+    display: flex;
+    align-items: center;
+    justify-content: start;
+    flex-direction: row;
+    margin: 5px;
+    transform: scale(0.6);
+    opacity: 0.7;
+`
+const StylePhotoProfile = styled.img`
+    height: 50px;
+    width: 50px;
+    border-radius: 50%;
+    margin: 5px;
+`
 
 // Composant
 const User = () => {
@@ -58,10 +75,10 @@ const User = () => {
     const { userid } = useParams()
 
     // AuthUser
-    const userId = useSelector(state => state.user.id)
+    const user = useSelector(state => state.user)
 
     let confidencial = false
-    if (userId === Number(userid)) {confidencial = true}
+    if (user.id === Number(userid)) {confidencial = true}
 
     const UserInfos = () => {         
         const { data: dataUser, isLoading: isLoadingUser, error: errorUser } = useQuery(['dataUser'], () =>
@@ -75,18 +92,36 @@ const User = () => {
         return (
             <>
                 {isLoadingUser ? (
-                <Loader id="loader" />
+                    <Loader id="loader" />
                 ) : (
-                <>
-                    {errorUser && (
-                        <Popup texte={errorUser} type='error' />
-                    )}
-                    {dataUser && (
-                        <>
-                            <Profile {...dataUser.datas}/>
-                        </>
-                    )}
-                </>
+                    <>
+                        {errorUser && (
+                            <Popup texte={errorUser} type='error' />
+                        )}
+                        {dataUser && (
+                            <>
+                                <Profile {...dataUser.datas}/>
+                                Followers:
+                                <StyleFollowers>
+                                    {user.follower.map((fol, index) => 
+                                        <div key={index}>
+                                            <>{fol.pseudo}</>
+                                            {fol.image ? 
+                                            <StylePhotoProfile 
+                                                src={`http://${window.location.hostname}:4000/download/${fol.image}`} 
+                                                id={`user-photo-${fol.pseudo}`} 
+                                                alt="photoProfile" />
+                                            : <StylePhotoProfile 
+                                                src={fol.sexe === 'f' ? DefaultPictureF : DefaultPictureH} 
+                                                id={`user-photo-${fol.pseudo}`} 
+                                                alt="photoProfile" />
+                                            }
+                                        </div>
+                                    )}
+                                </StyleFollowers>
+                            </>
+                        )}
+                    </>                
                 )}
             </>
         )
@@ -142,9 +177,9 @@ const User = () => {
                     <UserInfos />
                 </div>
 
-                { userId.toString() === userid ? (
+                { user.id.toString() === userid ? (
                     <NewPost
-                        userId={userId}
+                        userId={user.id}
                         updatePosts={updatePosts} 
                     />
                 ) : (<></>)}

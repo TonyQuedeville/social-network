@@ -392,7 +392,7 @@ func AddFollower(user_id, follow_id uint64) (status string) {
 }
 
 // accept follower
-func AcceptFollower(user_id, follow_id uint64, accept bool) (status string) {
+func AcceptFollower(user_id, follow_id uint64) (status string) {
 	if user_id == follow_id || user_id == 0 || follow_id == 0 {
 		return "operation inpossible"
 	}
@@ -412,6 +412,20 @@ func AcceptFollower(user_id, follow_id uint64, accept bool) (status string) {
 	} else {
 		return "demande confirmée"
 	}
+}
+
+// removeTempFollower
+func RefuseFollower(user_id, follow_id uint64) (status string) {
+	if user_id == follow_id || user_id == 0 || follow_id == 0 {
+		return "operation inpossible"
+	}
+	_, err := database.Database.Exec(`
+		DELETE FROM temp_follower WHERE user_id = ? AND follow_id = ?;
+	`, user_id, follow_id)
+	if err != nil {
+		fmt.Printf("err Remove temp_follower: %v\n", err)
+	}
+	return "remove suced"
 }
 
 // removeFollower

@@ -45,9 +45,17 @@ function MenuDeroulant(props) {
             name={name}
             theme={theme}
         >
+        <option value="" hidden>
+            Sélectionnez un interlocuteur
+        </option>
         {options.map((option, index) => (
-            <option key={index} value={option.id}>
-                {option.isConnected ? "🟢": "🔴"} {option.name} 
+            <option 
+                key={index} 
+                value={option.name} 
+                disabled={!option.isConnected}
+            >
+                {option.isConnected ? "🟢": "🔴"} 
+                {option.name}
             </option>
         ))}
         </CommonButtonStyle>
@@ -61,11 +69,12 @@ MenuDeroulant.defaultProps = {
 
 MenuDeroulant.propTypes = {
     name: PropTypes.string.isRequired,
-    options: PropTypes.arrayOf(PropTypes.string).isRequired,
+    options: PropTypes.arrayOf(PropTypes.object).isRequired,
     disabled: PropTypes.bool,
     onChange: PropTypes.func,
     id: PropTypes.string,
     theme: PropTypes.string,
+    value: PropTypes.string,
 }
 
 export default MenuDeroulant

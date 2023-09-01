@@ -8,7 +8,7 @@
 import React, { useState } from 'react';
 import styled from 'styled-components'
 import { Link } from 'react-router-dom'
-import { useQuery } from '@tanstack/react-query'
+import { useMutation } from '@tanstack/react-query'
 import { makeRequest } from '../../utils/Axios/Axios.js'
 import { useSelector } from "react-redux"
 import Button from '../Button/Button'
@@ -31,35 +31,51 @@ const StyleGroupButton = styled.div`
 
 // Composant
 const Notification = ({ notif, typeNotif, theme }) => {
-  //console.log("notif:", typeNotif, notif);
+  //console.log("notif:", typeNotif, notif.id);
 
   const userId = useSelector(state => state.user.id)
   
   // waitFollowers
+  const acceptFollowerMutation = useMutation(
+    (notifId) => makeRequest.get(`/acceptfollower/${notifId}`).then((res) => res.data),
+    {
+      cacheTime: 0,
+    }
+  );
+  
+  const refuseFollowerMutation = useMutation(
+    (notifId) => makeRequest.get(`/refusefollower/${notifId}`).then((res) => res.data),
+    {
+      cacheTime: 0,
+    }
+  );
+  
+  // accepter
   const HandleWaitFollowersAccept = () => {
-    const {} = useQuery(
-      ['dataWaitFollowers', notif.id],
-      () =>
-        makeRequest.get(`/acceptfollower/${notif.id}`).then((res) => {
-          return res.data;
-        }),
-      {
-        cacheTime: 0, // Désactiver la mise en cache
-      }
-    );
+    const notifId = notif.id;
+  
+    acceptFollowerMutation.mutateAsync(notifId)
+      .then(() => {
+        console.log("Acceptation réussie !");
+        // Vous pouvez ajouter ici un traitement pour afficher un message de confirmation ou actualiser la liste des notifications.
+      })
+      .catch((error) => {
+        console.log("Une erreur d'acceptation !", error);
+      });
   }
 
+  // refuser
   const HandleWaitFollowersRefuse = () => {
-    const {} = useQuery(
-      ['dataWaitFollowers', notif.id],
-      () =>
-        makeRequest.get(`/refusefollower/${notif.id}`).then((res) => {
-          return res.data;
-        }),
-      {
-        cacheTime: 0, // Désactiver la mise en cache
-      }
-    );
+    const notifId = notif.id;
+  
+    refuseFollowerMutation.mutateAsync(notifId)
+      .then(() => {
+        console.log("Refus réussi !");
+        // Vous pouvez ajouter ici un traitement pour afficher un message de confirmation ou actualiser la liste des notifications.
+      })
+      .catch((error) => {
+        console.log("Une erreur de refus !", error);
+      });
   }
 
   // waitGroupsAccept

@@ -93,9 +93,10 @@ const Groupes = (props) => {
 
   // Demander à adhérer au groupe
   const handleJoinGroupe = async (groupid) => {
+    console.log("groupid:", groupid);
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await makeRequest.post(`/joingroup/${groupid}`)
+      await makeRequest.get(`/joingroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {
@@ -110,7 +111,7 @@ const Groupes = (props) => {
   const handleQuitGroupe = async (groupid) => {
     // Requete de demande d'ajout au groupe de discution vers app-social-network
     try{
-      await makeRequest.post(`/quitgroup/${groupid}`)
+      await makeRequest.get(`/quitgroup/${groupid}`)
       setFetchError(false)
     }
     catch (err) {

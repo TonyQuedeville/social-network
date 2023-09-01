@@ -15,6 +15,7 @@ import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
 import Popup from '../Popup/Popup.jsx'
 import EventWindow from '../EventWindow/EventWindow.jsx'
+import InvitFollowerWindow from '../InvitFollowerWindow/InvitFollowerWindow.jsx'
 import axios from "axios"
 
 // css
@@ -74,6 +75,7 @@ const GroupeInfos = (props) => {
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 	const [showEventWindow, setShowEventWindow] = useState(false) // fenetre des évènements
+	const [showInvitWindow, setShowInvitWindow] = useState(false) // fenetre d'invitation
 
 	// Quitter le groupe
 	const handleSupGroupe = async () => {
@@ -92,6 +94,9 @@ const GroupeInfos = (props) => {
 
 	const handleEventGroupe = () => {
 		setShowEventWindow(true)
+	}
+	const handleInvitGroupe = () => {
+		setShowInvitWindow(true)
 	}
 	
 	return (
@@ -133,6 +138,11 @@ const GroupeInfos = (props) => {
 									text="Evenements" 
 									disabled={false} 
 									onClick={handleEventGroupe}
+								/>
+								<Button 
+									text="Inviter" 
+									disabled={false} 
+									onClick={handleInvitGroupe}
 								/> 
 							</>
 						)}
@@ -141,6 +151,13 @@ const GroupeInfos = (props) => {
 							<EventWindow
 								groupId={id}
 								onClose={() => {setShowEventWindow(false)}}
+							/>
+						)}
+
+						{showInvitWindow && (
+							<InvitFollowerWindow
+								groupId={id}
+								onClose={() => {setShowInvitWindow(false)}}
 							/>
 						)}
 					</StyleRow>

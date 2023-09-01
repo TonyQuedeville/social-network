@@ -149,7 +149,7 @@ const Groupe = () => {
         </StyleGroupContainer>
       )}
 
-      <Tchat type="group" larg={30}/>
+      <Tchat type="group" larg={30} roomGroupName={groupData.title}/>
     </PageContainer>
   )
 }
