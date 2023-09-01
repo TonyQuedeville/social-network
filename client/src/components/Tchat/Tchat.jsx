@@ -136,21 +136,8 @@ const Tchat = (props) => {
 	// Notifications des évènements de tchat
 	const [notif, setNotif] = useState()
 
-	socket.on('notif', (notif) => {
-		setNotif(notif)
-	})
-
-	useEffect(() => {
-		if(notif) {
-			setDataMessages(previous => [...previous, {
-				destinataire: '',
-				dateheure: FrenchFormatDateConvert(),
-				message: notif,
-				user_id: 0,
-				user_pseudo: 'server'
-			}])
-		}
-	}, [notif, user])
+	// Connexion Tchat
+    
 
 
 	// Render
