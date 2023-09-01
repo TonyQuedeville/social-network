@@ -14,7 +14,7 @@ import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
-import ShowConnected from '../ShowConnected/ShowConnected.jsx'
+//import ShowConnected from '../ShowConnected/ShowConnected.jsx'
 
 // css
 const StyleProfilCard = styled.div`
@@ -42,7 +42,6 @@ const StyleLabInput = styled.div `
   flex-direction: row;
   margin: 5px;
 `
-
 const InfoUser = styled.span`
   width: 100%;
   display: flex;
@@ -75,14 +74,13 @@ const Profile = (props) => {
           image, 
           lastname, 
           firstname, 
-          bornDate,
-          isConnected,
+          born_date,
+          //isConnected,
         } = props
 
   const { theme } = useContext(ThemeContext)
   const user = useSelector(state => state.user)
   
-  //console.log("status: ", status);
   const [statusProfil, setStatusProfil] = useState(status)
 
   useEffect(() => {
@@ -90,7 +88,7 @@ const Profile = (props) => {
   }, [status])
 
   const updateStatusProfilOnServer = (newStatus) => {
-    console.log("newStatus:", newStatus)
+    console.log("fonction newStatus en attente de développement :", newStatus)
     // Effectuer la requête HTTP ou la communication avec le serveur pour mettre à jour le statut du profil
   }
 
@@ -114,10 +112,10 @@ const Profile = (props) => {
               id={`user-photo-${pseudo}`} 
               alt="photoProfile" />
         }
-        <ShowConnected
+        {/* <ShowConnected
           id={`user-connect-${pseudo}`}
           isConnected={isConnected}
-        />
+        /> */}
         { user.pseudo === pseudo && user.isAuthenticated ? 
           <StyleLabInput>
             <p>Status profil</p>
@@ -151,11 +149,12 @@ const Profile = (props) => {
             { lastname && (
               <span id={`user-nom-${pseudo}`}>Prénom: {firstname}</span>
             )}
-            { bornDate && (
-              <span id={`user-age-${pseudo}`}>Date de naissance: {FrenchFormatDateConvert(bornDate)}</span>
+            { born_date && (
+              <span id={`user-age-${pseudo}`}>Date de naissance: {FrenchFormatDateConvert(born_date)}</span>
             )}
           </InfoUser>
           <Titre id={`user-title-${pseudo}`}>{about}</Titre>
+          
         </>
       : <></>
     }

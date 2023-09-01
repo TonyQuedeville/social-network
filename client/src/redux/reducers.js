@@ -9,6 +9,7 @@
 
 import { createSlice } from '@reduxjs/toolkit';
 import Cookies from 'js-cookie';
+import { socket } from '../socket';
 
 const initialValues = {
   isAuthenticated: false,
@@ -58,12 +59,14 @@ const userSlice = createSlice({
 
     setIsAuthenticated: (state, action) => {
       state.isAuthenticated = action.payload
+      socket.connect() // connection au tchat
     },
 
 
     handleLogout:() => {
-      Cookies.remove('session')
-      return initialValues;
+      socket.disconnect() // déconnection du tchat
+      Cookies.remove('session') // suppression du cookie
+      return initialValues; // ré-initilisation des données authUser
     }
   },
 })

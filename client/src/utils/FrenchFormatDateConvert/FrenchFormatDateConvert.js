@@ -10,8 +10,14 @@ import moment from 'moment';
 //import 'moment-timezone';
 
 export default function FrenchFormatDateConvert(dateString) {
-  const date = moment.utc(dateString);
+  if (dateString) {
+    const date = moment.utc(dateString);
 
-  const formattedDate = date.format(date.hours() !== 0 ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY');
-  return formattedDate;
+    const formattedDate = date.format(date.hours() !== 0 ? 'DD-MM-YYYY HH:mm:ss' : 'DD-MM-YYYY');
+    return formattedDate;
+  } else {
+    const now = moment();
+    const formattedNow = now.format('DD-MM-YYYY HH:mm:ss');
+    return formattedNow;
+  }
 }

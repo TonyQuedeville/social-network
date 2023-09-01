@@ -12,7 +12,12 @@ import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIs
 import { GroupProvider } from './utils/GroupProvider/GroupProvider'
 import { ThemeProvider } from './utils/ThemeProvider/ThemeProvider'
 import { makeRequest } from './utils/Axios/Axios.js'
+
 //import { io } from "socket.io-client" // npm install socket.io-client
+import { socket } from './socket';
+// import { ConnectionState } from './utils/ConnectionState/ConnectionState'; // Pour test et debuguage uniquement
+// import { ConnectionManager } from './utils/ConnectionManager/ConnectionManager'; // Pour test et debuguage uniquement
+// import TchatEvents from './components/TchatEvents/TchatEvents'
 
 import Header from './components/Header/Navbar'
 import Footer from './components/Footer/Footer'
@@ -31,7 +36,25 @@ import Cookies from 'js-cookie' // npm install js-cookie
 
 function App() {
   const dispatch = useDispatch()
-  
+
+  // Verification connection Socket.io pour debugage
+  //const [ isConnected, setIsConnected ] = useState(socket.connected);
+  //const [ tchatEvents, setTchatEvents ] = useState([]);
+
+  useEffect(() => {
+    function onDisconnect() {
+      //setIsConnected(false);
+    }
+
+    function onEvent(value) {
+      //setTchatEvents(previous => [...previous, value]);
+    }
+
+    socket.on('disconnect', onDisconnect);
+    socket.on('tchatEvent', onEvent);
+  }, [])
+
+
   useEffect(() => {
     const Verifcookie = async () => {
       try {
@@ -41,8 +64,11 @@ function App() {
         dispatch(setWaitGroupsAccept(data.datas.waitGroupsAccept))
         dispatch(setEvents(data.datas.events))
         dispatch(setIsAuthenticated(true))
+        socket.connect()
+        socket.emit('userConnect', data.datas.user.pseudo);
       } catch (error) {
         console.log("Erreur Verifcookie:", error);
+        socket.disconnect();
       }
     }
     
@@ -52,10 +78,14 @@ function App() {
 
   }, [dispatch])
 
+  // Application
   return (
     <Router>
       <GroupProvider>
         <ThemeProvider>
+          {/* <ConnectionState isConnected={ isConnected } /> 
+          <ConnectionManager /> */}
+          {/* <TchatEvents events={ tchatEvents } /> */}
           <Header />
           <GlobalStyle />
           <AppContent />
@@ -66,6 +96,7 @@ function App() {
   )
 }
 
+// Routes
 function AppContent() {  
   return (
     <Routes>
@@ -73,9 +104,9 @@ function AppContent() {
       <Route path="/users" element={<Users />} />
       <Route path="/login" element={<LoginForm />} />
       <Route path="/register" element={<RegisterForm />} />
-      <Route path="/groups" element={<Groupes/>} />
-      <Route path="/group/:groupId" element={<Groupe/>} />
-      <Route path="/tchat" element={<Tchat/>} />
+      <Route path="/groups" element={<Groupes />} />
+      <Route path="/group/:groupId" element={<Groupe />} />
+      <Route path="/tchat" element={<Tchat />} />
       <Route path="/user/:userid" element={<User />} />
       <Route path="*" element={<Error />} />
     </Routes>

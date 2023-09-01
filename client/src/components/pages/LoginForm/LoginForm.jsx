@@ -8,10 +8,11 @@
 
 import React, { useState, useEffect, useContext } from "react"
 import { useDispatch } from 'react-redux'
-import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated, setIsConnected } from '../../../redux/reducers'
+import { updateUserData, setWaitFollowers, setWaitGroupsAccept, setEvents, setIsAuthenticated } from '../../../redux/reducers'
 import { useNavigate } from 'react-router-dom'
 import { makeRequest } from '../../../utils/Axios/Axios.js'
 import { ThemeContext } from '../../../utils/ThemeProvider/ThemeProvider.jsx'
+import { socket } from '../../../socket';
 import colors from '../../../utils/style/Colors.js'
 import Popup from '../../Popup/Popup.jsx'
 import styled from 'styled-components'
@@ -133,6 +134,8 @@ function LoginForm() {
                 dispatch(setIsAuthenticated(true))
 
                 navigate(`/user/${responseData.datas.user.id}`)
+
+                socket.emit('userConnect', responseData.datas.user.pseudo)
             }
             catch (err) {
                 setNotification(err.message + " : " + err.response.data.error)

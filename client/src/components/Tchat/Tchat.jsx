@@ -4,18 +4,19 @@
 	10/07/2023
 	Composant Tchat : Affiche la page tchat
 	Page Tchat : Route http://localhost:3000/tchat
+	lien utile: https://socket.io/fr/how-to/use-with-react
 */
 
 import React, { useContext, useEffect, useState } from 'react'
-import PropTypes from 'prop-types'
 import { useSelector } from "react-redux"
 import { ThemeContext } from '../../utils/ThemeProvider/ThemeProvider.jsx'
 import colors from '../../utils/style/Colors.js'
 import styled from 'styled-components'
+import { socket } from '../../socket';
 import DisplayMessage from '../DisplayMessage/DisplayMessage.jsx'
 import SendMessage from '../SendMessage/SendMessage.jsx'
 import MenuDeroulant from '../MenuDeroulant/MenuDeroulant.jsx'
-import { io } from "socket.io-client" // npm install socket.io-client
+import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
 
 const TchatContainer = styled.div`
 	width: ${props => props.larg}%;
@@ -55,110 +56,95 @@ const StyleMessages = styled.div`
 
 // Composant
 const Tchat = (props) => {
-	const { convId, larg , type } = props
+	const { larg , type, roomGroupName } = props
 	const { theme } = useContext(ThemeContext)
 
 	// AuthUser
 	const user = useSelector(state => state.user)
 
-	// Champs Conversations
-	const [conversationsData, setConversationsData] = useState(undefined)
-	const socket = io('http://localhost:3001');
-	
-	useEffect(() => {
-		console.log("tentative de connexion au server tchat !")
-		
-		socket.on("connect", () => {
-			console.log("Connexion au tchat établie !")
-			if(user.isAuthenticated) setConnected(socket.connected)
-		});
-
-		socket.on("disconnect", () => {
-			console.log("déconnexion au tchat !")
-			if(user.isAuthenticated) setConnected(socket.connected)
-		});
-
-		socket.on("connect_error", (error) => {
-			console.error("Erreur de connexion Socket.io :", error)
-		});
-
-		socket.on("message", (data) => {
-			console.log("Message reçu du serveur tchat:", data)
-		});
-
-		// Émettre un message vers le serveur
-		socket.emit("chatMessage", "Hello, server!")
-	}, [])
-
-	const socket = io('http://localhost:3001');
-	
-	useEffect(() => {
-		console.log("tentative de connexion au server tchat !")
-		
-		socket.on("connect", () => {
-			console.log("Connexion au tchat établie !")
-			if(user.isAuthenticated) setConnected(socket.connected)
-		});
-
-		socket.on("disconnect", () => {
-			console.log("déconnexion au tchat !")
-			if(user.isAuthenticated) setConnected(socket.connected)
-		});
-
-		socket.on("connect_error", (error) => {
-			console.error("Erreur de connexion Socket.io :", error)
-		});
-
-		socket.on("message", (data) => {
-			console.log("Message reçu du serveur tchat:", data)
-		});
-
-		// Émettre un message vers le serveur
-		socket.emit("chatMessage", "Hello, server!")
-	}, [])
-
-
-	useEffect(() => {
-		if (type === "private") {
-			console.log(("private"));
-			// await requete prive
-			// setConversationsData(res.data)
-		} else { 
-			console.log("group");
-			// await requete group
-			// setDataMessages(res.data)
-		}
-	}, [type])
+	// Utilisateurs connectés
+	const [userListConnect, setUserListConnect] = useState([])
 
 	// Champs Messages
-	const [dataMessages, setDataMessages] = useState(undefined)
-	const [ connected, setConnected ] = useState(false)
+	const [dataMessages, setDataMessages] = useState([])
 
-    // Mise à jour de la liste de conversations à chaque changement de selection de conversation
-    const handleChargeConversations = (e) => {
-		if (e && e.target && e.target.name) {
-			var value = e.target.value
-			console.log("send message:", value);
+	// Champs Conversations
 
-			// await requete conversation privée
-			// setDataMessages(res.data)
+	const [destinataire , setDestinataire] = useState('')
 
-            // setConversationsData(prev => ({
-			// 	...prev,
-            //     [e.target.name]: value
-            // }))
+	// Liste des user.followed
+	const [ufolList, setUfolList] = useState(user.followed ? 
+		user.followed.map((ufol) => {
+			const connected = userListConnect.includes(ufol.pseudo) ? 1 : 0;
+			return {
+				id: ufol.id,
+				type: 'private',
+				isConnected: connected,
+				name: ufol.pseudo
+			};
+		}
+	) : []);
+
+	// Construction du composant
+	// Communications server
+	useEffect(() => {
+		// Réception de la liste des utilisateurs connectés du serveur
+		socket.on('connectedUsersList', (userList) => {
+			setUserListConnect(userList)
+		})
+
+		// Reception des messages
+		socket.on('message', (dataMessage) => {
+			setDataMessages(previous => [...previous, dataMessage])
+		})
+	}, [])
+
+	useEffect(() => {
+		if(user.followed){
+			setUfolList(
+				user.followed.map((ufol) => {
+					const connected = userListConnect.includes(ufol.pseudo) ? 1 : 0
+					return {
+						id: ufol.id,
+						type: 'private',
+						isConnected: connected,
+						name: ufol.pseudo
+					}
+				})
+			)
+		}
+	},[userListConnect, user])
+
+	// Rejoindre la conversation de groupe de discution
+	useEffect(() => {
+		if (!roomGroupName) {
+			socket.emit('quitRoom', {user: user.pseudo}); // quitter la conversation active
+		} else { 
+			socket.emit('joinRoom', {roomName: roomGroupName, user: user.pseudo})
+			setDestinataire(roomGroupName)
+		}
+	}, [roomGroupName, user])
+
+	// Rejoindre la conversation
+    const handleChangeConversations = (e) => {
+		if (e && e.target && e.target.name) { 
+			setDestinataire(e.target.value)
+			// Remise à jour de la liste de conversations à chaque changement de selection de conversation
+			setDataMessages([])
         }
     }
 
-	//console.log("conversationsData:", conversationsData)
+	// Notifications des évènements de tchat
+	const [notif, setNotif] = useState()
 
 	// Connexion Tchat
     
 
 
+	// Render
 	return (
 		<TchatContainer theme={theme} larg={larg}>
-			{connected && (
+			{socket.connect() && (
 				<>
 					<StyleConvList theme={theme}>
 						Conversation 
@@ -166,43 +152,28 @@ const Tchat = (props) => {
 							<MenuDeroulant
 								name="id" 
 								disabled={false} 
-								onChange={(e) => {
-									handleChargeConversations(e)}}
+								onChange={(e) => {handleChangeConversations(e)}}
 								theme={theme}
-								options={[
-									{id: 1, type: 'private', isConnected: true, name: "Tata"}, 
-									{id: 2, type: 'private', isConnected: true, name: "Tutu"}, 
-									{id: 3, type: 'private', isConnected: false, name: "Alannnn"},
-								]}
+								options={ufolList}
 							/>
 						)}
 					</StyleConvList>
 					<MessagesContainer>
-						{/* {dataMessages.datas.map((dataMessage, index) => (
-						))} */}
-						<StyleMessages align={'Toto' === user.pseudo}>
-							<DisplayMessage
-								convId={convId}
-								pseudo={'Toto' === user.pseudo ? 'moi' : 'pseudo'}
-								message={"Message de test en attendant d'avoir le server"}
-								dateheure={'25-08-2023 10:44:00'}
-							/>
-						</StyleMessages>
-
-						<SendMessage convId={convId}/>
+						{dataMessages.map((dataMessage, index) => (
+							<StyleMessages key={index} align={dataMessage.user_pseudo === user.pseudo}>
+								<DisplayMessage
+									pseudo={dataMessage.user_pseudo === user.pseudo ? 'moi' : dataMessage.user_pseudo}
+									message={dataMessage.message}
+									dateheure={dataMessage.dateheure}
+								/>
+							</StyleMessages>
+						))}
+						<SendMessage destinataire={destinataire} type={type}/>
 					</MessagesContainer>
 				</>
 			)}
 		</TchatContainer>
 	)
-}
-
-Tchat.defaultProps = {
-	convId: 0,
-}
-
-Tchat.propTypes = {
-	convId: PropTypes.number,
 }
 
 export default Tchat
