@@ -52,17 +52,20 @@ func VerifCookie(w http.ResponseWriter, r *http.Request) {
 	u := user.GetUserById(user_id, user_id)
 	askFollowers := user.GetTempFolower(user_id)
 	waitGroups := user.GetWaitUsersInGroupsByUserId(user_id)
+	invitGroups := user.GetInvitUsersInGroupsByUserId(user_id)
 	events := event.CheckNewEvent(user_id)
 
 	rep := struct {
 		User         user.User      `json:"user"`
 		AskFollowers []*user.User   `json:"waitFollowers"`
 		WaitGroups   []interface{}  `json:"waitGroupsAccept"`
+		InvitGroups  []interface{}  `json:"invitGroupsAccept"`
 		Events       []*event.Event `json:"events"`
 	}{
 		User:         *u,
 		AskFollowers: askFollowers,
 		WaitGroups:   waitGroups,
+		InvitGroups:  invitGroups,
 		Events:       events,
 	}
 

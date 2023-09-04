@@ -1,0 +1,39 @@
+version: '3'
+
+services:
+  app-social-network:
+    build:
+      context: ./app-social-network # Le chemin vers le dossier du serveur app-social-network
+    ports:
+      - "8080:8080" # Port exposé pour app-social-network
+    depends_on:
+      - database-manager # Dépendance du service database-manager
+
+  database-manager:
+    build:
+      context: ./database-manager # Le chemin vers le dossier du serveur database-manager
+    environment:
+      MYSQL_ROOT_PASSWORD: root_password # Variables d'environnement pour la base de données
+      MYSQL_DATABASE: database_name
+      MYSQL_USER: user_name
+      MYSQL_PASSWORD: user_password
+
+  app-image-storage:
+    build:
+      context: ./app-image-storage # Le chemin vers le dossier du serveur app-image-storage
+    ports:
+      - "4000:4000" # Port exposé pour app-image-storage
+
+  app-tchat:
+    build:
+      context: ./app-tchat # Le chemin vers le dossier du serveur app-tchat
+    ports:
+      - "3001:3001" # Port exposé pour app-tchat
+
+  client:
+    build:
+      context: ./client # Le chemin vers le dossier du client React
+    ports:
+      - "3000:3000" # Port exposé pour le client
+    depends_on:
+      - app-social-network # Dépendance du service app-social-network

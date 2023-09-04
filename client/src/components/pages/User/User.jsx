@@ -103,7 +103,7 @@ const User = () => {
                                 <Profile {...dataUser.datas}/>
                                 Followers:
                                 <StyleFollowers>
-                                    {user.follower.map((fol, index) => 
+                                    {user.follower && user.follower.map((fol, index) => 
                                         <div key={index}>
                                             <>{fol.pseudo}</>
                                             {fol.image ? 
