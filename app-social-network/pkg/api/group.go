@@ -147,8 +147,10 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 	Ok(w, "Votre de demande à rejoindre le groupe est en attente.")
 }
 
+
 /* Invitation au groupe par un utilisateur */
 func InvitGroup(w http.ResponseWriter, r *http.Request) {
+
 	if !IsPost(w, r) {
 		return
 	}
@@ -184,6 +186,7 @@ func InvitGroup(w http.ResponseWriter, r *http.Request) {
 			BadRequest(w, err.Error())
 			return
 		}
+
 }
 
 /* Acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */

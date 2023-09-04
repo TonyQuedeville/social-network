@@ -283,6 +283,7 @@ func AddGroupMember(user_id, group_id uint64) error {
 	return nil
 }
 
+
 func UpdateGroupMember(user_id, group_id uint64, status string) error {
     if status != "" {
         _, err := database.Database.Exec(`
