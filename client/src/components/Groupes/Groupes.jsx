@@ -109,10 +109,11 @@ const Groupes = (props) => {
 
   // Quitter le groupe
   const handleQuitGroupe = async (groupid) => {
-    // Requete de demande d'ajout au groupe de discution vers app-social-network
+    // Requete quitter le groupe de discution vers app-social-network
     try{
       await makeRequest.get(`/quitgroup/${groupid}`)
       setFetchError(false)
+      navigate(`/groups`)
     }
     catch (err) {
         setNotification(err.message + " : " + err.response.data.error)
@@ -196,7 +197,7 @@ const Groupes = (props) => {
                               <Button 
                                 text="Quitter le groupe" 
                                 disabled={false} 
-                                onClick={handleQuitGroupe}
+                                onClick={()=>{handleQuitGroupe(group.id)}}
                               /> 
                             }
                           </>

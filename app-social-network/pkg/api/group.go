@@ -124,7 +124,6 @@ func PostsByGrouypId(w http.ResponseWriter, r *http.Request) {
 
 /* Demande d'adhésion au groupe par un utilisateur */
 func JoinGroup(w http.ResponseWriter, r *http.Request) {
-	// only post request
 	if !IsGet(w, r) {
 		return
 	}
@@ -140,12 +139,51 @@ func JoinGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	group.AddGroupMember(intel_id, group_id)
+	err = group.AddGroupMember(intel_id, group_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
 	}
 	Ok(w, "Votre de demande à rejoindre le groupe est en attente.")
+}
+
+/* Invitation au groupe par un utilisateur */
+func InvitGroup(w http.ResponseWriter, r *http.Request) {
+	if !IsPost(w, r) {
+		return
+	}
+
+	intel_id := GetIdUser(r)
+	if intel_id == 0 {
+		BadRequest(w, "User not connected")
+		return
+	}
+
+	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
+	g := &struct {
+		Group_id uint64 `json:"group_id"`
+		User_id  uint64 `json:"user_id"`
+	}{} // prepare un user                 // prepare un objet
+	if err := json.Unmarshal(reqBody, &g); // unwrap le corp dans post
+	err != nil {
+		// fmt.Println("error Unmarshal :", err)
+		BadRequest(w, err.Error())
+		return
+	}
+	group_id := g.Group_id
+	user_id := g.User_id
+
+	err := group.AddGroupMember(user_id, group_id)
+	if err != nil {
+		BadRequest(w, err.Error())
+		return
+	} else {	
+		err = group.UpdateGroupMember(user_id, group_id, "invit")
+	}
+		if err != nil {
+			BadRequest(w, err.Error())
+			return
+		}
 }
 
 /* Acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */
@@ -169,15 +207,16 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 	user_id := g.User_id
 
 	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
-	fmt.Println("GROUPIDALANN:", group_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
 	}
+
 	if intel_id == 0 {
 		BadRequest(w, "User not connected")
 		return
 	}
+
 	status := group.GetMemberStatus(user_id)
 	if status == "invit" {
 		if user_id != intel_id {
@@ -191,7 +230,7 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	} else {
-		BadRequest(w, "Utilisateur deja dans le groupe")
+		BadRequest(w, "Cet utilisateur est déjà dans le groupe")
 	}
 
 	err = group.AcceptGroupMember(user_id)
@@ -199,7 +238,8 @@ func AcceptGroup(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, err.Error())
 		return
 	}
-	Ok(w, "Vous avez bien ajouter l'utilisateur au groupe")
+
+	Ok(w, "Vous avez bien ajouté l'utilisateur au groupe")
 }
 
 /* Refut d'acceptation au groupe d'un utilisateur par n'importe quel membres du groupe */
@@ -208,22 +248,23 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 	if !IsPost(w, r) {
 		return
 	}
+
 	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
 
 	reqBody, _ := io.ReadAll(r.Body) // récupere le corp json
 	g := &struct {
 		Group_id uint64 `json:"group_id"`
 		User_id  uint64 `json:"user_id"`
-	}{} // prepare un user                                 // prepare un user
+	}{} // prepare un user
 	if err := json.Unmarshal(reqBody, &g); err != nil { // unwrap le corp dans user
 		BadRequest(w, err.Error())
 		return
 	}
-	group_id := g.Group_id
 
+	group_id := g.Group_id
 	user_id := g.User_id
 
-	group, err := group.GetGroupById(group_id) // Recupere l'objet du group
+	group, err := group.GetGroupById(group_id) // Recupere l'objet du groupe
 	if err != nil {
 		BadRequest(w, err.Error())
 		return
@@ -240,7 +281,7 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 	} else {
 		group.GetGroupMembers()
 		if !slices.Contains(group.Members, intel_id) {
-			BadRequest(w, "Tu dois faire partie du groupe pour accepter un membre")
+			BadRequest(w, "Tu dois faire partie du groupe pour refuser un membre")
 			return
 		}
 	}
@@ -249,7 +290,7 @@ func RefuseGroup(w http.ResponseWriter, r *http.Request) {
 		BadRequest(w, err.Error())
 		return
 	}
-	Ok(w, "L'utilisateur n'a pas etait ajouter au groupe.")
+	Ok(w, "L'utilisateur n'a pas été ajouté au groupe.")
 }
 
 /* Quitter le groupe */
@@ -259,8 +300,10 @@ func QuitGroup(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 	intel_id := GetIdUser(r) // (cookie) Utilisateur connecté, demandeur du post (qui demande à voir le post)
+	fmt.Println("intel_id:", intel_id)
 
 	group_id, err := GetIdFromPath(r) // Recupere l'id du group
+	fmt.Println("group_id:", group_id)
 	if err != nil {
 		BadRequest(w, err.Error())
 		return

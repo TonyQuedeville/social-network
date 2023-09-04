@@ -283,6 +283,21 @@ func AddGroupMember(user_id, group_id uint64) error {
 	return nil
 }
 
+func UpdateGroupMember(user_id, group_id uint64, status string) error {
+    if status != "" {
+        _, err := database.Database.Exec(`
+            UPDATE groupmembers
+            SET status = ?
+            WHERE group_id = ? AND user_id = ?
+        `, status, group_id, user_id)
+        if err != nil {
+            return err
+        }
+    }
+
+    return nil
+}
+
 // Delete
 /* Supprime un membre du groupe de discution */
 func (g *Group) DeleteGroupMember(user_id uint64) error {
@@ -363,29 +378,25 @@ func (g *Group) GetGroupMembersWait() {
 	}
 
 	g.WaitMembers = groupWaitMembers
+}
 
-	// rows, _ := database.Database.Query(`
-	// SELECT user.id, user.pseudo, user.first_name, user.last_name, user.sexe, user.about, user.image
-	// FROM user
-	// JOIN groupmembers AS gm ON gm.group_id = ? AND gm.status IS NULL
-	// WHERE user.id = gm.user_id
-	// `, group_id)
-	// defer rows.Close()
+/* Retourne les membres du groupe en invitation */
+func (g *Group) GetGroupMembersInvit() {
+	rows, _ := database.Database.Query(`
+	SELECT user_id
+	FROM groupmembers
+	WHERE group_id = ? AND status = 'invit'
+	`, g.Id)
+	defer rows.Close()
 
-	// var users []*User
-	// for rows.Next() {
-	// 	var u User
-	// 	rows.Scan(
-	// 		&u.Id,
-	// 		&u.Pseudo,
-	// 		&u.First_name,
-	// 		&u.Last_name,
-	// 		&u.Sexe,
-	// 		&u.About,
-	// 		&u.Image,
-	// 	)
-	// 	users = append(users, &u)
-	// }
+	var groupInvitMembers []uint64
+	for rows.Next() {
+		var memberID uint64
+		rows.Scan(
+			&memberID,
+		)
+		groupInvitMembers = append(groupInvitMembers, memberID)
+	}
 
-	// return users
+	g.InvitMembers = groupInvitMembers
 }

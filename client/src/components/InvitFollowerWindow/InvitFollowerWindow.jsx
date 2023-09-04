@@ -5,14 +5,17 @@
 	Composant InvitFollowerWindow : Affichage d'une fenetre d'invitaion followers à un groupe de discutiion
 */
 
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from "react-redux"
+import { makeRequest } from '../../utils/Axios/Axios.js'
+import Popup from '../Popup/Popup.jsx'
 import styled from 'styled-components'
 import colors from '../../utils/style/Colors.js'
 import Button from '../Button/Button.jsx'
 import RadioBouton from '../RadioBouton/RadioBouton.jsx'
 import DefaultPictureH from '../../assets/img/user-profile-avatar-h.png'
 import DefaultPictureF from '../../assets/img/user-profile-avatar-f.png'
+
 
 //css
 const StyleWindow = styled.div`
@@ -63,14 +66,26 @@ const StylePhotoProfile = styled.img`
 `
 
 // Composant
-function InvitFollowerWindow({ groupId, onClose, theme }) {
+function InvitFollowerWindow({ groupId, members, onClose, theme }) {
     // AuthUser
     const user = useSelector(state => state.user)
     const follower = user.follower
+	
+	const handleFollowerChange = async(followerId) => {
+		const invitGroupsData = {
+			group_id: groupId,
+			user_id: followerId,
+		}
 
-	const handleFollowerChange = (followerId) => {
-        console.log("inviter followerId:", followerId, "groupId:", groupId);
-        // requete d'invitation (post)
+        // requete d'invitation 
+		try{
+			await makeRequest.post(`/invitgroup`, JSON.stringify(invitGroupsData)) 
+		}
+		catch (err) {
+			console.log(err.message + " : " + err.response.data.error)
+		}
+		finally {
+		}
 	}
 
 	const close = () => {
@@ -82,23 +97,25 @@ function InvitFollowerWindow({ groupId, onClose, theme }) {
 			<StyleFollowersList>
 				{/* Afficher la liste des followers avec cases à cocher */}
 				{follower.map((followerData) => (
-					<label key={followerData.id}>
-						<StyleLabel>
-						{followerData.pseudo}
-                        <RadioBouton
-                            id="invitFollower"
-                            name="invitFollower"
-                            label="inviter"
-                            value={followerData.pseudo}
-                            onChange={() => handleFollowerChange(followerData.id)}
-                            alignment="vertical"
-                        />
-						{followerData.image ? 
-							<StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${followerData.image}`} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
-							: <StylePhotoProfile src={followerData.sexe === 'h' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
-						}
-						</StyleLabel>
-					</label>
+					!members.includes(followerData.id) && (
+						<label key={followerData.id}>
+							<StyleLabel>
+							{followerData.pseudo}
+							<RadioBouton
+								id="invitFollower"
+								name={"invitFollower" + followerData.id}
+								label="inviter"
+								//value={followerData.pseudo}
+								onChange={() => handleFollowerChange(followerData.id)}
+								alignment="vertical"
+							/>
+							{followerData.image ? 
+								<StylePhotoProfile src={`http://${window.location.hostname}:4000/download/${followerData.image}`} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
+								: <StylePhotoProfile src={followerData.sexe === 'h' ? DefaultPictureF : DefaultPictureH} id={`user-photo-${followerData.pseudo}`} alt="photoProfile" />
+							}
+							</StyleLabel>
+						</label>
+					)
 				))}
 			</StyleFollowersList>
 			<StyleGroupOk>

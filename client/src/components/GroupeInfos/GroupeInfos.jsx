@@ -6,6 +6,7 @@
 */
 
 import React, { useState, useContext } from 'react'
+import { useNavigate } from 'react-router-dom'
 import { useSelector } from "react-redux"
 import styled from 'styled-components'
 import FrenchFormatDateConvert from '../../utils/FrenchFormatDateConvert/FrenchFormatDateConvert.js'
@@ -16,7 +17,7 @@ import Button from '../Button/Button.jsx'
 import Popup from '../Popup/Popup.jsx'
 import EventWindow from '../EventWindow/EventWindow.jsx'
 import InvitFollowerWindow from '../InvitFollowerWindow/InvitFollowerWindow.jsx'
-import axios from "axios"
+import { makeRequest } from '../../utils/Axios/Axios.js'
 
 // css
 const StyleGroupContainer = styled.div`
@@ -69,20 +70,22 @@ const StyleBold = styled.p`
 
 // Composant
 const GroupeInfos = (props) => {
-	const { theme } = useContext(ThemeContext)
-	const userId = useSelector(state => state.user.id)
 	const {id, title, pseudo, description, image, members, createDate } = props
+	const { theme } = useContext(ThemeContext)
+	const user = useSelector(state => state.user)
 	const [fetchError, setFetchError] = useState(false) // Gestion des erreurs
   	const [notification, setNotification] = useState('') // Message de notification dans le composant Popup
 	const [showEventWindow, setShowEventWindow] = useState(false) // fenetre des évènements
 	const [showInvitWindow, setShowInvitWindow] = useState(false) // fenetre d'invitation
+	const navigate = useNavigate() // Redirection vers la page du groupe
 
 	// Quitter le groupe
 	const handleSupGroupe = async () => {
 		// Requete de demande d'ajout au groupe de discution vers app-social-network
 		try{
-			await axios.post(`http://${window.location.hostname}:8080/supGroup/${id}`)
+			await makeRequest.get(`/quitgroup/${id}`)
 			setFetchError(false)
+			navigate(`/groups`)
 		}
 		catch (err) {
 			setNotification(err.message + " : " + err.response.data.error)
@@ -125,9 +128,9 @@ const GroupeInfos = (props) => {
 			</StyleBanner>
 
 			<>
-				{ members.includes(userId) && (
+				{ members.includes(user.id) && (
 					<StyleRow>
-						{ userId && (
+						{ user.id && (
 							<>
 								<Button 
 									text="Quitter le groupe" 
@@ -146,22 +149,23 @@ const GroupeInfos = (props) => {
 								/> 
 							</>
 						)}
-
-						{showEventWindow && (
-							<EventWindow
-								groupId={id}
-								onClose={() => {setShowEventWindow(false)}}
-							/>
-						)}
-
-						{showInvitWindow && (
-							<InvitFollowerWindow
-								groupId={id}
-								onClose={() => {setShowInvitWindow(false)}}
-								theme={theme}
-							/>
-						)}
 					</StyleRow>
+)				}
+
+				{showEventWindow && (
+					<EventWindow
+						groupId={id}
+						onClose={() => {setShowEventWindow(false)}}
+					/>
+				)}
+
+				{showInvitWindow && (
+					<InvitFollowerWindow
+						groupId={id}
+						members={members}
+						onClose={() => {setShowInvitWindow(false)}}
+						theme={theme}
+					/>
 				)}
 			</>
 
