@@ -66,7 +66,6 @@ func StartServer() {
 	server.OnEvent("/", "message", func(s socketio.Conn, c_id uint64, content string) {
 		u_id := socket_users_id[s.ID()]
 		api.OnMessage(s, u_id, c_id, content, conn_users_id)
-
 		m := conv.GetLastMessage(c_id)
 		server.BroadcastToRoom("/", fmt.Sprintf("conv_%v", c_id), "message", m)
 	})
