@@ -14,6 +14,7 @@ type Group struct {
 	Nb_members  uint64    `json:"nb_members,omitempty"`
 	Members     []uint64  `json:"members"`
 	WaitMembers []uint64  `json:"wait_members"`
+	InvitMembers []uint64  `json:"invit_members"`
 	Created_at  time.Time `json:"created_date,omitempty"`
 	Updated_at  time.Time `json:"updated_date,omitempty"`
 }

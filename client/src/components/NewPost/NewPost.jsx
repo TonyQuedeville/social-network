@@ -26,7 +26,7 @@ import FollowersSelector from '../FollowersSelector/FollowersSelector.jsx'
 // css
 const NewPostContainer = styled.div`
 	width: auto;
-	max-width: 600px;
+	max-width: 700px;
 	display: flex;
 	flex-direction: column;
 	align-items: center;

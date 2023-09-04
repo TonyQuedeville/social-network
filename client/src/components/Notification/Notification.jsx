@@ -31,9 +31,10 @@ const StyleGroupButton = styled.div`
 
 // Composant
 const Notification = ({ notif, typeNotif, theme }) => {
-  //console.log("notif:", typeNotif, notif.id);
+  console.log("notif:", typeNotif, notif);
 
   const userId = useSelector(state => state.user.id)
+  console.log("userId:",userId);
   
   // waitFollowers
   const acceptFollowerMutation = useMutation(
@@ -79,19 +80,14 @@ const Notification = ({ notif, typeNotif, theme }) => {
   }
 
   // waitGroupsAccept
-  const [waitGroupsData] = useState({
+  const [waitGroupsData, setWaitGroupsData] = useState({
 		group_id: notif.Group_id,
-		user_id: 0,
+		user_id: notif.Id,
 	})
 
-  const handleWaitGroupAccept = async(e) => {
-    const data = {
-			...waitGroupsData,
-			user_id: notif.user_id,
-		};
-    
+  const handleWaitGroupAccept = async(e) => {    
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(data))
+      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(waitGroupsData))
     }
     catch (err) {
       console.log("err:", err);
@@ -101,13 +97,8 @@ const Notification = ({ notif, typeNotif, theme }) => {
   }
 
   const handleWaitGroupRefuse = async(e) => {
-    const data = {
-			...waitGroupsData,
-			user_id: notif.user_id,
-		};
-    
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(data))
+      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(waitGroupsData))
     }
     catch (err) {
       console.log("err:", err);
@@ -117,14 +108,14 @@ const Notification = ({ notif, typeNotif, theme }) => {
   }
 
   // invitGroups
+  const [invitGroupsData] = useState({
+		group_id: notif.id,
+		user_id: userId,
+	})
   const handleInvitGroupAccept = async (e) => {
-    const data = {
-			...waitGroupsData,
-			user_id: userId,
-		};
 
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(data))
+      await makeRequest.post(`http://${window.location.hostname}:8080/acceptgroup`, JSON.stringify(invitGroupsData))
     }
     catch (err) {
       console.log("err:", err);
@@ -134,13 +125,13 @@ const Notification = ({ notif, typeNotif, theme }) => {
   }
 
   const handleInvitGroupRefuse = async(e) => {
-    const data = {
-			...waitGroupsData,
-			user_id: userId,
-		};
+    setWaitGroupsData((previousData) => ({
+      ...previousData,
+      user_id: userId,
+    }))
 
     try{
-      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(data))
+      await makeRequest.post(`http://${window.location.hostname}:8080/refusegroup`, JSON.stringify(invitGroupsData))
     }
     catch (err) {
       console.log("err:", err);

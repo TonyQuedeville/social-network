@@ -70,6 +70,7 @@ const Notifications = ({onClose}) => {
 	// Contexte
 	const { theme } = useContext(ThemeContext)
 	const user = useSelector(state => state.user)
+	//console.log(user);
 
 	const handleClose = () => {
 		onClose();
@@ -108,9 +109,9 @@ const Notifications = ({onClose}) => {
 					</>
 				)}
 
-				{ user.invitGroups && (
+				{ user.invit_groups && (
 					<>
-					{user.invitGroups.map((invitGroup, index) => ( // Utilisateurs invité dans les groupes
+					{user.invit_groups.map((invitGroup, index) => ( // Utilisateurs invité dans les groupes
 						<Notification 
 							key={index} 
 							notif={invitGroup}
