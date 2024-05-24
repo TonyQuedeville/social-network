@@ -3,7 +3,7 @@
 FROM mysql:latest
 
 # Copiez les fichiers de migration SQL dans le conteneur
-COPY ./migrations /docker-entrypoint-initdb.d/
+COPY ./database/migrations /docker-entrypoint-initdb.d/
 
 # Définissez les variables d'environnement pour la base de données (à personnaliser)
 ENV MYSQL_ROOT_PASSWORD=root_password
